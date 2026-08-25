@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # NU AI — Smart Academic Assistant for National University Bangladesh (nu.ac.bd)
 
 A production-grade AI Academic Assistant and counselor for **National University Bangladesh (জাতীয় বিশ্ববিদ্যালয়)** built on Google Gemini 2.5/3.5 Flash, ChromaDB vector store, and SQLite structured storage with a **self-enriching RAG (Retrieval-Augmented Generation)** architecture.
