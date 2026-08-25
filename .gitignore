@@ -1,4 +1,4 @@
-﻿__pycache__/
+__pycache__/
 *.py[cod]
 *.class
 *.so
@@ -31,3 +31,6 @@ htmlcov/
 *.db-shm
 *.db-wal
 nu_vector_db/
+backups/
+Backup/
+*.zip
