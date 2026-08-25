@@ -1042,13 +1042,17 @@
           </div>
         </div>
         <div class="flex items-center gap-2">
-          <button onclick="toggleEmbedModal()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 px-3 py-1.5 rounded-lg font-semibold transition flex items-center gap-1.5">
+          <button onclick="openDocumentaryModal()" class="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-800 border border-indigo-200 px-3 py-1.5 rounded-lg font-semibold transition flex items-center gap-1.5 shadow-2xs cursor-pointer" title="Complete System Architecture, Solver Roles & Operations Guide">
+            <span>📖</span>
+            <span class="hidden sm:inline">System & Operations Manual</span>
+          </button>
+          <button onclick="toggleEmbedModal()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 px-3 py-1.5 rounded-lg font-semibold transition flex items-center gap-1.5 cursor-pointer">
             <svg class="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
             </svg>
             <span>Embed Widget</span>
           </button>
-          <button onclick="handleAdminLogout()" class="text-xs bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-3 py-1.5 rounded-lg font-semibold transition flex items-center gap-1">
+          <button onclick="handleAdminLogout()" class="text-xs bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-3 py-1.5 rounded-lg font-semibold transition flex items-center gap-1 cursor-pointer">
             <span>🚪</span>
             <span>Logout</span>
           </button>
@@ -2105,166 +2109,125 @@
   <!-- Help Drawer Backdrop -->
   <div id="help-drawer-backdrop" onclick="closeHelpDrawer()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden transition-opacity duration-300"></div>
 
-  <!-- Help Sliding Drawer from Right -->
+  <!-- Help Sliding Drawer from Right (Student & User Friendly Guide) -->
   <div id="help-drawer" class="fixed top-0 right-0 h-full w-full max-w-md sm:max-w-lg bg-white z-50 shadow-2xl border-l border-slate-200 flex flex-col transform translate-x-full transition-transform duration-300 ease-in-out">
     <!-- Top Header -->
-    <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-900 text-white shrink-0">
+    <div class="px-6 py-4 border-b border-emerald-800 flex items-center justify-between bg-gradient-to-r from-emerald-900 to-slate-900 text-white shrink-0">
       <div class="flex items-center gap-2.5">
-        <div class="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black text-sm shadow-xs">?</div>
+        <div class="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-black text-sm shadow-xs">📖</div>
         <div>
-          <h2 class="text-sm font-bold text-white">Interactive User Guide & Functions</h2>
-          <p class="text-[11px] text-slate-400">All system functions explained from scratch (0-Level Guide)</p>
+          <h2 class="text-sm font-bold text-white">ব্যবহারকারী নির্দেশিকা (User Manual)</h2>
+          <p class="text-[11px] text-emerald-200">সহজ ৪টি ধাপে এআই সহকারী ও টোকেন সার্ভিস ব্যবহারের নিয়ম</p>
         </div>
       </div>
-      <button onclick="closeHelpDrawer()" class="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-800 transition">✕</button>
+      <button onclick="closeHelpDrawer()" class="text-slate-300 hover:text-white p-1.5 rounded-lg hover:bg-white/10 transition cursor-pointer">✕</button>
     </div>
 
-    <!-- Scrollable Drawer Body with all features listed from scratch -->
+    <!-- Scrollable Drawer Body (Clean 4-Step Student Manual) -->
     <div class="flex-1 overflow-y-auto p-5 space-y-4 text-xs text-slate-700">
       
-      <!-- Big Documentary Link Card -->
-      <div class="bg-gradient-to-r from-blue-900 to-indigo-900 text-white p-4 rounded-2xl shadow-md flex items-center justify-between gap-3">
-        <div>
-          <span class="bg-blue-500/30 text-blue-200 text-[10px] font-bold px-2 py-0.5 rounded-full border border-blue-400/30 uppercase tracking-wider">Comprehensive Documentary</span>
-          <h3 class="font-bold text-sm mt-1 text-white">Full System Architecture & Roadmap</h3>
-          <p class="text-[11px] text-blue-200 mt-0.5">Explore the technical review, 24/7 AI agents, and future vision.</p>
-        </div>
-        <div class="flex flex-wrap gap-1.5 shrink-0">
-          <button onclick="openDocumentaryModal()" class="bg-white text-blue-950 font-bold text-xs px-3 py-1.5 rounded-xl hover:bg-blue-50 transition shadow-sm">
-            Read Doc 📖
-          </button>
-          <a href="/docs/project-overview.pdf" download="National_University_AI_Project_Overview_BN.pdf" target="_blank" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-2.5 py-1.5 rounded-xl transition shadow-sm flex items-center gap-1" title="Download Bengali Edition">
-            <span>📥 বাংলা PDF</span>
-          </a>
-          <a href="/docs/project-overview-en.pdf" download="National_University_AI_Project_Overview_EN.pdf" target="_blank" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs px-2.5 py-1.5 rounded-xl transition shadow-sm flex items-center gap-1" title="Download English Edition">
-            <span>📥 English PDF</span>
-          </a>
-        </div>
-      </div>
-
-      <!-- Function 1: AI Chatbot & Instant Greetings -->
-      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-2 hover:border-emerald-300 transition">
+      <!-- Step 1: AI Chatbot -->
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-2 hover:border-emerald-400 transition">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
             <span class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-sm">💬</span>
-            <h4 class="font-bold text-slate-900 text-xs">1. AI Conversational Assistant</h4>
+            <h4 class="font-bold text-slate-900 text-xs">১. এআই চ্যাটবটে প্রশ্ন ও তথ্য অনুসন্ধান</h4>
           </div>
-          <button onclick="closeHelpDrawer()" class="text-[11px] font-bold text-emerald-700 hover:underline">Focus Chat ↗</button>
+          <button onclick="closeHelpDrawer()" class="text-[11px] font-bold text-emerald-700 hover:underline cursor-pointer">চ্যাট করুন ↗</button>
         </div>
         <p class="text-slate-600 leading-relaxed text-[11px]">
-          Ask any question regarding Admissions, Results, Exams, Syllabus, or Regulations in <strong>Bengali</strong> or <strong>English</strong>.
+          জাতীয় বিশ্ববিদ্যালয়ের যে কোনো তথ্য (ভর্তি, পরীক্ষার সময়সূচি/রুটিন, ফরম ফিলাপ, নোটিশ, রেজাল্ট, দপ্তর ও কর্মকর্তাদের ফোন নম্বর) জানতে নিচে আপনার প্রশ্ন বাংলায় বা ইংরেজিতে লিখুন।
         </p>
-        <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100 space-y-1 text-[11px]">
-          <div class="font-semibold text-slate-800">⚡ Sub-millisecond Preloaded Triggers:</div>
-          <div class="flex flex-wrap gap-1 mt-1">
-            <span class="bg-white px-2 py-0.5 rounded border border-slate-200 font-mono text-[10px]">hi</span>
-            <span class="bg-white px-2 py-0.5 rounded border border-slate-200 font-mono text-[10px]">ভর্তি</span>
-            <span class="bg-white px-2 py-0.5 rounded border border-slate-200 font-mono text-[10px]">রুটিন</span>
-            <span class="bg-white px-2 py-0.5 rounded border border-slate-200 font-mono text-[10px]">রেজাল্ট</span>
-            <span class="bg-white px-2 py-0.5 rounded border border-slate-200 font-mono text-[10px]">ems</span>
+        <div class="bg-emerald-50/70 p-2.5 rounded-xl border border-emerald-100 space-y-1.5 text-[11px]">
+          <div class="font-semibold text-emerald-900">💡 দ্রুত উত্তরের জন্য শর্টকাট বাটন চাপুন:</div>
+          <div class="flex flex-wrap gap-1">
+            <span class="bg-white px-2 py-0.5 rounded-md border border-emerald-200 font-medium text-[10px] text-emerald-800">📄 লেটেস্ট নোটিশ</span>
+            <span class="bg-white px-2 py-0.5 rounded-md border border-emerald-200 font-medium text-[10px] text-emerald-800">📅 পরীক্ষার রুটিন</span>
+            <span class="bg-white px-2 py-0.5 rounded-md border border-emerald-200 font-medium text-[10px] text-emerald-800">🎓 ভর্তি তথ্য</span>
+            <span class="bg-white px-2 py-0.5 rounded-md border border-emerald-200 font-medium text-[10px] text-emerald-800">🏛️ সকল দপ্তর ও ফোন</span>
           </div>
-          <div class="text-[10px] text-slate-500 mt-1">Responds in &lt; 0.001 seconds with verified citations & portal links.</div>
         </div>
       </div>
 
-      <!-- Function 2: Support Token Service -->
-      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-2 hover:border-amber-300 transition">
+      <!-- Step 2: Support Token Submission -->
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-2 hover:border-amber-400 transition">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
             <span class="w-7 h-7 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-sm">🎫</span>
-            <h4 class="font-bold text-slate-900 text-xs">2. Official Support Token (Ticket Service)</h4>
+            <h4 class="font-bold text-slate-900 text-xs">২. সমস্যা সমাধানের সাপোর্ট টোকেন তৈরি</h4>
           </div>
-          <button onclick="closeHelpDrawer(); openTokenModal();" class="text-[11px] font-bold text-amber-700 hover:underline">Open Form ↗</button>
+          <button onclick="closeHelpDrawer(); openTokenModal();" class="text-[11px] font-bold text-amber-700 hover:underline cursor-pointer">টোকেন ফর্ম ↗</button>
         </div>
         <p class="text-slate-600 leading-relaxed text-[11px]">
-          Submit a tracked issue for 10+ specific university departments. Generates an atomic tracking ID like <code class="bg-slate-100 px-1 py-0.5 rounded font-mono text-slate-800">NU-2026-XXXXXX</code>.
+          যদি আপনার কোনো ব্যক্তিগত একাডেমিক বা কারিগরি সমস্যার সমাধানের প্রয়োজন হয়:
         </p>
-        <ul class="list-disc list-inside text-slate-500 text-[11px] space-y-0.5">
-          <li><strong>EMS:</strong> Student portal login & password lockouts</li>
-          <li><strong>FORM_FILLUP:</strong> Exam form fill-up & payment errors</li>
-          <li><strong>RESCRUTINY:</strong> Result re-check / board challenge</li>
-          <li><strong>CERTIFICATE:</strong> Original/Provisional certificate release</li>
-          <li><strong>MARKSHEET / TC / CORRECTION:</strong> Academic transcripts & transfers</li>
-        </ul>
+        <div class="space-y-1.5 text-slate-600 text-[11px] bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+          <p>১. উপরের <strong>"Token Service"</strong> বাটনে ক্লিক করুন।</p>
+          <p>২. সেবার ক্যাটাগরি বেছে নিন (যেমন: <strong>Form Fill-up</strong>, <strong>EMS লগইন</strong>, <strong>Rescrutiny খাতা পুনঃনিরীক্ষণ</strong>, <strong>Certificate</strong>, <strong>Marksheet</strong>, <strong>TC</strong> ইত্যাদি)।</p>
+          <p>৩. আপনার নাম, মোবাইল, রোল/রেজিস্ট্রেশন ও সমস্যার বিবরণ লিখে সাবমিট করুন।</p>
+          <p class="font-bold text-amber-900 bg-amber-50 p-1.5 rounded-lg border border-amber-200">
+            ⚠️ সাবমিট করার পর প্রাপ্ত টোকেন নম্বরটি (যেমন: <code class="font-mono">NU-2026-XXXXXX</code>) লিখে বা কপি করে রাখুন।
+          </p>
+        </div>
       </div>
 
-      <!-- Function 3: Live Token Tracking -->
-      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-2 hover:border-purple-300 transition">
+      <!-- Step 3: Track Token Status -->
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-2 hover:border-purple-400 transition">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
             <span class="w-7 h-7 rounded-lg bg-purple-100 text-purple-800 flex items-center justify-center font-bold text-sm">📋</span>
-            <h4 class="font-bold text-slate-900 text-xs">3. Live Token Status & Resolution Tracking</h4>
+            <h4 class="font-bold text-slate-900 text-xs">৩. টোকেনের অগ্রগতি ও সমাধান ট্র্যাক করা</h4>
           </div>
-          <button onclick="closeHelpDrawer(); openTokenCheckModal();" class="text-[11px] font-bold text-purple-700 hover:underline">Track Now ↗</button>
+          <button onclick="closeHelpDrawer(); openTokenCheckModal();" class="text-[11px] font-bold text-purple-700 hover:underline cursor-pointer">স্ট্যাটাস চেক ↗</button>
         </div>
         <p class="text-slate-600 leading-relaxed text-[11px]">
-          Check the real-time progress of your ticket from anywhere without logging in:
+          আপনার জমা দেওয়া টোকেনটি বিশ্ববিদ্যালয়ের সংশ্লিষ্ট শাখা সমাধান করেছে কিনা তা সরাসরি দেখতে পারেন:
         </p>
-        <div class="grid grid-cols-3 gap-1.5 text-center text-[10px] font-bold">
-          <div class="bg-amber-50 text-amber-800 p-1.5 rounded-lg border border-amber-200">1. PENDING</div>
-          <div class="bg-blue-50 text-blue-800 p-1.5 rounded-lg border border-blue-200">2. PROCESSING</div>
-          <div class="bg-emerald-50 text-emerald-800 p-1.5 rounded-lg border border-emerald-200">3. SOLVED</div>
+        <div class="grid grid-cols-3 gap-1.5 text-center text-[10px] font-bold my-1">
+          <div class="bg-amber-50 text-amber-800 p-1.5 rounded-lg border border-amber-200">🟡 অপেক্ষমাণ (Pending)</div>
+          <div class="bg-blue-50 text-blue-800 p-1.5 rounded-lg border border-blue-200">⚙️ প্রক্রিয়াধীন (Processing)</div>
+          <div class="bg-emerald-50 text-emerald-800 p-1.5 rounded-lg border border-emerald-200">✅ সমাধানকৃত (Solved)</div>
         </div>
-        <p class="text-[10px] text-slate-500">Download official resolution certificates in PDF once solved.</p>
-      </div>
-
-      <!-- Function 4: Service-Specific Encrypted Credentials -->
-      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-2 hover:border-indigo-300 transition">
-        <div class="flex items-center gap-2">
-          <span class="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-800 flex items-center justify-center font-bold text-sm">🔐</span>
-          <h4 class="font-bold text-slate-900 text-xs">4. Service-Specific Encrypted Credentials</h4>
-        </div>
-        <p class="text-slate-600 leading-relaxed text-[11px]">
-          When applying for services that require staff troubleshooting (such as an EMS portal account lockout), your credentials are encrypted using <strong>AES-128-CBC</strong> before being stored. University solvers can securely verify and resolve your issue.
+        <p class="text-[11px] text-slate-500">
+          উপরের <strong>"Check Token"</strong> বাটনে টোকেন নম্বর লিখুন অথবা চ্যাটে সরাসরি আপনার টোকেন নম্বরটি লিখলেই সমাধান এবং অফিসিয়াল সমাধানের প্রত্যয়নপত্র দেখতে পাবেন।
         </p>
       </div>
 
-      <!-- Function 5: Mobile QR Code Access -->
-      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-2 hover:border-emerald-300 transition">
+      <!-- Step 4: Mobile QR Access -->
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-2 hover:border-teal-400 transition">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <span class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-sm">📱</span>
-            <h4 class="font-bold text-slate-900 text-xs">5. Smartphone QR Code Access</h4>
+            <span class="w-7 h-7 rounded-lg bg-teal-100 text-teal-800 flex items-center justify-center font-bold text-sm">📱</span>
+            <h4 class="font-bold text-slate-900 text-xs">৪. মোবাইল ফোনে সহজে ব্যবহার</h4>
           </div>
-          <button onclick="closeHelpDrawer(); openQRModal();" class="text-[11px] font-bold text-emerald-700 hover:underline">Show QR ↗</button>
+          <button onclick="closeHelpDrawer(); openQRModal();" class="text-[11px] font-bold text-teal-700 hover:underline cursor-pointer">QR কোড দেখুন ↗</button>
         </div>
         <p class="text-slate-600 leading-relaxed text-[11px]">
-          Scan the on-screen QR code with any smartphone camera to open the assistant immediately in mobile browsers with touch-first UI.
+          মোবাইল ফোন দিয়ে ব্যবহার করতে উপরের <strong>"Mobile QR"</strong> বাটনে ক্লিক করুন এবং আপনার স্মার্টফোনের ক্যামেরা দিয়ে কিউআর কোড স্ক্যান করুন।
         </p>
       </div>
 
-      <!-- Function 6: Staff & Solver Support Center -->
-      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-2 hover:border-slate-400 transition">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <span class="w-7 h-7 rounded-lg bg-slate-900 text-white flex items-center justify-center font-bold text-sm">🏛️</span>
-            <h4 class="font-bold text-slate-900 text-xs">6. Administrative & Department Solvers</h4>
-          </div>
-          <button onclick="closeHelpDrawer(); toggleAdminModal();" class="text-[11px] font-bold text-slate-900 hover:underline">Staff Login ↗</button>
+      <!-- Official Portals Direct Link Reminder -->
+      <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 text-[11px] text-slate-600 space-y-1">
+        <div class="font-bold text-slate-800 flex items-center gap-1.5">
+          <span>🌐</span>
+          <span>জাতীয় বিশ্ববিদ্যালয়ের অফিশিয়াল পোর্টালসমূহ:</span>
         </div>
-        <p class="text-slate-600 leading-relaxed text-[11px]">
-          Dedicated interface for university officers to assign tickets, update statuses, record verified solutions, view the 10-section website architecture map, and manage 24/7 autonomous knowledge enrichment.
-        </p>
-      </div>
-
-      <!-- Function 7: 24/7 AI Knowledge Enrichment -->
-      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-2 hover:border-indigo-300 transition">
-        <div class="flex items-center gap-2">
-          <span class="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-800 flex items-center justify-center font-bold text-sm">🤖</span>
-          <h4 class="font-bold text-slate-900 text-xs">7. 24/7 Autonomous AI Knowledge Agents</h4>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-1 text-[10px]">
+          <div>• স্টুডেন্ট সার্ভিসেস: <a href="http://103.113.200.68/nu-app/" target="_blank" class="text-emerald-700 font-semibold hover:underline">103.113.200.68/nu-app/</a></div>
+          <div>• ভর্তি পোর্টাল: <a href="http://app11.nu.edu.bd/" target="_blank" class="text-emerald-700 font-semibold hover:underline">app11.nu.edu.bd</a></div>
+          <div>• ইএমএস পোর্টাল: <a href="http://ems.nu.ac.bd/" target="_blank" class="text-emerald-700 font-semibold hover:underline">ems.nu.ac.bd</a></div>
+          <div>• মূল পোর্টাল: <a href="https://www.nu.ac.bd/" target="_blank" class="text-emerald-700 font-semibold hover:underline">www.nu.ac.bd</a></div>
         </div>
-        <p class="text-slate-600 leading-relaxed text-[11px]">
-          Multi-agent ecosystem running in the background every 10 minutes to analyze newly crawled notices, extract dates and rules, vectorize Q&A pairs into ChromaDB, and log machine-readable changelogs.
-        </p>
       </div>
 
     </div>
 
     <!-- Drawer Footer -->
     <div class="p-4 border-t border-slate-200 bg-slate-50 flex items-center justify-between shrink-0">
-      <span class="text-[11px] text-slate-500 font-medium">National University AI Platform v2.0</span>
-      <button onclick="openDocumentaryModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl transition shadow-xs flex items-center gap-1.5">
-        <span>📖 Read Full Documentary</span>
+      <span class="text-[11px] text-slate-500 font-medium">National University AI Assistant</span>
+      <button onclick="closeHelpDrawer()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs px-4 py-2 rounded-xl transition shadow-xs cursor-pointer">
+        <span>চ্যাট শুরু করুন 🚀</span>
       </button>
     </div>
   </div>
