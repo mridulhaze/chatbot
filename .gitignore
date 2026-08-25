@@ -28,4 +28,6 @@ ENV/
 htmlcov/
 *.log
 .DS_Store
+*.db-shm
+*.db-wal
 nu_vector_db/
