@@ -1,9 +1,14 @@
 <<<<<<< HEAD
+<img width="1152" height="889" alt="1" src="https://github.com/user-attachments/assets/4a3d9605-1252-483c-9b1b-a792a1016172" />
+<img width="512" height="607" alt="check_token" src="https://github.com/user-attachments/assets/0621b12d-3a84-4002-92fb-5bfee9bf025b" />
+
 # NU AI — Smart Academic Assistant for National University Bangladesh (nu.ac.bd)
 
 A production-grade AI Academic Assistant and counselor for **National University Bangladesh (জাতীয় বিশ্ববিদ্যালয়)** built on Google Gemini 2.5/3.5 Flash, ChromaDB vector store, and SQLite structured storage with a **self-enriching RAG (Retrieval-Augmented Generation)** architecture.
 
 ---
+<img width="1152" height="876" alt="3" src="https://github.com/user-attachments/assets/648ecfb2-c903-4235-b4c1-5373c711c8d0" />
+
 
 ## 🌟 Key Features
 
