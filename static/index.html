@@ -1790,6 +1790,101 @@
           </div>
         </div>
 
+        <!-- Tab Content: Backup & Restore -->
+        <div id="tab-content-backups" class="space-y-5 hidden">
+          <!-- Overview Card -->
+          <div class="bg-gradient-to-r from-emerald-900 to-slate-900 text-white rounded-2xl p-5 sm:p-6 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div class="space-y-1.5">
+              <div class="flex items-center gap-2">
+                <span class="text-xl">📦</span>
+                <h3 class="text-base sm:text-lg font-bold">National University System Backup & Disaster Recovery</h3>
+                <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[10px] font-bold px-2 py-0.5 rounded-full">Super Admin Protected</span>
+              </div>
+              <p class="text-xs text-slate-300 max-w-2xl leading-relaxed">
+                Generate atomic, portable <code class="bg-emerald-950 text-emerald-300 px-1 py-0.5 rounded">.ZIP</code> backups containing all departmental directories, verified notices, support token tickets, solver activities, and user databases. Restore cleanly in one click to recover or migrate instances.
+              </p>
+            </div>
+            <button onclick="loadBackupList()" class="bg-white/10 hover:bg-white/20 text-white text-xs font-semibold px-3 py-2 rounded-xl border border-white/10 transition flex items-center gap-1.5 shrink-0 cursor-pointer">
+              <span>🔄</span>
+              <span>Refresh Archives</span>
+            </button>
+          </div>
+
+          <!-- Dual Operation Cards: Backup & Restore -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            
+            <!-- Card 1: Create Backup -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-3.5 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center gap-2 text-slate-900 font-bold text-sm">
+                  <div class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center text-sm font-bold">⬇️</div>
+                  <h4>Create & Download System Backup</h4>
+                </div>
+                <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">
+                  Compiles a point-in-time snapshot of <code class="text-slate-700 bg-slate-100 px-1 py-0.5 rounded">nu_assistant.db</code>, <code class="text-slate-700 bg-slate-100 px-1 py-0.5 rounded">nu_tokens.db</code>, and all system metadata into a standalone portable ZIP archive.
+                </p>
+              </div>
+
+              <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
+                <span class="text-[11px] text-slate-400 font-medium">Format: .ZIP (Portable Snapshot)</span>
+                <button id="btn-download-backup" onclick="downloadSystemBackup()" class="bg-gradient-to-r from-emerald-700 to-teal-700 hover:from-emerald-800 hover:to-teal-800 text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow-2xs flex items-center gap-1.5 cursor-pointer">
+                  <span>⬇️</span>
+                  <span>Generate & Download Backup (.ZIP)</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Card 2: Restore Backup -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-3.5 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center gap-2 text-slate-900 font-bold text-sm">
+                  <div class="w-7 h-7 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center text-sm font-bold">🚀</div>
+                  <h4>Restore System from Backup Archive</h4>
+                </div>
+                <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">
+                  Upload a verified <code class="text-slate-700 bg-slate-100 px-1 py-0.5 rounded">.ZIP</code> backup archive to rollback or restore database state. An automatic safety pre-restore snapshot is captured before applying.
+                </p>
+              </div>
+
+              <div class="space-y-2.5 pt-2 border-t border-slate-100">
+                <input id="restore-backup-file-input" type="file" accept=".zip" class="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200 cursor-pointer" />
+                <button id="btn-restore-backup" onclick="restoreSystemBackup()" class="w-full bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white text-xs font-bold py-2 rounded-xl transition shadow-2xs flex items-center justify-center gap-1.5 cursor-pointer">
+                  <span>🚀</span>
+                  <span>Upload & Restore System Now</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Card 3: Server Backup Snapshots History Table -->
+          <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-2xs">
+            <div class="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+              <div class="flex items-center gap-2">
+                <span class="text-sm">🗄️</span>
+                <h4 class="text-xs font-bold text-slate-900">Available Server Snapshots & Archives</h4>
+              </div>
+              <span class="text-[11px] text-slate-400">Stored locally in <code class="text-slate-600 bg-slate-100 px-1 py-0.5 rounded">/backups</code></span>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-900 text-white font-semibold">
+                  <tr>
+                    <th class="p-3">Backup Archive Filename</th>
+                    <th class="p-3">Creation Timestamp</th>
+                    <th class="p-3">Archive Size</th>
+                    <th class="p-3">Captured Stats</th>
+                    <th class="p-3 text-right">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-backups-tbody" class="divide-y divide-slate-100 text-slate-700">
+                  <tr><td colspan="5" class="p-6 text-center text-slate-400">Loading system backups...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -3795,12 +3890,14 @@
       const tabAIEngineBtn = document.getElementById("tab-btn-ai-engine");
       const tabUsersBtn = document.getElementById("tab-btn-users");
       const tabLogsBtn = document.getElementById("tab-btn-logs");
+      const tabBackupsBtn = document.getElementById("tab-btn-backups");
 
       if (tabTokensBtn) tabTokensBtn.style.display = "flex";
       if (tabSitemapBtn) tabSitemapBtn.style.display = isAdmin ? "flex" : "none";
       if (tabAIEngineBtn) tabAIEngineBtn.style.display = isAdmin ? "flex" : "none";
       if (tabUsersBtn) tabUsersBtn.style.display = isAdmin ? "flex" : "none";
       if (tabLogsBtn) tabLogsBtn.style.display = isAdmin ? "flex" : "none";
+      if (tabBackupsBtn) tabBackupsBtn.style.display = isAdmin ? "flex" : "none";
 
       document.getElementById("admin-modal").classList.remove("hidden");
       switchAdminTab("tokens");
@@ -4307,15 +4404,17 @@
       const tabAIEngine = document.getElementById("tab-content-ai-engine");
       const tabUsers = document.getElementById("tab-content-users");
       const tabLogs = document.getElementById("tab-content-logs");
+      const tabBackups = document.getElementById("tab-content-backups");
 
       const btnTokens = document.getElementById("tab-btn-tokens");
       const btnSitemap = document.getElementById("tab-btn-sitemap");
       const btnAIEngine = document.getElementById("tab-btn-ai-engine");
       const btnUsers = document.getElementById("tab-btn-users");
       const btnLogs = document.getElementById("tab-btn-logs");
+      const btnBackups = document.getElementById("tab-btn-backups");
 
-      [tabTokens, tabSitemap, tabAIEngine, tabUsers, tabLogs].forEach(el => { if (el) el.classList.add("hidden"); });
-      [btnTokens, btnSitemap, btnAIEngine, btnUsers, btnLogs].forEach(el => {
+      [tabTokens, tabSitemap, tabAIEngine, tabUsers, tabLogs, tabBackups].forEach(el => { if (el) el.classList.add("hidden"); });
+      [btnTokens, btnSitemap, btnAIEngine, btnUsers, btnLogs, btnBackups].forEach(el => {
         if (el) el.className = "py-3 px-2.5 sm:px-3.5 border-b-2 border-transparent text-slate-600 hover:text-slate-900 shrink-0 flex items-center gap-1.5 cursor-pointer transition font-semibold";
       });
 
@@ -4340,6 +4439,10 @@
         if (tabLogs) tabLogs.classList.remove("hidden");
         if (btnLogs) btnLogs.className = "py-3 px-2.5 sm:px-3.5 border-b-2 border-blue-700 text-blue-800 shrink-0 flex items-center gap-1.5 font-bold cursor-pointer transition";
         loadAdminLogs();
+      } else if (tab === "backups") {
+        if (tabBackups) tabBackups.classList.remove("hidden");
+        if (btnBackups) btnBackups.className = "py-3 px-2.5 sm:px-3.5 border-b-2 border-emerald-700 text-emerald-800 shrink-0 flex items-center gap-1.5 font-bold cursor-pointer transition";
+        loadBackupList();
       }
     }
 
