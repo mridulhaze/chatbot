@@ -1,0 +1,1431 @@
+"The screenshot shows the current chatbot taking approximately 10.58 seconds. Treat this as a performance investigation, not merely a UI problem. Determine whether those 10.58 seconds are caused by LLM latency, sequential MCP calls, RAG, database queries, prompt construction, network latency, frontend waiting, or a combination."
+
+The biggest improvement for your particular system will likely come from three architectural changes:
+
+1. Streaming
+Don't wait for the entire answer. Show the answer as the LLM generates it.
+
+2. Parallel execution
+Don't do:
+
+RAG → MCP → DB → another MCP → LLM
+
+when those operations don't depend on each other. Do them concurrently.
+
+3. Intelligent routing
+A simple "hi" should not activate your entire RAG + Skills + MCP + database pipeline. A Token Service question should go directly to Token MCP, while a notice question goes to the knowledge system.
+
+You are a senior performance engineer, AI systems architect, LLM engineer,
+RAG engineer, MCP architect, Python/FastAPI engineer, database engineer,
+frontend performance engineer, and distributed-systems engineer.
+
+I have an existing NU AI Assistant / chatbot.
+
+The chatbot currently feels very slow.
+
+For example, in the current UI a simple response is taking approximately
+10+ seconds before the answer is available.
+
+I want you to investigate the COMPLETE request/response pipeline and
+redesign it for a genuinely fast, real-time conversational experience.
+
+IMPORTANT:
+
+Do NOT randomly optimize code.
+
+FIRST PROFILE THE SYSTEM.
+
+Find exactly where the latency is coming from.
+
+Then make an optimization plan.
+
+Then implement the improvements.
+
+Then benchmark again.
+
+============================================================
+PRIMARY OBJECTIVE
+============================================================
+
+Transform the chatbot from:
+
+User message
+    ↓
+wait
+    ↓
+many sequential operations
+    ↓
+LLM
+    ↓
+wait
+    ↓
+response
+
+into:
+
+User message
+    ↓
+IMMEDIATE REQUEST ACCEPTANCE
+    ↓
+FAST INTENT DETECTION
+    ↓
+PARALLEL DATA RETRIEVAL
+    ↓
+STREAMING LLM RESPONSE
+    ↓
+REAL-TIME UI OUTPUT
+
+The user should feel that the chatbot starts responding almost
+immediately.
+
+============================================================
+TARGET PERFORMANCE
+============================================================
+
+Establish measurable performance targets.
+
+TARGET:
+
+Time to first visible response:
+< 1 second where technically possible
+
+Time to first LLM token:
+< 1–1.5 seconds
+
+Simple cached/common question:
+< 1 second
+
+Simple database lookup:
+~1 second or less
+
+Normal RAG question:
+~1–3 seconds
+
+Complex multi-tool question:
+~3–5 seconds where unavoidable
+
+Do NOT sacrifice answer accuracy just to achieve an artificial number.
+
+Measure:
+
+TTFB
+Time to First Token
+Time to First Visible UI Update
+Total Response Time
+LLM Generation Time
+Database Time
+RAG Retrieval Time
+Embedding Time
+MCP Tool Time
+Network Time
+Crawler/Knowledge lookup time
+Frontend Rendering Time
+
+Use actual measurements rather than assumptions.
+
+============================================================
+PHASE 1 — FULL PERFORMANCE AUDIT
+============================================================
+
+Before changing anything, inspect the entire system.
+
+Analyze:
+
+Frontend
+Backend
+API
+WebSocket/SSE
+LLM provider
+LLM model
+Prompt construction
+RAG
+Vector database
+SQL database
+Redis/cache
+MCP
+Skills
+Crawler
+Document search
+Authentication
+Conversation memory
+Conversation history
+Token Service
+Service credentials
+Logging
+Network calls
+
+Create:
+
+PERFORMANCE_AUDIT.md
+
+Include:
+
+Component
+Current latency
+Number of calls
+Sequential/parallel
+Blocking/non-blocking
+Optimization opportunity
+Expected improvement
+Risk
+
+============================================================
+PHASE 2 — REQUEST TRACE
+============================================================
+
+Trace one complete chatbot request.
+
+Example:
+
+User sends message
+        ↓
+Frontend
+        ↓
+API request
+        ↓
+Authentication
+        ↓
+Conversation history
+        ↓
+Intent detection
+        ↓
+Skill selection
+        ↓
+MCP selection
+        ↓
+RAG retrieval
+        ↓
+Database
+        ↓
+Prompt construction
+        ↓
+LLM
+        ↓
+Response processing
+        ↓
+Frontend
+        ↓
+User
+
+Measure EVERY stage.
+
+Example:
+
+Frontend → API                 50 ms
+Authentication                100 ms
+History lookup                200 ms
+Intent detection             1200 ms
+Skill selection               800 ms
+RAG retrieval                 900 ms
+MCP call                     1500 ms
+Database                      400 ms
+Prompt construction            50 ms
+LLM first token              3200 ms
+LLM generation              2500 ms
+Frontend rendering             50 ms
+
+Then identify the actual bottleneck.
+
+============================================================
+PHASE 3 — DO NOT USE SEQUENTIAL OPERATIONS UNNECESSARILY
+============================================================
+
+This is extremely important.
+
+Look for code like:
+
+result1 = await operation1()
+
+result2 = await operation2()
+
+result3 = await operation3()
+
+result4 = await operation4()
+
+If these operations are independent, execute them concurrently.
+
+For example:
+
+Instead of:
+
+User
+ ↓
+search knowledge
+ ↓
+search documents
+ ↓
+search token database
+ ↓
+search FAQ
+ ↓
+LLM
+
+Use:
+
+                 ┌→ Knowledge
+                 │
+User → Intent → ├→ Documents
+                 │
+                 ├→ FAQ
+                 │
+                 └→ Token DB
+
+                 ↓
+
+             Combine results
+
+                 ↓
+
+                LLM
+
+Use async/concurrent execution where appropriate.
+
+============================================================
+PHASE 4 — MCP PERFORMANCE
+============================================================
+
+Audit ALL MCP calls.
+
+Determine:
+
+Which MCP calls are required?
+
+Which MCP calls are unnecessary?
+
+Which calls are duplicated?
+
+Which calls can run in parallel?
+
+Which results can be cached?
+
+Which MCP calls are slow?
+
+Do NOT call every MCP server for every user question.
+
+For example:
+
+User:
+
+"হ্যালো"
+
+Should NOT call:
+
+Crawler MCP
+Knowledge MCP
+Document MCP
+Token MCP
+Credential MCP
+Database MCP
+
+It should answer immediately.
+
+User:
+
+"আজকের NU notice কী?"
+
+Should use only the required knowledge/notice tools.
+
+User:
+
+"আমার token NU-2026-1234 এর status কী?"
+
+Should directly use Token MCP.
+
+Create intelligent tool routing.
+
+============================================================
+PHASE 5 — SKILL PERFORMANCE
+============================================================
+
+Audit Skills.
+
+The system should NOT load every Skill for every request.
+
+Bad architecture:
+
+User message
+ ↓
+Load 20 Skills
+ ↓
+analyze all
+ ↓
+choose one
+
+Better:
+
+User message
+ ↓
+fast intent/router
+ ↓
+load only relevant Skill
+ ↓
+execute
+
+Implement lazy Skill loading.
+
+Only load the Skill required for the current task.
+
+============================================================
+PHASE 6 — FAST INTENT ROUTER
+============================================================
+
+Create a lightweight intent classification layer.
+
+It should quickly classify:
+
+GREETING
+GENERAL_CHAT
+NOTICE
+ADMISSION
+EXAM
+RESULT
+DOCUMENT
+TOKEN
+EMS
+CERTIFICATE
+MARKSHEET
+FORM_FILLUP
+TC
+RESCRUTINEE
+CRAWLER
+ADMIN
+OTHER
+
+Do NOT use the largest/slowest LLM just to detect simple intent.
+
+Where possible use:
+
+rules
+keyword matching
+small model
+lightweight classifier
+cached intent
+
+Only invoke the expensive LLM when necessary.
+
+============================================================
+PHASE 7 — MODEL ROUTING
+============================================================
+
+Audit the LLM model being used.
+
+Do not use an expensive/slow reasoning model for every question.
+
+Implement model routing.
+
+Example:
+
+SIMPLE:
+
+"Hi"
+
+"ধন্যবাদ"
+
+"NU কোথায়?"
+
+→ fast model
+
+NORMAL:
+
+"Honours admission এর latest notice কী?"
+
+→ fast/medium model + RAG
+
+COMPLEX:
+
+"Compare the latest three admission notices and explain
+what changed."
+
+→ stronger model
+
+The system should choose the minimum capable model.
+
+============================================================
+PHASE 8 — STREAMING RESPONSE
+============================================================
+
+This is one of the highest-priority improvements.
+
+Do NOT wait for the complete LLM response before sending anything
+to the frontend.
+
+Implement streaming.
+
+Preferred architecture:
+
+User
+ ↓
+Backend
+ ↓
+LLM
+ ↓
+token/token chunk
+ ↓
+SSE/WebSocket
+ ↓
+Frontend
+
+The frontend should display text progressively.
+
+Example:
+
+Instead of:
+
+[10 seconds waiting]
+
+"জাতীয় বিশ্ববিদ্যালয়ের..."
+
+Show:
+
+"জাতীয়..."
+
+then:
+
+"জাতীয় বিশ্ববিদ্যালয়ের..."
+
+then:
+
+"জাতীয় বিশ্ববিদ্যালয়ের সর্বশেষ..."
+
+etc.
+
+The user should see activity immediately.
+
+Use:
+
+Server-Sent Events (SSE)
+
+or
+
+WebSocket
+
+depending on the existing architecture.
+
+Prefer the simplest reliable option compatible with the project.
+
+============================================================
+PHASE 9 — STREAMING STATUS
+============================================================
+
+While waiting for tools, show useful status.
+
+Example:
+
+"তথ্য খুঁজছি..."
+
+Then:
+
+"প্রাসঙ্গিক নোটিশ যাচাই করছি..."
+
+Then:
+
+"উত্তর তৈরি করছি..."
+
+Do NOT fake progress.
+
+Status must correspond to actual operations.
+
+============================================================
+PHASE 10 — FAST PATH
+============================================================
+
+Create a FAST PATH for simple queries.
+
+Examples:
+
+"Hi"
+
+"Hello"
+
+"হাই"
+
+"ধন্যবাদ"
+
+"কে তুমি?"
+
+"তুমি কী করতে পারো?"
+
+These should NOT trigger RAG/MCP/database unnecessarily.
+
+Response should be nearly instant.
+
+============================================================
+PHASE 11 — CACHE
+============================================================
+
+Implement intelligent caching.
+
+Potential cache candidates:
+
+FAQ
+common questions
+common NU information
+popular notices
+navigation information
+intent classification
+RAG results
+document metadata
+MCP results
+session data
+
+Use Redis if appropriate and if not already available.
+
+Implement TTL.
+
+Example:
+
+Common static information:
+hours/days
+
+Latest notices:
+short TTL
+
+Dynamic token status:
+very short TTL or no cache
+
+User credentials:
+NEVER cache insecurely
+
+============================================================
+PHASE 12 — SEMANTIC CACHE
+============================================================
+
+Consider semantic caching.
+
+Example:
+
+Question 1:
+
+"NU Honours admission কবে শুরু হবে?"
+
+Question 2:
+
+"জাতীয় বিশ্ববিদ্যালয়ের অনার্স ভর্তি কখন শুরু?"
+
+These may have the same answer.
+
+If safe and the underlying information is still valid,
+reuse cached result.
+
+Do NOT use semantic cache for highly dynamic information
+unless freshness is verified.
+
+============================================================
+PHASE 13 — RAG OPTIMIZATION
+============================================================
+
+Audit the RAG pipeline.
+
+Measure:
+
+query embedding time
+vector search time
+metadata filtering
+reranking
+chunk count
+context size
+prompt construction
+
+Do NOT retrieve 50–100 chunks when 5–10 relevant chunks are sufficient.
+
+Optimize:
+
+top_k
+metadata filtering
+hybrid search
+reranking
+chunk size
+embedding cache
+
+Use:
+
+semantic search + keyword search
+
+where useful.
+
+============================================================
+PHASE 14 — DO NOT EMBED EVERY USER MESSAGE SLOWLY
+============================================================
+
+Check whether every request unnecessarily performs:
+
+embedding
+vector search
+reranking
+LLM classification
+multiple database queries
+
+For simple questions, bypass unnecessary operations.
+
+============================================================
+PHASE 15 — DATABASE PERFORMANCE
+============================================================
+
+Audit all SQL queries.
+
+Check:
+
+missing indexes
+N+1 queries
+slow joins
+full table scans
+unnecessary SELECT *
+repeated queries
+connection creation
+connection pool configuration
+
+Use:
+
+connection pooling
+
+prepared queries
+
+appropriate indexes
+
+cached reference data
+
+async DB operations where appropriate.
+
+============================================================
+PHASE 16 — DATABASE CONNECTION POOL
+============================================================
+
+Do NOT create a new database connection for every user message.
+
+Use a connection pool.
+
+Check:
+
+minimum connections
+maximum connections
+connection timeout
+idle connections
+pool reuse
+
+Do this for:
+
+SQL Server
+Oracle
+PostgreSQL
+or whichever databases the existing system uses.
+
+============================================================
+PHASE 17 — HTTP CONNECTION POOLING
+============================================================
+
+Do NOT repeatedly create new HTTP clients.
+
+Use persistent:
+
+HTTP connection pool
+
+Keep-alive
+
+connection reuse
+
+appropriate timeouts.
+
+Audit external API calls.
+
+============================================================
+PHASE 18 — CONVERSATION HISTORY
+============================================================
+
+Audit how chat history is loaded.
+
+Do NOT send the entire conversation history to the LLM
+on every request if unnecessary.
+
+Instead:
+
+short-term recent context
++
+summarized older context
++
+relevant retrieved history
+
+Example:
+
+Last 6 messages
++
+conversation summary
++
+relevant context
+
+This reduces:
+
+latency
+token usage
+cost
+
+============================================================
+PHASE 19 — PROMPT OPTIMIZATION
+============================================================
+
+Audit system prompts.
+
+Remove:
+
+unnecessary repetition
+large static instructions
+duplicated Skill instructions
+unused tool descriptions
+
+Do NOT sacrifice important instructions.
+
+Separate:
+
+static system instructions
+
+from:
+
+dynamic context
+
+Cache/reuse static prompt components where supported.
+
+============================================================
+PHASE 20 — TOOL DESCRIPTION OPTIMIZATION
+============================================================
+
+Do not send huge descriptions of every MCP tool to the model
+for every request.
+
+Use dynamic tool exposure.
+
+For example:
+
+Token question
+→ expose Token MCP tools
+
+Notice question
+→ expose Notice/Knowledge tools
+
+Greeting
+→ expose no tools
+
+This can significantly reduce prompt size and tool-selection latency.
+
+============================================================
+PHASE 21 — PARALLEL RAG + DATABASE
+============================================================
+
+If a question requires independent sources:
+
+run them concurrently.
+
+Example:
+
+asyncio.gather(
+    search_vector_db(),
+    search_keyword_db(),
+    search_notice_db()
+)
+
+Then combine results.
+
+Do NOT perform them sequentially unless dependency requires it.
+
+============================================================
+PHASE 22 — CRAWLER MUST NOT BLOCK CHAT
+============================================================
+
+This is VERY IMPORTANT for my system.
+
+The NU Deep Crawler must NEVER block a user chatbot request.
+
+Bad:
+
+User asks question
+ ↓
+Crawler starts
+ ↓
+wait
+ ↓
+RAG update
+ ↓
+answer
+
+Correct:
+
+Crawler
+     ↓
+background workers
+     ↓
+Knowledge DB / Vector DB
+
+Chatbot
+     ↓
+reads available knowledge
+     ↓
+answers immediately
+
+Crawler and chatbot must be independently scalable.
+
+============================================================
+PHASE 23 — BACKGROUND JOBS
+============================================================
+
+Move heavy operations to background workers:
+
+document extraction
+OCR
+embedding generation
+crawler
+large document processing
+index rebuilding
+analytics
+change summaries
+
+Do NOT perform expensive operations inside
+the synchronous user request.
+
+============================================================
+PHASE 24 — PRECOMPUTATION
+============================================================
+
+Precompute frequently requested information.
+
+Examples:
+
+latest notices
+admission deadlines
+exam routines
+popular services
+service descriptions
+
+When information changes:
+
+background worker updates cache.
+
+============================================================
+PHASE 25 — FRONTEND PERFORMANCE
+============================================================
+
+Audit the frontend.
+
+Ensure:
+
+message appears immediately after sending
+typing indicator appears instantly
+streaming text renders smoothly
+no full-page reload
+no unnecessary API calls
+no duplicate requests
+no excessive React/Vue/etc. re-rendering
+no waiting for unrelated data
+
+The UI must feel real-time even when backend work continues.
+
+============================================================
+PHASE 26 — REQUEST DEDUPLICATION
+============================================================
+
+If the same request is accidentally submitted twice:
+
+avoid duplicate processing.
+
+Example:
+
+same user
+same conversation
+same message hash
+
+within a short period:
+
+deduplicate.
+
+============================================================
+PHASE 27 — CANCELLATION
+============================================================
+
+If user sends a new message while a previous complex request
+is still running:
+
+allow cancellation of unnecessary work where possible.
+
+Example:
+
+User asks:
+
+"Show latest admission notice"
+
+Then immediately:
+
+"No, show exam routine."
+
+The system should not waste resources finishing an obsolete
+long-running operation if it can safely cancel it.
+
+============================================================
+PHASE 28 — TIMEOUT BUDGET
+============================================================
+
+Create explicit latency budgets.
+
+Example:
+
+Intent:
+< 100 ms target
+
+Cache:
+< 50 ms
+
+Database:
+< 300 ms
+
+Vector search:
+< 500 ms
+
+MCP:
+< 500–1000 ms
+
+LLM first token:
+< 1500 ms
+
+LLM generation:
+stream continuously
+
+If a tool exceeds its latency budget:
+
+handle gracefully.
+
+Do NOT allow one slow service to block the entire request indefinitely.
+
+============================================================
+PHASE 29 — FALLBACK STRATEGY
+============================================================
+
+If an optional service is slow:
+
+do not necessarily block the entire response.
+
+Example:
+
+Document metadata service unavailable.
+
+Still answer from:
+
+RAG
++
+database
++
+known information
+
+Then mention that the document source could not be retrieved
+if necessary.
+
+============================================================
+PHASE 30 — OBSERVABILITY
+============================================================
+
+Add a request trace ID.
+
+Example:
+
+REQ-20260825-000123
+
+Log:
+
+request received
+intent selected
+skill selected
+MCP calls
+RAG search
+database queries
+LLM request
+first token
+final token
+total time
+
+Create a latency dashboard.
+
+============================================================
+PHASE 31 — PERFORMANCE DASHBOARD
+============================================================
+
+Display:
+
+Average response time
+P50
+P90
+P95
+P99
+
+Time to first token
+Time to first visible token
+
+LLM latency
+RAG latency
+MCP latency
+Database latency
+Frontend latency
+
+Cache hit rate
+
+Error rate
+
+Tool-call count
+
+Tokens/request
+
+============================================================
+PHASE 32 — BEFORE/AFTER BENCHMARK
+============================================================
+
+Before optimization:
+
+Run at least 50 representative queries.
+
+Measure:
+
+P50
+P95
+P99
+
+Then optimize.
+
+Run exactly the same benchmark.
+
+Create:
+
+PERFORMANCE_BEFORE_AFTER.md
+
+Example:
+
+                    BEFORE      AFTER
+
+P50 response       8.4 sec     2.1 sec
+
+P95 response      14.2 sec     4.3 sec
+
+TTFT               5.1 sec     1.0 sec
+
+RAG                1.8 sec     0.4 sec
+
+MCP                2.2 sec     0.7 sec
+
+DB                 0.9 sec     0.2 sec
+
+Cache hit           0%         62%
+
+============================================================
+PHASE 33 — REALISTIC TEST QUERIES
+============================================================
+
+Benchmark at least these categories:
+
+1. Greeting
+2. General question
+3. NU notice
+4. Admission
+5. Examination
+6. Result
+7. Document
+8. Token service
+9. EMS
+10. Certificate
+11. Marksheet
+12. TC
+13. Rescrutinee
+14. Bangla
+15. English
+16. Banglish
+17. Typo
+18. Multi-turn
+19. Latest information
+20. Complex RAG query
+
+============================================================
+PHASE 34 — REAL-TIME UX
+============================================================
+
+The user's perception of speed is extremely important.
+
+Even if the final answer requires 4 seconds:
+
+The UI should immediately show:
+
+User message
+        ↓
+Assistant activity
+        ↓
+"তথ্য খুঁজছি..."
+        ↓
+streaming answer
+
+Do NOT show:
+
+User message
+        ↓
+
+[blank screen for 10 seconds]
+
+        ↓
+complete answer
+
+============================================================
+PHASE 35 — DO NOT REDUCE QUALITY
+============================================================
+
+Do NOT make the chatbot fast by:
+
+removing RAG
+removing source verification
+removing security
+using extremely weak models
+removing context
+returning guesses
+disabling important MCP tools
+reducing answer quality
+
+The objective is:
+
+FAST + ACCURATE + RELIABLE
+
+not:
+
+FAST BUT WRONG.
+
+============================================================
+PHASE 36 — ARCHITECTURAL DECISION
+============================================================
+
+After profiling the existing application, make an explicit decision:
+
+What is currently causing the largest latency?
+
+For example:
+
+A. LLM
+B. RAG
+C. MCP
+D. Database
+E. Sequential execution
+F. Prompt size
+G. Frontend
+H. Network
+I. Crawler integration
+J. Multiple causes
+
+Rank them:
+
+1. Biggest bottleneck
+2. Second biggest
+3. Third biggest
+
+Then optimize in that order.
+
+============================================================
+PHASE 37 — DO NOT REWRITE EVERYTHING
+============================================================
+
+Do NOT rewrite the entire application simply for performance.
+
+Prefer:
+
+targeted optimization
+architecture improvements
+async execution
+streaming
+caching
+connection pooling
+query optimization
+model routing
+tool routing
+
+Only rewrite components when profiling demonstrates
+that rewriting is justified.
+
+============================================================
+PHASE 38 — IMPLEMENTATION ORDER
+============================================================
+
+Use this order:
+
+STEP 1
+Profile current system.
+
+STEP 2
+Find bottlenecks.
+
+STEP 3
+Implement streaming.
+
+STEP 4
+Optimize sequential → parallel operations.
+
+STEP 5
+Optimize MCP calls.
+
+STEP 6
+Optimize Skills.
+
+STEP 7
+Implement fast intent routing.
+
+STEP 8
+Implement model routing.
+
+STEP 9
+Optimize RAG.
+
+STEP 10
+Optimize database.
+
+STEP 11
+Implement caching.
+
+STEP 12
+Move heavy work to background jobs.
+
+STEP 13
+Optimize frontend.
+
+STEP 14
+Add cancellation/timeouts.
+
+STEP 15
+Run benchmark.
+
+STEP 16
+Compare before/after.
+
+============================================================
+PHASE 39 — IMPORTANT USER EXPERIENCE REQUIREMENT
+============================================================
+
+The final chatbot should feel similar to a modern real-time AI assistant.
+
+When I send:
+
+"জাতীয় বিশ্ববিদ্যালয়ের সর্বশেষ নোটিশ কী?"
+
+The UI should:
+
+IMMEDIATELY:
+
+show the user message
+
+THEN:
+
+show assistant activity
+
+THEN:
+
+start streaming the answer
+
+THEN:
+
+show source links/cards
+
+The user should not wait 10 seconds for the first visible response.
+
+============================================================
+PHASE 40 — FINAL ACCEPTANCE CRITERIA
+============================================================
+
+The optimization is successful only if:
+
+1. First visible assistant activity appears quickly.
+
+2. First LLM token is significantly faster.
+
+3. Responses stream progressively.
+
+4. Independent operations run concurrently.
+
+5. Unnecessary MCP calls are eliminated.
+
+6. Unnecessary Skills are not loaded.
+
+7. Fast queries bypass expensive pipelines.
+
+8. Common results are cached appropriately.
+
+9. Database connections are pooled.
+
+10. HTTP connections are reused.
+
+11. Heavy crawler/document processing does not block chat.
+
+12. RAG is optimized.
+
+13. Conversation history is optimized.
+
+14. Frontend renders streaming efficiently.
+
+15. Slow tools have timeouts/fallbacks.
+
+16. Existing Token Service still works.
+
+17. Existing MCP still works.
+
+18. Existing Skills still work.
+
+19. Existing crawler still works.
+
+20. Answer accuracy does not regress.
+
+============================================================
+FIRST ACTION
+============================================================
+
+DO NOT MODIFY CODE IMMEDIATELY.
+
+First inspect the existing application.
+
+Then create:
+
+1. PERFORMANCE_AUDIT.md
+
+2. LATENCY_TRACE.md
+
+3. PERFORMANCE_OPTIMIZATION_PLAN.md
+
+4. PERFORMANCE_BENCHMARK_BASELINE.md
+
+Identify the exact reason the chatbot currently takes approximately
+10+ seconds.
+
+Then show the highest-impact optimization plan.
+
+After that, implement the optimizations.
+
+Then run the benchmark again.
+
+Finally create:
+
+PERFORMANCE_BEFORE_AFTER.md
+
+with real measured numbers.
+
+DO NOT CLAIM THE SYSTEM IS FASTER WITHOUT MEASURING IT.
+
+============================================================
+FINAL GOAL
+============================================================
+
+I want this:
+
+User
+ ↓
+instant UI acknowledgement
+ ↓
+fast intent routing
+ ↓
+only necessary Skills
+ ↓
+only necessary MCP tools
+ ↓
+parallel retrieval
+ ↓
+optimized RAG
+ ↓
+streaming LLM
+ ↓
+progressive UI response
+
+The final result should feel like a professional modern
+real-time AI assistant, not a traditional request/response chatbot.
+
+START BY PROFILING THE CURRENT SYSTEM.

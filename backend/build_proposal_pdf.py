@@ -1,0 +1,782 @@
+"""
+National University Bangladesh AI Assistant & Smart Support Platform
+Executive Project Proposal PDF Generator
+Outputs to: E:/projects/AI_CHAT_BOT/project_proposal/project_proposal.pdf
+"""
+
+import os
+import subprocess
+from pathlib import Path
+import fitz
+
+BASE_DIR = Path("E:/projects/AI_CHAT_BOT")
+PROPOSAL_DIR = BASE_DIR / "project_proposal"
+PROPOSAL_DIR.mkdir(parents=True, exist_ok=True)
+
+def get_browser_executable() -> str:
+    candidates = [
+        r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
+        r"C:\Program Files\Microsoft\Edge\Application\msedge.exe",
+        r"C:\Program Files\Google\Chrome\Application\chrome.exe",
+        r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+        os.path.expandvars(r"%LOCALAPPDATA%\Google\Chrome\Application\chrome.exe")
+    ]
+    for c in candidates:
+        if os.path.exists(c):
+            return c
+    raise FileNotFoundError("Could not find Edge or Chrome executable for PDF printing.")
+
+def convert_html_to_pdf(html_path: Path, pdf_path: Path):
+    browser = get_browser_executable()
+    cmd = [
+        browser,
+        "--headless",
+        "--disable-gpu",
+        "--allow-file-access-from-files",
+        "--enable-local-file-accesses",
+        "--no-pdf-header-footer",
+        f"--print-to-pdf={pdf_path}",
+        html_path.as_uri()
+    ]
+    res = subprocess.run(cmd, capture_output=True, text=True)
+    if res.returncode != 0:
+        raise RuntimeError(f"Browser PDF generation failed (code {res.returncode}): {res.stderr}")
+    print(f"[OK] Generated: {pdf_path} ({pdf_path.stat().st_size} bytes)")
+
+def generate_proposal_html() -> str:
+    # Convert screenshot paths to file URIs or relative paths
+    img_1 = (PROPOSAL_DIR / "1.png").as_uri()
+    img_faq = (PROPOSAL_DIR / "FAQ.png").as_uri()
+    img_token = (PROPOSAL_DIR / "token.png").as_uri()
+    img_check = (PROPOSAL_DIR / "check_token.png").as_uri()
+    img_qr = (PROPOSAL_DIR / "qr.png").as_uri()
+    img_admin = (PROPOSAL_DIR / "admin_panel.png").as_uri()
+
+    return f"""<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<title>Project Proposal — National University Bangladesh AI Platform</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap');
+
+  @page {{
+    size: A4 portrait;
+    margin: 12mm 14mm 14mm 14mm;
+  }}
+
+  * {{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }}
+
+  body {{
+    font-family: 'Hind Siliguri', 'Inter', 'Segoe UI', Arial, sans-serif;
+    color: #1e293b;
+    background-color: #ffffff;
+    line-height: 1.45;
+    font-size: 12px;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }}
+
+  .page {{
+    page-break-after: always;
+    position: relative;
+    padding-bottom: 25px;
+  }}
+
+  .page:last-child {{
+    page-break-after: avoid;
+  }}
+
+  /* Header Banner */
+  .header-table {{
+    width: 100%;
+    border-bottom: 2px solid #059669;
+    padding-bottom: 6px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }}
+
+  .header-left h2 {{
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    color: #065f46;
+    letter-spacing: -0.2px;
+  }}
+
+  .header-left p {{
+    font-size: 10.5px;
+    color: #059669;
+    font-weight: 600;
+  }}
+
+  .header-right {{
+    text-align: right;
+  }}
+
+  .header-right .badge {{
+    display: inline-block;
+    background: #065f46;
+    color: #ffffff;
+    font-family: 'Inter', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }}
+
+  .header-right p {{
+    font-size: 9.5px;
+    color: #64748b;
+    margin-top: 2px;
+  }}
+
+  /* Main Title Section */
+  .title-section {{
+    margin-bottom: 12px;
+  }}
+
+  .title-section h1 {{
+    font-size: 20px;
+    font-weight: 700;
+    color: #065f46;
+    line-height: 1.3;
+    margin-bottom: 3px;
+  }}
+
+  .title-section .subtitle {{
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    color: #475569;
+    font-weight: 600;
+  }}
+
+  /* Callout & Summary Boxes */
+  .callout-box {{
+    background: #f0fdf4;
+    border: 1px solid #86efac;
+    border-left: 4px solid #059669;
+    padding: 9px 12px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+  }}
+
+  .callout-box h3 {{
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #065f46;
+    margin-bottom: 3px;
+  }}
+
+  .callout-box p {{
+    font-size: 11.5px;
+    color: #166534;
+    line-height: 1.45;
+  }}
+
+  /* Grid Layouts */
+  .grid-4 {{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-bottom: 10px;
+  }}
+
+  .grid-3 {{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 7px;
+    margin-bottom: 10px;
+  }}
+
+  .grid-2 {{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 9px;
+    margin-bottom: 10px;
+  }}
+
+  .card {{
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+  }}
+
+  .card.green {{ background: #f0fdf4; border-color: #bbf7d0; }}
+  .card.amber {{ background: #fffbeb; border-color: #fef08a; }}
+  .card.blue {{ background: #eff6ff; border-color: #bfdbfe; }}
+  .card.purple {{ background: #faf5ff; border-color: #e9d5ff; }}
+  .card.slate {{ background: #f8fafc; border-color: #cbd5e1; }}
+
+  .card h4 {{
+    font-size: 11.5px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }}
+
+  .card.green h4 {{ color: #065f46; }}
+  .card.amber h4 {{ color: #92400e; }}
+  .card.blue h4 {{ color: #1e40af; }}
+  .card.purple h4 {{ color: #6b21a8; }}
+  .card.slate h4 {{ color: #0f172a; }}
+
+  .card p {{
+    font-size: 10.5px;
+    color: #475569;
+    line-height: 1.35;
+  }}
+
+  .stat-card {{
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 7px;
+    text-align: center;
+  }}
+
+  .stat-card .num {{
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    color: #065f46;
+  }}
+
+  .stat-card .label {{
+    font-size: 9.5px;
+    color: #475569;
+    font-weight: 600;
+  }}
+
+  /* Section Headings */
+  .section-title {{
+    font-size: 13px;
+    font-weight: 700;
+    color: #0f172a;
+    border-left: 3px solid #059669;
+    padding-left: 7px;
+    margin-top: 11px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }}
+
+  .section-title span.en {{
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 600;
+    color: #64748b;
+  }}
+
+  /* Tables */
+  table.data-table {{
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 4px;
+    margin-bottom: 9px;
+    font-size: 11px;
+  }}
+
+  table.data-table th {{
+    background: #0f172a;
+    color: #ffffff;
+    font-weight: 700;
+    padding: 5px 8px;
+    text-align: left;
+    border: 1px solid #334155;
+    font-size: 10.5px;
+  }}
+
+  table.data-table td {{
+    padding: 5px 8px;
+    border: 1px solid #e2e8f0;
+    vertical-align: top;
+    line-height: 1.35;
+  }}
+
+  table.data-table tr:nth-child(even) td {{
+    background: #f8fafc;
+  }}
+
+  .tag {{
+    display: inline-block;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: 'Inter', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+  }}
+
+  .tag.green {{ background: #dcfce7; color: #166534; border: 1px solid #86efac; }}
+  .tag.blue {{ background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }}
+  .tag.purple {{ background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; }}
+  .tag.amber {{ background: #fef3c7; color: #92400e; border: 1px solid #fde047; }}
+  .tag.slate {{ background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; }}
+
+  /* Screenshot Figure Box */
+  .figure-box {{
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 6px;
+    text-align: center;
+    margin-bottom: 8px;
+  }}
+
+  .figure-box img {{
+    max-width: 100%;
+    max-height: 150px;
+    border-radius: 4px;
+    border: 1px solid #cbd5e1;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }}
+
+  .figure-box .caption {{
+    font-size: 9.5px;
+    color: #475569;
+    font-weight: 600;
+    margin-top: 3px;
+  }}
+
+  /* Footer */
+  .page-footer {{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-top: 1px solid #cbd5e1;
+    padding-top: 4px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 9.5px;
+    color: #64748b;
+  }}
+</style>
+</head>
+<body>
+
+<!-- ==================== PAGE 1: EXECUTIVE PROPOSAL & INSTITUTIONAL CHARTER ==================== -->
+<div class="page">
+  <div class="header-table">
+    <div class="header-left">
+      <h2>NATIONAL UNIVERSITY BANGLADESH</h2>
+      <p>জাতীয় বিশ্ববিদ্যালয় • শিক্ষা ও তথ্য প্রযুক্তি বিভাগ • প্রজেক্ট প্রপোজাল</p>
+    </div>
+    <div class="header-right">
+      <span class="badge">Official Project Proposal</span>
+      <p>Target: 3.2M+ Students • 2,260+ Colleges</p>
+    </div>
+  </div>
+
+  <div class="title-section">
+    <h1>জাতীয় বিশ্ববিদ্যালয় স্মার্ট AI অ্যাসিস্ট্যান্ট ও সেন্ট্রালাইজড সাপোর্ট প্ল্যাটফর্ম</h1>
+    <div class="subtitle">Institutional Project Proposal for Scalable Academic AI, Support Ticket Service & 24/7 Knowledge Automation</div>
+  </div>
+
+  <div class="grid-4">
+    <div class="stat-card">
+      <div class="num">২,২৬০+</div>
+      <div class="label">অধিভুক্ত কলেজ</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">৩২ লক্ষ+</div>
+      <div class="label">সক্রিয় শিক্ষার্থী</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">২ লক্ষ+</div>
+      <div class="label">শিক্ষক ও কর্মকর্তা</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">৬৪ জেলা</div>
+      <div class="label">সারাদেশে বিস্তৃত</div>
+    </div>
+  </div>
+
+  <div class="callout-box">
+    <h3>🌟 ১. প্রজেক্টের প্রয়োজনীয়তা ও পটভূমি (Executive Context)</h3>
+    <p>
+      জাতীয় বিশ্ববিদ্যালয় বাংলাদেশের উচ্চশিক্ষার সিংহভাগ (প্রায় ৭০%) পরিচালনা করে। দেশব্যাপী বিস্তৃত ২,২৬০টি কলেজের লাখ লাখ শিক্ষার্থী ও শিক্ষকের ভর্তি, পরীক্ষার রুটিন, ফরম পূরণ, ইএমএস (EMS) পোর্টাল লকআউট, মার্কশিট ও মূল সনদ উত্তোলনের সময় হাজার হাজার প্রশ্নের সৃষ্টি হয়। গাজীপুর মূল ক্যাম্পাসের সাথে দূরবর্তী শিক্ষার্থীদের যোগাযোগের দূরত্ব, হটলাইনে অতিরিক্ত চাপ এবং প্রশাসনিক দীর্ঘসূত্রতা দূর করে <strong>'স্মার্ট বাংলাদেশ ২০৪১'</strong> রূপকল্প বাস্তবায়নে এই স্বয়ংক্রিয় AI প্ল্যাটফর্মটি অপরিহার্য।
+    </p>
+  </div>
+
+  <div class="section-title">
+    ২. প্রধান স্টেকহোল্ডারদের সরাসরি সুবিধাসমূহ
+    <span class="en">(Comprehensive Stakeholder Value Realization)</span>
+  </div>
+
+  <div class="grid-2">
+    <div class="card green">
+      <h4>🎓 শিক্ষার্থীদের জন্য সুবিধাসমূহ (৩.২ মিলিয়ন শিক্ষার্থী):</h4>
+      <p>
+        • <strong>তাৎক্ষণিক সমাধান:</strong> বাংলা ও ইংরেজিতে ভর্তি, রুটিন ও রেজাল্ট সংক্রান্ত প্রশ্নের নির্ভুল উত্তর (&lt; 0.001 সেকেন্ড)।<br/>
+        • <strong>সাপোর্ট টোকেন সার্ভিস:</strong> EMS পোর্টাল ও ফরম পূরণ ভুলের জন্য ট্র্যাকিং নম্বর (NU-2026-XXXXXX) সহ সমাধান。<br/>
+        • <strong>যাতায়াত খরচ সাশ্রয়:</strong> দূর-দূরান্ত থেকে গাজীপুর আসা-যাওয়ার খরচ ও সময় সম্পূর্ণ সাশ্রয়。<br/>
+        • <strong>মোবাইল কিউআর এক্সেস:</strong> কোনো অ্যাপ ইন্সটল ছাড়াই মোবাইল ক্যামেরা দিয়ে স্ক্যান করে ব্যবহার।
+      </p>
+    </div>
+
+    <div class="card blue">
+      <h4>👨‍🏫 শিক্ষকদের জন্য সুবিধাসমূহ (২ লক্ষ+ শিক্ষক):</h4>
+      <p>
+        • <strong>পরীক্ষা ও মূল্যায়ন বিধি:</strong> প্রশ্নপত্র প্রণয়ন, মডারেশন ও খাতা মূল্যায়নের নিয়মাবলী এক ক্লিকে জানা。<br/>
+        • <strong>সম্মানী ও বিলিং গাইড:</strong> সোনালী সেবার মাধ্যমে পরীক্ষক বিল সাবমিশনের সঠিক নিয়মাবলী。<br/>
+        • <strong>সিলেবাস ও কারিকুলাম ভেরিফিকেশন:</strong> অনার্স ও মাস্টার্সের হালনাগাদ সিলেবাস ও ক্রেডিট যাচাই।
+      </p>
+    </div>
+
+    <div class="card amber">
+      <h4>🏛️ অধিভুক্ত কলেজ ও অধ্যক্ষদের জন্য সুবিধা:</h4>
+      <p>
+        • <strong>অফিসের চাপ হ্রাস:</strong> কলেজের প্রশাসনিক কাউন্টারে শিক্ষার্থীদের ভিড় ৮০% পর্যন্ত হ্রাস পায়。<br/>
+        • <strong>সরাসরি ডেস্ক এসকেলেশন:</strong> কলেজের জটিল সমস্যা সরাসরি গাজীপুরের আইসিটি/রেজিস্ট্রার ডেস্কে প্রেরণ。<br/>
+        • <strong>তথ্য সমতা:</strong> প্রত্যন্ত অঞ্চলের কলেজগুলো মূল ক্যাম্পাসের মতোই রিয়েল-টাইমে নোটিশ পায়।
+      </p>
+    </div>
+
+    <div class="card purple">
+      <h4>🏢 গাজীপুর সেন্ট্রাল প্রশাসনের জন্য সুবিধা:</h4>
+      <p>
+        • <strong>৮৫% সাপোর্ট কল হ্রাস:</strong> সাধারণ প্রশ্নোত্তর AI একা সামলানোয় কর্মকর্তাদের কাজের সময় সাশ্রয়。<br/>
+        • <strong>সেলফ-লার্নিং ফিডব্যাক:</strong> একবার কোনো সমস্যার সমাধান করলে AI তা শিখে নিয়ে ভবিষ্যতে উত্তর দেয়。<br/>
+        • <strong>২৪/৭ স্বয়ংক্রিয় নলেজ আপডেট:</strong> প্রতি ১০ মিনিটে ক্রলার নোটিশ বিশ্লেষণ করে ডাটাবেস আপডেট রাখে।
+      </p>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>National University AI Assistant • Official Project Proposal</span>
+    <span>Page 1 of 4</span>
+  </div>
+</div>
+
+<!-- ==================== PAGE 2: ARCHITECTURE & DEMONSTRATION ==================== -->
+<div class="page">
+  <div class="header-table">
+    <div class="header-left">
+      <h2>SYSTEM ARCHITECTURE & SCREENSHOT DEMONSTRATION</h2>
+      <p>টেকনিক্যাল আর্কিটেকচার ও প্ল্যাটফর্মের লাইভ ইন্টারফেস সমূহের চিত্র</p>
+    </div>
+    <div class="header-right">
+      <span class="badge">Architecture & UI Showcase</span>
+      <p>FastAPI • Gemini 3 Flash • ChromaDB</p>
+    </div>
+  </div>
+
+  <div class="section-title">
+    ৩. সিস্টেম আর্কিটেকচার ও ডাটা ফ্লো স্কেচ
+    <span class="en">(End-to-End Technical Workflow)</span>
+  </div>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th style="width: 25%;">মডিউল স্তর (Layer)</th>
+        <th style="width: 25%;">প্রযুক্তি উপাদান (Components)</th>
+        <th>প্রকৌশলগত কার্যপ্রণালী (Engineering Workflow)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>১. ক্লায়েন্ট ও চ্যানেল</strong></td>
+        <td>ওয়েব ইন্টারফেস, মোবাইল কিউআর (QR), টোকেন ফর্ম</td>
+        <td>শিক্ষার্থী ও শিক্ষকরা যেকোনো ব্রাউজারে বাংলা ও ইংরেজিতে প্রশ্ন করেন এবং টোকেন জমা দেন।</td>
+      </tr>
+      <tr>
+        <td><strong>২. অ্যাসিন্ক গেটওয়ে</strong></td>
+        <td>FastAPI (Python 3.13), Preload Cache</td>
+        <td>নন-ব্লকিং মেকানিজম (asyncio.to_thread); সাধারণ প্রশ্নে <strong>০.০১ মিলি-সেকেন্ডে</strong> মেমোরি থেকে উত্তর।</td>
+      </tr>
+      <tr>
+        <td><strong>৩. AI ও ভেক্টর ইঞ্জিন</strong></td>
+        <td>Gemini 3 Flash, ChromaDB RAG</td>
+        <td>জটিল প্রশ্নে অফিসিয়াল নোটিশ ও সার্কুলার ভেক্টরাইজ করে রেফারেন্স লিংক সহ সত্যনিষ্ঠ উত্তর তৈরি।</td>
+      </tr>
+      <tr>
+        <td><strong>৪. এমসিপি ও ডাটাবেস</strong></td>
+        <td>৫টি MCP সার্ভার, SQLite (WAL), AES-128</td>
+        <td>টোকেন তৈরি, স্ট্যাটাস ট্র্যাকিং এবং লগইন পাসওয়ার্ড সুরক্ষায় AES-128-CBC এনক্রিপ্টেড ভল্ট।</td>
+      </tr>
+      <tr>
+        <td><strong>৫. ২৪/৭ স্বয়ংক্রিয় লুপ</strong></td>
+        <td>ScrapedDataAnalyzer, KnowledgeEnricher</td>
+        <td>প্রতি ১০ মিনিটে nu.ac.bd সাইট ক্রল করে প্রশ্নোত্তর তৈরি ও ChromaDB-তে লাইভ ইনজেশন।</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-title">
+    ৪. প্ল্যাটফর্মের ইন্টারফেস ডেমোনস্ট্রেশন
+    <span class="en">(Visual Interface Demonstration)</span>
+  </div>
+
+  <div class="grid-2">
+    <div class="figure-box">
+      <img src="{img_1}" alt="AI Conversational Assistant">
+      <div class="caption">চিত্র ১: মূল AI চ্যাটবট ইন্টারফেস ও ভেরিফায়েড নোটিশ রেফারেন্স</div>
+    </div>
+    <div class="figure-box">
+      <img src="{img_faq}" alt="Instant FAQ and Knowledge">
+      <div class="caption">চিত্র ২: তাৎক্ষণিক FAQ ও প্রিলোডেড একাডেমিক জিজ্ঞাসা প্যানেল</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>National University AI Assistant • Official Project Proposal</span>
+    <span>Page 2 of 4</span>
+  </div>
+</div>
+
+<!-- ==================== PAGE 3: TOKEN LIFECYCLE & SECURITY ==================== -->
+<div class="page">
+  <div class="header-table">
+    <div class="header-left">
+      <h2>SUPPORT TOKEN SERVICE & SECURITY STANDARDS</h2>
+      <p>টোকেন সার্ভিস, এনক্রিপ্টেড ভল্ট ও প্রশাসনিক ড্যাশবোর্ড</p>
+    </div>
+    <div class="header-right">
+      <span class="badge">Operations & Security</span>
+      <p>AES-128-CBC • PBKDF2 • RBAC</p>
+    </div>
+  </div>
+
+  <div class="section-title">
+    ৫. সাপোর্ট টোকেন লাইফসাইকেল ও এনক্রিপ্টেড ক্রেডেনশিয়াল
+    <span class="en">(Token Lifecycle & Credential Vault)</span>
+  </div>
+
+  <div class="grid-3" style="grid-template-columns: 1.2fr 1fr 1fr; gap: 7px; margin-bottom: 8px;">
+    <div class="figure-box">
+      <img src="{img_token}" alt="Support Token Form">
+      <div class="caption">চিত্র ৩: সাপোর্ট টোকেন আবেদন ফর্ম ও AES-128 ভল্ট</div>
+    </div>
+    <div class="figure-box">
+      <img src="{img_check}" alt="Live Token Tracking">
+      <div class="caption">চিত্র ৪: লাইভ টোকেন ট্র্যাকিং</div>
+    </div>
+    <div class="figure-box">
+      <img src="{img_qr}" alt="Mobile QR Access">
+      <div class="caption">চিত্র ৫: মোবাইল কিউআর স্ক্যান</div>
+    </div>
+  </div>
+
+  <div class="section-title">
+    ৬. দাপ্তরিক সলভার ড্যাশবোর্ড ও ২৪/৭ এজেন্ট মনিটরিং
+    <span class="en">(Admin Control & 24/7 Agent Center)</span>
+  </div>
+
+  <div class="grid-2" style="grid-template-columns: 1.4fr 1fr; gap: 8px; margin-bottom: 6px;">
+    <div class="figure-box">
+      <img src="{img_admin}" alt="Admin & Solver Dashboard">
+      <div class="caption">চিত্র ৬: দাপ্তরিক সলভার কন্ট্রোল সেন্টার, ওয়েবসাইট স্ট্রাকচার ও ২৪/৭ এজেন্ট মনিটরিং</div>
+    </div>
+    <div class="card slate" style="padding: 8px;">
+      <h4 style="color: #0f172a; font-size: 11px;">🔒 ডাটা নিরাপত্তা ও অডিট ট্রেইল:</h4>
+      <p style="font-size: 10px; line-height: 1.4; color: #334155;">
+        • <strong>পাসওয়ার্ড হ্যাশিং:</strong> PBKDF2-HMAC-SHA256 (100,000 বার হ্যাশিং)।<br/>
+        • <strong>ক্রেডেনশিয়াল এনক্রিপশন:</strong> শিক্ষার্থীর পোর্টাল পাসওয়ার্ড ডিস্কে সংরক্ষণের পূর্বে Fernet AES-128 দিয়ে এনক্রিপ্ট করা হয়।<br/>
+        • <strong>অডিট ট্রেইল:</strong> প্রতিটি স্ট্যাটাস পরিবর্তন এবং কর্মকর্তার সমাধান <code>nu_audit_log</code> টেবিলে সংরক্ষিত।
+      </p>
+    </div>
+  </div>
+
+  <div class="section-title">
+    ৭. সাপোর্ট সার্ভিস ক্যাটালগ ও সমাধানের সময়সীমা (SLA)
+    <span class="en">(Service Directory & SLA)</span>
+  </div>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th style="width: 16%;">সার্ভিস কোড</th>
+        <th style="width: 44%;">সেবার বিষয়বস্তু (Service Scope)</th>
+        <th style="width: 25%;">দায়িত্বপ্রাপ্ত শাখা</th>
+        <th style="width: 15%;">SLA সময়</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>EMS</strong></td>
+        <td>ইএমএস পোর্টাল পাসওয়ার্ড রিসেট ও লগইন লকআউট সহায়তা</td>
+        <td>আইসিটি সাপোর্ট সেল</td>
+        <td>২৪-৪৮ ঘণ্টা</td>
+      </tr>
+      <tr>
+        <td><strong>FORM_FILLUP</strong></td>
+        <td>পরীক্ষার ফরম পূরণ ও সোনালী সেবা ফি কনফার্মেশন</td>
+        <td>পরীক্ষা নিয়ন্ত্রণ শাখা</td>
+        <td>১২-২৪ ঘণ্টা</td>
+      </tr>
+      <tr>
+        <td><strong>RESCRUTINY</strong></td>
+        <td>খাতা পুনর্নিরীক্ষণ / ফলাফল চ্যালেঞ্জ অগ্রগতি ট্র্যাকিং</td>
+        <td>ফলাফল মূল্যায়ন শাখা</td>
+        <td>৩-৭ দিন</td>
+      </tr>
+      <tr>
+        <td><strong>CERTIFICATE</strong></td>
+        <td>মূল ও সাময়িক সনদ উত্তোলন ও অনলাইন ভেরিফিকেশন</td>
+        <td>সনদপত্র শাখা</td>
+        <td>২-৫ দিন</td>
+      </tr>
+      <tr>
+        <td><strong>MARKSHEET</strong></td>
+        <td>একাডেমিক ট্রান্সক্রিপ্ট ও নম্বরপত্র ভুল সংশোধন</td>
+        <td>রেজিস্ট্রার দপ্তর</td>
+        <td>২-৪ দিন</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="page-footer">
+    <span>National University AI Assistant • Official Project Proposal</span>
+    <span>Page 3 of 4</span>
+  </div>
+</div>
+
+<!-- ==================== PAGE 4: ROADMAP, ROI & SIGN-OFF ==================== -->
+<div class="page">
+  <div class="header-table">
+    <div class="header-left">
+      <h2>ROADMAP, INSTITUTIONAL ROI & SIGN-OFF</h2>
+      <p>কৌশলগত রোডম্যাপ, আর্থিক সাশ্রয় ও অনুমোদন পত্র</p>
+    </div>
+    <div class="header-right">
+      <span class="badge">Strategic Deployment</span>
+      <p>ROI Analysis • Smart Bangladesh 2041</p>
+    </div>
+  </div>
+
+  <div class="section-title">
+    ৮. বাস্তবায়ন রোডম্যাপ
+    <span class="en">(Phased Implementation Roadmap)</span>
+  </div>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th style="width: 22%;">পর্যায় (Phase)</th>
+        <th style="width: 16%;">সময়কাল</th>
+        <th>পরিকল্পিত প্রযুক্তি ও সক্ষমতা (Planned Features & Capabilities)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Phase 1 (Completed)</strong></td>
+        <td><span class="tag green">Q3 2026</span></td>
+        <td>পূর্ণাঙ্গ জেনারেটিভ চ্যাটবট, প্রি-লোডেড ফাস্ট ক্যাশ, সাপোর্ট টোকেন সার্ভিস, ৫টি MCP সার্ভার ও ২৪/৭ এজেন্ট।</td>
+      </tr>
+      <tr>
+        <td><strong>Phase 2 (Upcoming)</strong></td>
+        <td><span class="tag blue">Q4 2026</span></td>
+        <td><strong>বাংলা ভয়েস এআই:</strong> প্রত্যন্ত অঞ্চলের শিক্ষার্থীদের জন্য লাইভ ভয়েস ইন্টারফেস ও ডায়ালেক্ট প্রসেসিং।</td>
+      </tr>
+      <tr>
+        <td><strong>Phase 3</strong></td>
+        <td><span class="tag amber">Q1 2027</span></td>
+        <td><strong>হোয়াটসঅ্যাপ ও এসএমএস গেটওয়ে:</strong> টোকেন সমাধান ও জরুরি নোটিশে শিক্ষার্থীর মোবাইলে সরাসরি মেসেজ অ্যালার্ট।</td>
+      </tr>
+      <tr>
+        <td><strong>Phase 4</strong></td>
+        <td><span class="tag purple">Q2 2027</span></td>
+        <td><strong>রোবোটিক ডিজিটাল ই-সার্টিফিকেট:</strong> কেন্দ্রীয় ডাটাবেস সমন্বয়ে সরাসরি ডিজিটাল স্বাক্ষরিত সনদপত্র ডাউনলোড।</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-title">
+    ৯. অর্থনৈতিক ও প্রশাসনিক রিটার্ন অন ইনভেস্টমেন্ট
+    <span class="en">(Institutional Return on Investment - ROI)</span>
+  </div>
+
+  <div class="grid-3" style="margin-bottom: 8px;">
+    <div class="card green">
+      <h4 style="color: #065f46;">💰 ৫০ কোটি+ টাকা বার্ষিক সাশ্রয়</h4>
+      <p>দূর-দূরান্তের শিক্ষার্থীদের গাজীপুর যাতায়াত, থাকা-খাওয়া ও ফটোকপি খরচ সাশ্রয়।</p>
+    </div>
+    <div class="card blue">
+      <h4 style="color: #1e40af;">⏱️ ৮৫% সময় সাশ্রয়</h4>
+      <p>টোকেন সমাধানের গড় সময় ৭-১৫ দিনের জায়গায় ২৪ ঘণ্টার নিচে নামিয়ে আনা।</p>
+    </div>
+    <div class="card amber">
+      <h4 style="color: #92400e;">📈 প্রশাসনিক উৎপাদনশীলতা</h4>
+      <p>অফিসিয়ালরা রুটিন কাজের বদলে মূল নীতিনির্ধারণী ও শিক্ষা কার্যক্রমে মনোযোগ দিতে পারবেন।</p>
+    </div>
+  </div>
+
+  <div class="section-title">
+    ১০. সুপারিশ ও প্রাতিষ্ঠানিক অনুমোদনের আবেদন
+    <span class="en">(Institutional Recommendation & Sign-Off)</span>
+  </div>
+
+  <p style="font-size: 11px; line-height: 1.45; color: #334155; margin-bottom: 12px;">
+    জাতীয় বিশ্ববিদ্যালয়ের সকল শিক্ষার্থী, শিক্ষক ও কলেজ সমূহের ডিজিটাল সমতা নিশ্চিতকরণ এবং সেবা সহজীকরণের লক্ষ্যে এই প্রোডাকশন-রেডি <strong>AI অ্যাসিস্ট্যান্ট ও স্মার্ট সাপোর্ট প্ল্যাটফর্মটি</strong> কেন্দ্রীয়ভাবে মোতায়েন ও বাস্তবায়নের জন্য সনির্বন্ধ প্রস্তাব পেশ করা হলো।
+  </p>
+
+  <table style="width: 100%; margin-top: 15px; border-collapse: collapse;">
+    <tr>
+      <td style="width: 33%; text-align: center; vertical-align: bottom;">
+        <div style="border-bottom: 1px dashed #64748b; width: 80%; margin: 0 auto 5px auto;"></div>
+        <p style="font-size: 10px; font-weight: 700; color: #0f172a;">প্রস্তাবক / প্রজেক্ট লিড</p>
+        <p style="font-size: 9px; color: #64748b;">AI আর্কিটেকচার টিম</p>
+      </td>
+      <td style="width: 33%; text-align: center; vertical-align: bottom;">
+        <div style="border-bottom: 1px dashed #64748b; width: 80%; margin: 0 auto 5px auto;"></div>
+        <p style="font-size: 10px; font-weight: 700; color: #0f172a;">পরিচালক (আইসিটি)</p>
+        <p style="font-size: 9px; color: #64748b;">জাতীয় বিশ্ববিদ্যালয়, বাংলাদেশ</p>
+      </td>
+      <td style="width: 33%; text-align: center; vertical-align: bottom;">
+        <div style="border-bottom: 1px dashed #64748b; width: 80%; margin: 0 auto 5px auto;"></div>
+        <p style="font-size: 10px; font-weight: 700; color: #0f172a;">উপাচার্য / অনুমোদনকারী কর্তৃপক্ষ</p>
+        <p style="font-size: 9px; color: #64748b;">জাতীয় বিশ্ববিদ্যালয়, বাংলাদেশ</p>
+      </td>
+    </tr>
+  </table>
+
+  <div class="page-footer">
+    <span>National University AI Assistant • Official Project Proposal</span>
+    <span>Page 4 of 4</span>
+  </div>
+</div>
+
+</body>
+</html>"""
+
+def build_proposal_pdf():
+    print("============================================================")
+    print("Building National University Official Project Proposal PDF")
+    print("============================================================")
+    
+    html_path = PROPOSAL_DIR / "project_proposal.html"
+    pdf_path = PROPOSAL_DIR / "project_proposal.pdf"
+    
+    html_path.write_text(generate_proposal_html(), encoding="utf-8")
+    convert_html_to_pdf(html_path, pdf_path)
+
+    # Render Preview of Page 1
+    doc = fitz.open(str(pdf_path))
+    print(f"Total Pages Generated: {len(doc)}")
+    pix = doc[0].get_pixmap(dpi=150)
+    preview_path = PROPOSAL_DIR / "proposal_preview.png"
+    pix.save(str(preview_path))
+    print(f"[OK] Saved Proposal Preview Image: {preview_path}")
+
+    # Copy to artifact folder for user viewing
+    artifact_dir = Path(r"C:\Users\RAKIB\.gemini\antigravity\brain\468d1645-a2a9-412c-a4e5-8783cc41d202")
+    if artifact_dir.exists():
+        import shutil
+        shutil.copy2(preview_path, artifact_dir / "proposal_preview.png")
+        print("[OK] Copied proposal preview to conversation artifact directory.")
+
+    print("\n[SUCCESS] OFFICIAL PROJECT PROPOSAL PDF GENERATED!")
+
+if __name__ == "__main__":
+    build_proposal_pdf()

@@ -1,0 +1,64 @@
+site:
+  root_url: "https://www.nu.ac.bd/"
+  allowed_domains:
+    - "nu.ac.bd"
+    - "*.nu.ac.bd"
+  follow_subdomains: true
+
+crawl:
+  max_pages: 100000
+  max_depth: 50
+  delay_seconds: 0.7
+  timeout_seconds: 30
+  retries: 3
+  respect_robots: true
+  include_query_strings: false
+  crawl_external_links: false
+  download_documents: true
+  max_document_mb: 50
+  user_agent: "NU-Knowledge-Crawler/1.0 (+responsible research crawler)"
+
+filters:
+  skip_extensions:
+    - ".jpg"
+    - ".jpeg"
+    - ".png"
+    - ".gif"
+    - ".webp"
+    - ".svg"
+    - ".ico"
+    - ".mp3"
+    - ".mp4"
+    - ".avi"
+    - ".mov"
+    - ".zip"
+    - ".rar"
+    - ".7z"
+    - ".exe"
+    - ".apk"
+  skip_url_patterns:
+    - "/login"
+    - "/logout"
+    - "/admin"
+    - "/wp-admin"
+    - "javascript:"
+    - "mailto:"
+    - "tel:"
+  document_extensions:
+    - ".pdf"
+    - ".doc"
+    - ".docx"
+    - ".xls"
+    - ".xlsx"
+    - ".csv"
+    - ".txt"
+
+output:
+  directory: "data"
+  pages_jsonl: "nu_pages.jsonl"
+  documents_jsonl: "nu_documents.jsonl"
+  links_jsonl: "nu_links.jsonl"
+  errors_jsonl: "nu_errors.jsonl"
+  site_map_json: "nu_site_map.json"
+  sqlite_db: "nu_crawler.sqlite3"
+  downloaded_documents: "documents"

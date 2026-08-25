@@ -1,0 +1,66 @@
+{
+  "autonomous_mode": "STOPPED",
+  "current_cycle": 5,
+  "current_task": null,
+  "agent1_status": "IDLE",
+  "agent1_activity": "Cycle #5 Complete. Quality Score: 9.54/10",
+  "agent2_status": "IDLE",
+  "agent2_activity": "Cycle #5 Complete. Resolved 0 tasks",
+  "open_critical": 0,
+  "open_high": 0,
+  "open_medium": 0,
+  "open_low": 0,
+  "total_resolved": 0,
+  "total_regressions": 0,
+  "average_accuracy": 9.5,
+  "average_context": 9.5,
+  "average_relevance": 9.28,
+  "average_overall_score": 9.54,
+  "last_cycle_timestamp": "2026-08-24T04:00:19.046985+00:00",
+  "next_cycle_timestamp": null,
+  "cooldown_seconds": 120,
+  "max_tests_per_cycle": 12,
+  "quality_gate": {
+    "min_accuracy": 9.0,
+    "min_relevance": 9.0,
+    "min_context": 8.5,
+    "min_safety": 9.5,
+    "min_overall": 9.0,
+    "max_critical_allowed": 0,
+    "max_high_allowed": 0
+  },
+  "history_metrics": [
+    {
+      "cycle": 2,
+      "timestamp": "2026-08-23T10:15:39.929829+00:00",
+      "accuracy": 9.5,
+      "context": 9.5,
+      "relevance": 8.79,
+      "overall": 9.41
+    },
+    {
+      "cycle": 3,
+      "timestamp": "2026-08-24T03:54:42.587977+00:00",
+      "accuracy": 9.5,
+      "context": 9.5,
+      "relevance": 8.56,
+      "overall": 9.37
+    },
+    {
+      "cycle": 4,
+      "timestamp": "2026-08-24T03:58:51.826837+00:00",
+      "accuracy": 9.5,
+      "context": 9.5,
+      "relevance": 9.16,
+      "overall": 9.53
+    },
+    {
+      "cycle": 5,
+      "timestamp": "2026-08-24T04:01:38.235431+00:00",
+      "accuracy": 9.5,
+      "context": 9.5,
+      "relevance": 9.28,
+      "overall": 9.54
+    }
+  ]
+}

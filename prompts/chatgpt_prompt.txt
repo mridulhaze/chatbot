@@ -1,0 +1,1950 @@
+Yes. For your project, I would give Antigravity **one master prompt** that clearly separates:
+
+* **AI Skills** → business logic, instructions, workflows
+* **MCP Server** → tools/data access
+* **NU Crawler/RAG** → official NU knowledge
+* **Token Database** → support tickets
+* **Admin/Solver Dashboard** → token management
+* **Interactive chatbot UI** → user interaction
+
+Below is a complete prompt you can paste into Antigravity.
+
+---
+
+# MASTER PROMPT — NU AI ASSISTANT + MCP SERVER + SKILLS + TOKEN SERVICE
+
+```text
+You are a senior AI systems architect, full-stack developer, MCP developer, RAG engineer, database architect, and UI/UX engineer.
+
+I want you to build a production-quality AI assistant platform for National University (NU), Bangladesh.
+
+The system must combine:
+
+1. NU official website crawler
+2. NU website/document knowledge base
+3. RAG-based AI question answering
+4. MCP Server architecture
+5. AI Skills architecture
+6. Token Service / Support Ticket system
+7. Solved-problem knowledge base
+8. Admin/Solver dashboard
+9. Interactive chatbot UI
+10. Authentication and authorization
+11. Audit logging
+12. API layer
+13. Database layer
+14. Document processing
+15. Future extensibility
+
+IMPORTANT:
+
+Do not build a simple chatbot.
+
+Build a modular AI platform where the AI can use Skills and MCP tools to perform real operations.
+
+The architecture must clearly separate:
+
+SKILLS
+=
+AI behavior, instructions, workflows, decision-making rules and business logic.
+
+MCP SERVERS
+=
+Tools and controlled access to databases, APIs, documents and external systems.
+
+The system must NOT mix these responsibilities.
+
+============================================================
+PART 1 — HIGH LEVEL ARCHITECTURE
+============================================================
+
+Build the following architecture:
+
+                         ┌──────────────────────────────┐
+                         │       USER / STUDENT         │
+                         └───────────────┬──────────────┘
+                                         │
+                                         ▼
+                         ┌──────────────────────────────┐
+                         │       AI CHAT INTERFACE      │
+                         │                              │
+                         │ Web / Mobile / Future Bots  │
+                         └───────────────┬──────────────┘
+                                         │
+                                         ▼
+                         ┌──────────────────────────────┐
+                         │        AI ORCHESTRATOR        │
+                         │                              │
+                         │ Intent Detection             │
+                         │ Skill Selection              │
+                         │ Tool Selection                │
+                         │ Context Management            │
+                         └───────────────┬──────────────┘
+                                         │
+                    ┌────────────────────┼────────────────────┐
+                    │                    │                    │
+                    ▼                    ▼                    ▼
+             ┌────────────┐      ┌──────────────┐     ┌─────────────┐
+             │   SKILLS   │      │ MCP SERVERS  │     │    RAG      │
+             └────────────┘      └──────────────┘     └─────────────┘
+                    │                    │                    │
+                    │                    │                    │
+          ┌─────────┼─────────┐    ┌─────┼──────┐            │
+          │         │         │    │     │      │            │
+          ▼         ▼         ▼    ▼     ▼      ▼            ▼
+       NU Skill  Token Skill Exam  Token  NU   Document   Vector DB
+                                  MCP   MCP    MCP
+                                    │
+                                    ▼
+                             Token Database
+```
+
+============================================================
+PART 2 — TECHNOLOGY REQUIREMENTS
+================================
+
+Use a modern, maintainable architecture.
+
+Backend:
+
+* Python
+* FastAPI
+* Pydantic
+* SQLAlchemy
+* Alembic
+* Async support where appropriate
+
+MCP:
+
+* Official MCP-compatible Python implementation
+* MCP Server architecture
+* Separate MCP servers/modules
+* Typed tool definitions
+* Tool validation
+* Authentication/authorization
+* Structured tool responses
+
+Frontend:
+
+Use the existing project's frontend technology if one exists.
+
+If no frontend exists, use:
+
+* React
+* TypeScript
+* modern component architecture
+* responsive UI
+* mobile-friendly layout
+
+Database:
+
+Use PostgreSQL as the primary production database.
+
+However, make database configuration environment-driven so SQL Server, Oracle or another relational database can be used later if necessary.
+
+Vector database:
+
+Make the vector layer pluggable.
+
+Support an architecture that can later use:
+
+* pgvector
+* Qdrant
+* Chroma
+* another vector database
+
+Do not tightly couple the entire application to one vector database.
+
+============================================================
+PART 3 — PROJECT STRUCTURE
+==========================
+
+Create a clean structure similar to:
+
+project/
+│
+├── backend/
+│   ├── app/
+│   │   ├── main.py
+│   │   │
+│   │   ├── api/
+│   │   │   ├── auth.py
+│   │   │   ├── chat.py
+│   │   │   ├── token.py
+│   │   │   ├── admin.py
+│   │   │   └── health.py
+│   │   │
+│   │   ├── core/
+│   │   │   ├── config.py
+│   │   │   ├── security.py
+│   │   │   ├── logging.py
+│   │   │   └── database.py
+│   │   │
+│   │   ├── models/
+│   │   │   ├── user.py
+│   │   │   ├── token.py
+│   │   │   ├── solver.py
+│   │   │   ├── history.py
+│   │   │   └── knowledge.py
+│   │   │
+│   │   ├── services/
+│   │   │   ├── token_service.py
+│   │   │   ├── search_service.py
+│   │   │   ├── similarity_service.py
+│   │   │   ├── rag_service.py
+│   │   │   └── notification_service.py
+│   │   │
+│   │   ├── orchestrator/
+│   │   │   ├── agent.py
+│   │   │   ├── intent.py
+│   │   │   ├── router.py
+│   │   │   └── context.py
+│   │   │
+│   │   └── schemas/
+│   │
+│   ├── requirements.txt
+│   └── alembic/
+│
+├── mcp_servers/
+│   │
+│   ├── token_mcp/
+│   │   ├── server.py
+│   │   ├── tools/
+│   │   │   ├── token_create.py
+│   │   │   ├── token_status.py
+│   │   │   ├── token_search.py
+│   │   │   ├── token_history.py
+│   │   │   ├── solved_problems.py
+│   │   │   └── services.py
+│   │   └── README.md
+│   │
+│   ├── knowledge_mcp/
+│   │   ├── server.py
+│   │   └── tools/
+│   │
+│   └── document_mcp/
+│       ├── server.py
+│       └── tools/
+│
+├── skills/
+│   │
+│   ├── nu_general/
+│   │   ├── SKILL.md
+│   │   └── prompts/
+│   │
+│   ├── token_service/
+│   │   ├── SKILL.md
+│   │   └── workflows/
+│   │
+│   ├── examination/
+│   │   └── SKILL.md
+│   │
+│   ├── admission/
+│   │   └── SKILL.md
+│   │
+│   ├── result/
+│   │   └── SKILL.md
+│   │
+│   └── document_search/
+│       └── SKILL.md
+│
+├── crawler/
+│
+├── rag/
+│
+├── frontend/
+│
+├── tests/
+│
+├── docker/
+│
+├── docker-compose.yml
+├── .env.example
+├── README.md
+└── docs/
+
+```
+
+============================================================
+PART 4 — SKILL ARCHITECTURE
+============================================================
+
+A Skill is NOT a database connection.
+
+A Skill tells the AI:
+
+- when to use it
+- what the goal is
+- what steps to follow
+- which MCP tools are allowed
+- what information to request
+- how to respond
+- what privacy rules to follow
+- what errors to handle
+
+Every Skill must have a SKILL.md file.
+
+Example:
+
+skills/token_service/SKILL.md
+
+The file must contain:
+
+# Token Service Skill
+
+## Purpose
+
+Manage user support requests for NU-related problems.
+
+## Trigger Conditions
+
+Activate when:
+
+- user selects Token Service
+- user asks to create a support ticket
+- user asks about a token
+- user provides a Token ID
+- user asks about the status of a previous problem
+
+## Available MCP Tools
+
+- get_services
+- create_token
+- get_token
+- get_token_status
+- get_token_history
+- search_similar_solved_problems
+
+## Workflow
+
+1. Detect user's intent.
+2. If service type is missing, show service selection.
+3. Ask for problem description.
+4. Search similar solved problems.
+5. If similar solution exists, show anonymized solution.
+6. Ask whether user wants to create a token.
+7. Create token only after confirmation.
+8. Return Token ID.
+9. Allow user to check status later.
+
+## Privacy
+
+Never reveal:
+
+- other users' identities
+- phone numbers
+- emails
+- registration numbers
+- internal notes
+- private attachments
+- solver private information
+
+Only return anonymized knowledge.
+
+============================================================
+PART 5 — TOKEN SERVICE SKILL
+============================================================
+
+Create a complete Token Service Skill.
+
+Supported services initially:
+
+FORM_FILLUP
+TC
+RESCRUTINY
+EMS
+CERTIFICATE
+MARKSHEET
+REGISTRATION
+ADMISSION
+RESULT
+OTHER
+
+Do NOT hard-code these into the frontend.
+
+Load them dynamically through MCP:
+
+get_services()
+
+The chatbot should show:
+
+🎫 NU Token Service
+
+Please select your service:
+
+[ Form Fill-up ]
+
+[ TC ]
+
+[ Rescrutiny ]
+
+[ EMS ]
+
+[ Certificate ]
+
+[ Marksheet ]
+
+[ Registration ]
+
+[ Admission ]
+
+[ Result ]
+
+[ Other ]
+
+============================================================
+PART 6 — TOKEN CREATION WORKFLOW
+============================================================
+
+User:
+
+"I have a problem."
+
+AI:
+
+"Please select a service."
+
+User:
+
+EMS
+
+AI:
+
+"Please describe your problem."
+
+User:
+
+"I cannot login to EMS."
+
+AI:
+
+Search previous solved problems.
+
+If similar problem found:
+
+"I found a similar previously solved problem.
+
+Common solution:
+Your EMS credentials may need to be reset.
+
+Would you like to create a support token?"
+
+Buttons:
+
+[ Create Token ]
+
+[ Cancel ]
+
+If user clicks Create Token:
+
+Call MCP:
+
+create_token()
+
+Return:
+
+🎫 Token Created
+
+Token ID:
+
+NU-2026-000123
+
+Service:
+
+EMS
+
+Problem:
+
+I cannot login to EMS.
+
+Status:
+
+🟡 PENDING
+
+============================================================
+PART 7 — TOKEN DATABASE
+============================================================
+
+Create these tables.
+
+--------------------------------------------------
+token_service_types
+--------------------------------------------------
+
+id
+service_code
+service_name
+description
+active
+sort_order
+created_at
+updated_at
+
+--------------------------------------------------
+token_requests
+--------------------------------------------------
+
+id
+token_id
+user_id
+service_type_id
+problem
+status
+priority
+solver_id
+solve_message
+admin_note
+created_at
+updated_at
+assigned_at
+solved_at
+closed_at
+
+--------------------------------------------------
+token_solvers
+--------------------------------------------------
+
+id
+solver_name
+department
+email
+active
+created_at
+
+--------------------------------------------------
+token_history
+--------------------------------------------------
+
+id
+token_request_id
+old_status
+new_status
+message
+changed_by
+created_at
+
+--------------------------------------------------
+token_attachments
+--------------------------------------------------
+
+id
+token_request_id
+file_name
+file_path
+mime_type
+file_size
+uploaded_by
+created_at
+
+Add proper foreign keys and indexes.
+
+============================================================
+PART 8 — TOKEN STATUS
+============================================================
+
+Supported statuses:
+
+PENDING
+ASSIGNED
+PROCESSING
+SOLVED
+CLOSED
+REJECTED
+
+Status transition rules:
+
+PENDING
+→ ASSIGNED
+
+ASSIGNED
+→ PROCESSING
+
+PROCESSING
+→ SOLVED
+
+SOLVED
+→ CLOSED
+
+Admin can reject:
+
+PENDING
+→ REJECTED
+
+Do not allow arbitrary status changes.
+
+Validate transitions in backend.
+
+============================================================
+PART 9 — TOKEN ID GENERATION
+============================================================
+
+Generate IDs:
+
+NU-YYYY-000001
+
+Example:
+
+NU-2026-000001
+NU-2026-000002
+
+Must be:
+
+- unique
+- sequential
+- concurrency safe
+
+Use a database sequence or equivalent atomic mechanism.
+
+Never use a simple count()+1 implementation.
+
+============================================================
+PART 10 — TOKEN MCP SERVER
+============================================================
+
+Build a dedicated MCP Server:
+
+NU Token MCP Server
+
+Its responsibility is ONLY controlled access to Token Service functionality.
+
+Expose tools:
+
+--------------------------------------------------
+get_services
+--------------------------------------------------
+
+Returns active token service types.
+
+--------------------------------------------------
+create_token
+--------------------------------------------------
+
+Input:
+
+{
+    "service_code": "EMS",
+    "problem": "I cannot login to EMS",
+    "user_id": "..."
+}
+
+Returns:
+
+{
+    "token_id": "NU-2026-000123",
+    "status": "PENDING"
+}
+
+--------------------------------------------------
+get_token
+--------------------------------------------------
+
+Input:
+
+token_id
+
+Returns token information allowed for the current user.
+
+--------------------------------------------------
+get_token_status
+--------------------------------------------------
+
+Input:
+
+token_id
+
+Returns:
+
+status
+service
+created_date
+updated_date
+solver if permitted
+solve message if solved
+
+--------------------------------------------------
+get_token_history
+--------------------------------------------------
+
+Input:
+
+token_id
+
+Returns sanitized status history.
+
+--------------------------------------------------
+search_similar_solved_problems
+--------------------------------------------------
+
+Input:
+
+service_code
+problem
+limit
+
+Returns anonymized similar solved cases.
+
+--------------------------------------------------
+search_tokens
+--------------------------------------------------
+
+Admin/solver only.
+
+Search by:
+
+token ID
+service
+status
+date
+solver
+
+--------------------------------------------------
+assign_token
+--------------------------------------------------
+
+Admin only.
+
+--------------------------------------------------
+update_token_status
+--------------------------------------------------
+
+Admin/solver with authorization.
+
+--------------------------------------------------
+solve_token
+--------------------------------------------------
+
+Admin/authorized solver only.
+
+============================================================
+PART 11 — MCP SECURITY
+============================================================
+
+MCP tools must NOT expose unrestricted database access.
+
+Do NOT create a tool such as:
+
+execute_sql()
+
+Do NOT allow arbitrary SQL from AI.
+
+Each MCP tool must perform one specific controlled operation.
+
+For example:
+
+GOOD:
+
+get_token_status(token_id)
+
+BAD:
+
+execute_sql("SELECT * FROM token_requests")
+
+Implement:
+
+- authentication
+- authorization
+- input validation
+- role checks
+- audit logs
+- rate limiting where appropriate
+
+============================================================
+PART 12 — KNOWLEDGE MCP SERVER
+============================================================
+
+Create another MCP Server:
+
+NU Knowledge MCP
+
+Purpose:
+
+Provide access to the NU crawler/RAG knowledge.
+
+Tools:
+
+search_nu_knowledge()
+get_page()
+get_document()
+search_notice()
+search_exam_information()
+search_admission_information()
+
+The AI should use this MCP Server when answering official NU questions.
+
+Example:
+
+User:
+
+"When is the Honours admission application deadline?"
+
+AI:
+
+Token Service Skill is NOT appropriate.
+
+Use:
+
+NU Knowledge Skill
+
+→ search_nu_knowledge()
+
+→ return official source information.
+
+============================================================
+PART 13 — DOCUMENT MCP SERVER
+============================================================
+
+Create:
+
+NU Document MCP
+
+Tools:
+
+search_documents()
+get_document_text()
+get_document_metadata()
+
+It should support:
+
+PDF
+DOC
+DOCX
+XLS
+XLSX
+CSV
+TXT
+
+The crawler should store:
+
+document URL
+title
+document type
+source page
+download date
+hash
+extracted text
+metadata
+
+============================================================
+PART 14 — SOLVED PROBLEM KNOWLEDGE
+============================================================
+
+This is a key feature.
+
+When a token is solved, its problem and solution can become part of the support knowledge.
+
+However:
+
+NEVER store private user information inside the AI knowledge representation.
+
+Create an anonymized knowledge record:
+
+service:
+
+EMS
+
+problem:
+
+"User cannot login to EMS."
+
+solution:
+
+"Credentials were reset."
+
+category:
+
+LOGIN
+
+Do not expose:
+
+user name
+registration number
+phone
+email
+internal note
+
+The AI can use this knowledge for future similar questions.
+
+============================================================
+PART 15 — SIMILARITY SEARCH
+============================================================
+
+Use semantic search.
+
+Pipeline:
+
+User problem
+      ↓
+Embedding
+      ↓
+Vector search
+      ↓
+Filter by service
+      ↓
+Similarity score
+      ↓
+Return top matches
+      ↓
+AI summarizes solution
+
+Example:
+
+Stored:
+
+"EMS login failed"
+
+User asks:
+
+"I can't enter my EMS account."
+
+These should be recognized as similar.
+
+Use a configurable similarity threshold.
+
+Example:
+
+SIMILARITY_THRESHOLD=0.78
+
+Do not automatically claim a solution if confidence is low.
+
+If confidence is low:
+
+"I couldn't find a sufficiently similar solved problem."
+
+Then offer:
+
+[ Create Support Token ]
+
+============================================================
+PART 16 — AI ORCHESTRATOR
+============================================================
+
+Create an AI Orchestrator.
+
+Its responsibility:
+
+1. Understand user intent.
+2. Select Skill.
+3. Load Skill instructions.
+4. Determine required MCP tools.
+5. Call MCP tools.
+6. Process results.
+7. Generate final response.
+
+Example intent categories:
+
+GENERAL_NU_QUERY
+TOKEN_CREATE
+TOKEN_STATUS
+TOKEN_SEARCH
+SOLVED_PROBLEM_SEARCH
+NOTICE_SEARCH
+EXAM_SEARCH
+ADMISSION_SEARCH
+DOCUMENT_SEARCH
+
+============================================================
+PART 17 — IMPORTANT ROUTING RULE
+============================================================
+
+Use the following priority:
+
+IF user provides a Token ID:
+
+→ Token Service Skill
+
+IF user explicitly requests Token Service:
+
+→ Token Service Skill
+
+IF user asks official NU information:
+
+→ NU Knowledge Skill
+
+IF user asks about documents:
+
+→ Document Skill
+
+IF user asks a general question:
+
+→ General NU Skill
+
+Never send every question to the Token database.
+
+============================================================
+PART 18 — TOKEN STATUS CHAT
+============================================================
+
+User:
+
+"Check NU-2026-000123"
+
+AI should identify the Token ID.
+
+Call:
+
+get_token_status()
+
+Then display:
+
+🎫 NU-2026-000123
+
+Service:
+EMS
+
+Status:
+🔵 PROCESSING
+
+Solver:
+ICT Support Team
+
+Created:
+19 August 2026
+
+Last Updated:
+19 August 2026
+
+Do not expose unauthorized information.
+
+============================================================
+PART 19 — ADMIN DASHBOARD
+============================================================
+
+Build a professional admin dashboard.
+
+Main sections:
+
+Dashboard
+Tokens
+Services
+Solvers
+Knowledge
+Analytics
+Users
+Audit Logs
+Settings
+
+Dashboard statistics:
+
+Total Tokens
+Pending
+Processing
+Solved Today
+Closed
+Average Resolution Time
+
+Token table:
+
+Token ID
+Service
+Problem
+Status
+Priority
+Solver
+Created
+Updated
+
+Filters:
+
+Service
+Status
+Solver
+Date range
+Priority
+
+============================================================
+PART 20 — TOKEN DETAILS PAGE
+============================================================
+
+Show:
+
+Token ID
+Service
+Problem
+User information according to permissions
+Status
+Priority
+Assigned solver
+Created date
+Updated date
+History
+Solution
+
+Buttons:
+
+Assign
+Start Processing
+Mark Solved
+Close
+Reject
+
+Solution editor:
+
+[ Write solution ]
+
+Internal note:
+
+[ Internal note ]
+
+Internal notes must NEVER be shown to normal users or AI unless explicitly permitted.
+
+============================================================
+PART 21 — USER CHAT UI
+============================================================
+
+Create interactive UI.
+
+Main menu:
+
+🎓 NU AI Assistant
+
+[ 🔎 Search NU Information ]
+
+[ 🎫 Token Service ]
+
+[ 📋 Check Token ]
+
+[ 📄 Documents ]
+
+[ 📝 Examination ]
+
+[ 🎓 Admission ]
+
+[ 📢 Notices ]
+
+Use cards/buttons.
+
+Token Service:
+
+[ Form Fill-up ]
+[ TC ]
+[ Rescrutiny ]
+[ EMS ]
+[ Certificate ]
+[ Marksheet ]
+[ Registration ]
+[ Admission ]
+[ Result ]
+[ Other ]
+
+============================================================
+PART 22 — CHAT CONTEXT
+============================================================
+
+The AI must maintain conversation state.
+
+Example:
+
+User:
+
+Token Service
+
+AI:
+
+Select service.
+
+User:
+
+EMS
+
+AI:
+
+Describe your problem.
+
+User:
+
+I cannot login.
+
+AI:
+
+Search similar problems...
+
+The system should remember:
+
+service_code = EMS
+
+problem = I cannot login
+
+Do not ask the user repeatedly for information already provided.
+
+Use a structured conversation state.
+
+============================================================
+PART 23 — ERROR HANDLING
+============================================================
+
+Never expose:
+
+SQL errors
+stack traces
+database credentials
+MCP internal errors
+server paths
+
+Example:
+
+If Token MCP is unavailable:
+
+"Sorry, the Token Service is temporarily unavailable. Please try again later."
+
+Log technical error internally.
+
+============================================================
+PART 24 — AUDIT LOGGING
+============================================================
+
+Log:
+
+user
+action
+token
+tool
+timestamp
+IP if appropriate
+result
+success/failure
+
+Examples:
+
+TOKEN_CREATED
+TOKEN_VIEWED
+TOKEN_ASSIGNED
+TOKEN_STATUS_CHANGED
+TOKEN_SOLVED
+TOKEN_CLOSED
+
+MCP tool calls should also be auditable.
+
+============================================================
+PART 25 — NOTIFICATION SYSTEM
+============================================================
+
+Design the system so notifications can later support:
+
+Email
+SMS
+Push Notification
+WhatsApp
+Telegram
+
+Initial implementation may use an abstract notification service.
+
+Events:
+
+TOKEN_CREATED
+TOKEN_ASSIGNED
+TOKEN_PROCESSING
+TOKEN_SOLVED
+TOKEN_CLOSED
+
+Do not hard-code a specific provider.
+
+============================================================
+PART 26 — AUTHENTICATION
+============================================================
+
+Implement role-based authentication.
+
+Roles:
+
+USER
+SOLVER
+ADMIN
+SUPER_ADMIN
+
+Permissions:
+
+USER:
+- create token
+- view own token
+- view own history
+
+SOLVER:
+- assigned tokens
+- update assigned tokens
+- solve assigned tokens
+
+ADMIN:
+- all token operations
+- assign solver
+- manage services
+- manage solvers
+
+SUPER_ADMIN:
+- full system access
+- user management
+- settings
+- audit logs
+
+============================================================
+PART 27 — RAG INTEGRATION
+============================================================
+
+The AI response system should combine:
+
+Official NU Knowledge
++
+Solved Support Knowledge
++
+Current Token Data
+
+But keep them logically separate.
+
+Example:
+
+Official source:
+
+"NU published a notice stating..."
+
+Solved support knowledge:
+
+"Similar users previously experienced..."
+
+Current token:
+
+"Your token is currently processing..."
+
+Never present a support case as an official NU notice.
+
+Clearly distinguish:
+
+OFFICIAL NU INFORMATION
+
+and
+
+PREVIOUSLY SOLVED SUPPORT CASE
+
+============================================================
+PART 28 — RESPONSE GENERATION RULES
+============================================================
+
+For official NU questions:
+
+Use official source information.
+
+For token status:
+
+Use current database.
+
+For similar problem:
+
+Use anonymized solved cases.
+
+For uncertain information:
+
+Say that the information could not be confirmed.
+
+Never hallucinate:
+
+Token IDs
+Status
+Solver
+Dates
+NU notices
+Exam dates
+Admission deadlines
+
+============================================================
+PART 29 — MCP TOOL RESPONSE FORMAT
+============================================================
+
+All MCP tools should return structured JSON.
+
+Example:
+
+{
+    "success": true,
+    "data": {
+        "token_id": "NU-2026-000123",
+        "status": "PROCESSING"
+    },
+    "error": null
+}
+
+Error:
+
+{
+    "success": false,
+    "data": null,
+    "error": {
+        "code": "TOKEN_NOT_FOUND",
+        "message": "Token was not found."
+    }
+}
+
+Never return uncontrolled raw database rows.
+
+============================================================
+PART 30 — TESTING
+============================================================
+
+Create automated tests.
+
+Test:
+
+Token creation
+Token ID uniqueness
+Status transitions
+Authorization
+User ownership
+Solver permissions
+Admin permissions
+Token search
+Similar problem search
+MCP tools
+Skill routing
+RAG routing
+Invalid token
+MCP failure
+Database failure
+Duplicate requests
+Concurrent token creation
+
+Create sample data.
+
+Example:
+
+EMS:
+
+"I cannot login to EMS."
+
+Solution:
+
+"Credentials were reset."
+
+Form Fill-up:
+
+"Payment successful but status pending."
+
+Solution:
+
+"Payment synchronization completed."
+
+Certificate:
+
+"Certificate application delayed."
+
+Solution:
+
+"Application was manually synchronized."
+
+============================================================
+PART 31 — MCP DEVELOPMENT MODE
+============================================================
+
+Provide an easy local development setup.
+
+Use:
+
+.env
+
+Example:
+
+DATABASE_URL=
+VECTOR_DATABASE_URL=
+AI_API_KEY=
+MCP_AUTH_SECRET=
+JWT_SECRET=
+
+Never commit secrets.
+
+Provide:
+
+.env.example
+
+============================================================
+PART 32 — DOCKER
+============================================================
+
+Create Docker support.
+
+Services:
+
+frontend
+backend
+token-mcp
+knowledge-mcp
+document-mcp
+postgres
+vector-db
+
+Provide:
+
+docker-compose.yml
+
+The system should be possible to start with:
+
+docker compose up -d
+
+============================================================
+PART 33 — DOCUMENTATION
+============================================================
+
+Create documentation:
+
+docs/
+│
+├── architecture.md
+├── skills.md
+├── mcp.md
+├── token-service.md
+├── database.md
+├── rag.md
+├── security.md
+├── api.md
+├── deployment.md
+└── troubleshooting.md
+
+Explain:
+
+What is a Skill?
+
+What is MCP?
+
+Why Skills and MCP are separate.
+
+How to create a new Skill.
+
+How to create a new MCP tool.
+
+How to add a new Token Service type.
+
+How to add a new solver.
+
+How to connect another database.
+
+============================================================
+PART 34 — ADDING NEW SERVICES
+============================================================
+
+Adding a new service such as:
+
+"Migration"
+
+should NOT require rewriting the chatbot.
+
+Admin adds:
+
+MIGRATION
+
+to token_service_types.
+
+The chatbot automatically displays:
+
+[ Migration ]
+
+The Skill should automatically handle it using:
+
+service_code.
+
+============================================================
+PART 35 — FUTURE MCP EXTENSIBILITY
+============================================================
+
+The architecture must allow future MCP servers.
+
+Potential future servers:
+
+NU Exam MCP
+NU Admission MCP
+NU Result MCP
+NU College MCP
+NU Registration MCP
+NU Certificate MCP
+NU Payment MCP
+
+Example:
+
+NU Exam MCP:
+
+get_exam_schedule()
+search_exam_notice()
+get_exam_center()
+
+NU Result MCP:
+
+search_result()
+get_result_status()
+
+NU College MCP:
+
+search_college()
+get_college_information()
+
+Do not implement all of these now unless required.
+
+Create the architecture so they can be added later.
+
+============================================================
+PART 36 — FUTURE SKILLS
+============================================================
+
+Create a Skill architecture supporting:
+
+NU General Skill
+Token Service Skill
+Exam Skill
+Admission Skill
+Result Skill
+Notice Skill
+Document Skill
+College Skill
+Certificate Skill
+
+Each Skill must be independent.
+
+============================================================
+PART 37 — IMPORTANT SECURITY RULE
+============================================================
+
+The AI must never have unrestricted database access.
+
+NEVER implement:
+
+execute_sql()
+
+NEVER allow:
+
+AI-generated SQL
+
+NEVER expose:
+
+database credentials
+
+Use only typed MCP tools.
+
+Example:
+
+GOOD:
+
+get_token_status(token_id)
+
+BAD:
+
+query_database(sql)
+
+============================================================
+PART 38 — FINAL USER EXPERIENCE
+============================================================
+
+The final experience should look like:
+
+USER:
+
+Hello
+
+AI:
+
+Welcome to National University AI Assistant.
+
+How can I help you?
+
+[ 🔎 Search NU Information ]
+[ 🎫 Token Service ]
+[ 📋 Check Token ]
+[ 📄 Documents ]
+
+USER:
+
+Token Service
+
+AI:
+
+🎫 Please select your service.
+
+[ Form Fill-up ]
+[ TC ]
+[ Rescrutiny ]
+[ EMS ]
+[ Certificate ]
+[ Marksheet ]
+[ Registration ]
+[ Admission ]
+[ Result ]
+[ Other ]
+
+USER:
+
+EMS
+
+AI:
+
+Please describe your problem.
+
+USER:
+
+I cannot login to EMS.
+
+AI:
+
+🔎 I found a similar previously solved problem.
+
+Problem:
+EMS login issue.
+
+Previous solution:
+The user's credentials were reset.
+
+Would you like to create a support token?
+
+[ Create Token ]
+[ Cancel ]
+
+USER:
+
+Create Token
+
+AI:
+
+🎫 Token created successfully.
+
+Token ID:
+
+NU-2026-000123
+
+Status:
+
+🟡 PENDING
+
+You can check the status anytime by asking:
+
+"Check NU-2026-000123"
+
+============================================================
+PART 39 — IMPLEMENTATION STRATEGY
+============================================================
+
+Do not generate everything blindly in one step.
+
+First:
+
+1. Inspect existing project.
+2. Understand existing architecture.
+3. Identify current chatbot.
+4. Identify current database.
+5. Identify current crawler.
+6. Identify RAG system.
+7. Identify authentication.
+8. Identify frontend.
+
+Then produce:
+
+PHASE 1
+Architecture analysis.
+
+PHASE 2
+Database schema.
+
+PHASE 3
+Token Service backend.
+
+PHASE 4
+Token MCP Server.
+
+PHASE 5
+Skills architecture.
+
+PHASE 6
+AI Orchestrator integration.
+
+PHASE 7
+Frontend interactive Token Service.
+
+PHASE 8
+Admin dashboard.
+
+PHASE 9
+Solved-problem semantic search.
+
+PHASE 10
+Testing.
+
+PHASE 11
+Docker/deployment.
+
+After each phase:
+
+- run tests
+- check errors
+- preserve existing functionality
+- document changes
+
+Do not break existing functionality.
+
+============================================================
+PART 40 — FINAL ACCEPTANCE CRITERIA
+============================================================
+
+The project is considered complete only when:
+
+[ ] Existing NU crawler works.
+
+[ ] Existing NU RAG works.
+
+[ ] General NU questions work.
+
+[ ] Token Service appears in chatbot.
+
+[ ] User can select service interactively.
+
+[ ] User can describe problem.
+
+[ ] Similar solved problems are searched.
+
+[ ] User can create token.
+
+[ ] Token ID is generated safely.
+
+[ ] User can check token status.
+
+[ ] Token status transitions work.
+
+[ ] Solver can receive token.
+
+[ ] Solver can update token.
+
+[ ] Solver can solve token.
+
+[ ] Admin can manage tokens.
+
+[ ] Admin can manage services.
+
+[ ] Admin can manage solvers.
+
+[ ] Token history is maintained.
+
+[ ] Similar solved problems are anonymized.
+
+[ ] User privacy is protected.
+
+[ ] MCP tools are restricted and typed.
+
+[ ] AI cannot execute arbitrary SQL.
+
+[ ] Skills are separated from MCP.
+
+[ ] RAG and Token knowledge are separated.
+
+[ ] Audit logs work.
+
+[ ] Error handling works.
+
+[ ] Tests pass.
+
+[ ] Docker deployment works.
+
+[ ] Documentation exists.
+
+============================================================
+MOST IMPORTANT ARCHITECTURAL PRINCIPLE
+============================================================
+
+Remember this distinction throughout the project:
+
+SKILL:
+
+"What should the AI do?"
+
+MCP:
+
+"What tools/data can the AI access?"
+
+Example:
+
+Token Service Skill:
+
+"When user has a problem, collect service + problem, search similar solved cases, then offer token creation."
+
+Token MCP:
+
+"Provides create_token(), get_token_status(), search_similar_solved_problems(), assign_token(), solve_token()."
+
+Do not put business workflow instructions inside MCP unnecessarily.
+
+Do not put database access inside Skills.
+
+Keep the system modular.
+
+============================================================
+START NOW
+============================================================
+
+First inspect my existing project.
+
+Do NOT immediately overwrite existing files.
+
+First generate:
+
+1. Current architecture analysis
+2. Proposed architecture
+3. Files that need to be added
+4. Files that need modification
+5. Database ER diagram
+6. MCP architecture
+7. Skill architecture
+8. API design
+9. Security model
+10. Implementation plan
+
+Then begin implementation phase by phase.
+
+Use production-quality code.
+
+Use clear comments only where necessary.
+
+Use strong typing.
+
+Use validation.
+
+Use logging.
+
+Use tests.
+
+Preserve existing functionality.
+
+The final result must be a working NU AI Assistant platform with:
+
+NU CRAWLER
++
+RAG
++
+SKILLS
++
+MCP SERVERS
++
+TOKEN SERVICE
++
+SOLVED PROBLEM KNOWLEDGE
++
+ADMIN/SOLVER DASHBOARD
++
+INTERACTIVE CHATBOT
+```
+
+## আপনার ক্ষেত্রে সবচেয়ে গুরুত্বপূর্ণ design
+
+আমি আপনার project-এ **একটা বিশাল MCP Server** বানাতে বলব না। বরং এইভাবে রাখব:
+
+```text
+                    NU AI ASSISTANT
+                           │
+                    AI ORCHESTRATOR
+                           │
+             ┌─────────────┴─────────────┐
+             │                           │
+          SKILLS                       MCP
+             │                           │
+    ┌────────┼────────┐          ┌───────┼────────┐
+    │        │        │          │       │        │
+    ▼        ▼        ▼          ▼       ▼        ▼
+   NU      TOKEN    EXAM       TOKEN    NU     DOCUMENT
+  Skill    Skill    Skill       MCP     MCP      MCP
+                                  │
+                                  ▼
+                           Token Database
+```
+
+এখানে **Token Skill** AI-কে workflow শেখাবে, আর **Token MCP** database-এর সাথে নিরাপদভাবে কাজ করবে।
+
+আর সবচেয়ে গুরুত্বপূর্ণ বিষয় হলো, ভবিষ্যতে আপনি যদি **EMS-এর জন্য আলাদা database/API**, **Result database**, **Certificate system**, বা **College database** যুক্ত করেন, তখন পুরো bot rewrite করতে হবে না। শুধু নতুন MCP tools/server এবং প্রয়োজনে নতুন Skill যোগ করলেই হবে।
+
+**Antigravity-কে prompt দেওয়ার সময় আপনার বর্তমান project folder-টিও দিন**, যাতে সে প্রথমে existing crawler, RAG, chatbot এবং database architecture inspect করে তারপর integration করে—নতুন করে একই system বানিয়ে existing কাজ নষ্ট না করে।

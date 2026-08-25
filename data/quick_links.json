@@ -1,0 +1,109 @@
+[
+  {
+    "category": "All Notices & Circulars",
+    "category_bn": "সকল নোটিশ ও বিজ্ঞপ্তি",
+    "icon": "📄",
+    "links": [
+      {
+        "title": "All Notice Board (Recent News & Notice)",
+        "title_bn": "সকল নোটিশ বোর্ড (সাম্প্রতিক নোটিশ)",
+        "url": "https://www.nu.ac.bd/recent-news-notice.php",
+        "description": "Primary official notice board for all breaking circulars, routines, and announcements."
+      },
+      {
+        "title": "Examination Notices & Routines",
+        "title_bn": "পরীক্ষার রুটিন ও নোটিশ",
+        "url": "https://www.nu.ac.bd/examination-notice.php",
+        "description": "Latest timetable, exam center list, and schedule notices."
+      },
+      {
+        "title": "Admission Notices & Circulars",
+        "title_bn": "ভর্তি সংক্রান্ত সকল নোটিশ",
+        "url": "https://www.nu.ac.bd/admission-notice.php",
+        "description": "Latest release slip, merit list, and admission circulars."
+      }
+    ]
+  },
+  {
+    "category": "Admissions & Applications",
+    "category_bn": "ভর্তি ও আবেদন",
+    "icon": "🎓",
+    "links": [
+      {
+        "title": "Honours & Degree Admission Portal",
+        "title_bn": "অনার্স ও ডিগ্রি ভর্তি পোর্টাল",
+        "url": "http://app1.nu.edu.bd/",
+        "description": "Apply for Honours, Degree (Pass), Professional & Masters courses."
+      },
+      {
+        "title": "Alternative Admission Server",
+        "title_bn": "বিকল্প ভর্তি সার্ভার",
+        "url": "http://app11.nu.edu.bd/",
+        "description": "Secondary application server during high traffic."
+      }
+    ]
+  },
+  {
+    "category": "Results & Archive",
+    "category_bn": "ফলাফল ও রেজাল্ট আর্কাইভ",
+    "icon": "📊",
+    "links": [
+      {
+        "title": "Official Result Archive (Primary)",
+        "title_bn": "ফলাফল আর্কাইভ (প্রধান সার্ভার)",
+        "url": "https://results.nu.ac.bd/",
+        "description": "View marksheet & GPA for Honours, Degree, Masters & Professional."
+      },
+      {
+        "title": "NU Results Portal (Alternative)",
+        "title_bn": "রেজাল্ট পোর্টাল (বিকল্প)",
+        "url": "http://www.nu.ac.bd/results/",
+        "description": "Individual and college-wise results query."
+      },
+      {
+        "title": "Archive Server (Dedicated IP)",
+        "title_bn": "রেজাল্ট আর্কাইভ ডেডিকেটেড সার্ভার",
+        "url": "http://103.113.200.7/",
+        "description": "High-speed result archive server."
+      }
+    ]
+  },
+  {
+    "category": "Exams, Routine & Form Fill-up",
+    "category_bn": "পরীক্ষা, রুটিন ও ফর্ম পূরণ",
+    "icon": "📝",
+    "links": [
+      {
+        "title": "EMS & Form Fill-Up Portal",
+        "title_bn": "ফর্ম পূরণ ও ইএমএস পোর্টাল",
+        "url": "http://ems.nu.ac.bd/",
+        "description": "Online exam form fill-up, student portal, and admit card status."
+      },
+      {
+        "title": "Student Form Fill-up (NUBD Info)",
+        "title_bn": "শিক্ষার্থী ফর্ম ফিলাপ পোর্টাল",
+        "url": "http://www.nubd.info/form_fillup/",
+        "description": "Online examination registration and subject entry."
+      }
+    ]
+  },
+  {
+    "category": "ICT Department & Employee Directory",
+    "category_bn": "আইসিটি দপ্তর ও কর্মকর্তা তালিকা",
+    "icon": "💻",
+    "links": [
+      {
+        "title": "ICT Department & Officer Profiles",
+        "title_bn": "তথ্য প্রযুক্তি (আইসিটি) দপ্তর ও কর্মকর্তা/কর্মচারী",
+        "url": "https://www.nu.ac.bd/ict-department.php",
+        "description": "Directory of 90+ ICT officers, director, programmers, and support contacts."
+      },
+      {
+        "title": "Certificate & Marksheet Verification",
+        "title_bn": "সার্টিফিকেট ও নম্বরপত্র যাচাই",
+        "url": "https://www.nu.ac.bd/certificate-verification.php",
+        "description": "Verify official degree certificates and academic transcripts online."
+      }
+    ]
+  }
+]

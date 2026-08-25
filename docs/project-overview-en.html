@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>National University AI Assistant — Project Overview & Technical Architecture</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap');
+
+  @page {
+    size: A4 portrait;
+    margin: 12mm 14mm 14mm 14mm;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: #1e293b;
+    background-color: #ffffff;
+    line-height: 1.5;
+    font-size: 13px;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .page {
+    page-break-after: always;
+    position: relative;
+    padding-bottom: 25px;
+  }
+
+  .page:last-child {
+    page-break-after: avoid;
+  }
+
+  .header-table {
+    width: 100%;
+    border-bottom: 2px solid #059669;
+    padding-bottom: 8px;
+    margin-bottom: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .header-left h2 {
+    font-size: 15px;
+    font-weight: 800;
+    color: #065f46;
+    letter-spacing: -0.2px;
+  }
+
+  .header-left p {
+    font-size: 11px;
+    color: #059669;
+    font-weight: 600;
+  }
+
+  .header-right {
+    text-align: right;
+  }
+
+  .header-right .badge {
+    display: inline-block;
+    background: #0f172a;
+    color: #ffffff;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .header-right p {
+    font-size: 10px;
+    color: #64748b;
+    margin-top: 2px;
+  }
+
+  .title-section {
+    margin-bottom: 12px;
+  }
+
+  .title-section h1 {
+    font-size: 21px;
+    font-weight: 800;
+    color: #065f46;
+    line-height: 1.3;
+    margin-bottom: 4px;
+    letter-spacing: -0.3px;
+  }
+
+  .title-section .subtitle {
+    font-size: 12px;
+    color: #475569;
+    font-weight: 600;
+  }
+
+  .callout-box {
+    background: #f0fdf4;
+    border: 1px solid #86efac;
+    border-left: 4px solid #059669;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+
+  .callout-box h3 {
+    font-size: 13px;
+    font-weight: 700;
+    color: #065f46;
+    margin-bottom: 4px;
+  }
+
+  .callout-box p {
+    font-size: 12px;
+    color: #166534;
+    line-height: 1.5;
+  }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .card {
+    padding: 9px 11px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+  }
+
+  .card.green { background: #f0fdf4; border-color: #bbf7d0; }
+  .card.amber { background: #fffbeb; border-color: #fef08a; }
+  .card.blue { background: #eff6ff; border-color: #bfdbfe; }
+  .card.purple { background: #faf5ff; border-color: #e9d5ff; }
+
+  .card h4 {
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 3px;
+  }
+
+  .card.green h4 { color: #065f46; }
+  .card.amber h4 { color: #92400e; }
+  .card.blue h4 { color: #1e40af; }
+  .card.purple h4 { color: #6b21a8; }
+
+  .card p {
+    font-size: 11px;
+    color: #475569;
+    line-height: 1.4;
+  }
+
+  .section-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f172a;
+    border-left: 3px solid #059669;
+    padding-left: 8px;
+    margin-top: 14px;
+    margin-bottom: 8px;
+  }
+
+  .diagram-container {
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+
+  table.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 6px;
+    margin-bottom: 12px;
+    font-size: 11.5px;
+  }
+
+  table.data-table th {
+    background: #0f172a;
+    color: #ffffff;
+    font-weight: 700;
+    padding: 6px 10px;
+    text-align: left;
+    border: 1px solid #334155;
+    font-size: 11px;
+  }
+
+  table.data-table td {
+    padding: 6px 10px;
+    border: 1px solid #e2e8f0;
+    vertical-align: top;
+    line-height: 1.4;
+  }
+
+  table.data-table tr:nth-child(even) td {
+    background: #f8fafc;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 9.5px;
+    font-weight: 700;
+  }
+
+  .tag.green { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+  .tag.blue { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+  .tag.purple { background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; }
+  .tag.amber { background: #fef3c7; color: #92400e; border: 1px solid #fde047; }
+  .tag.slate { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; }
+
+  .page-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-top: 1px solid #cbd5e1;
+    padding-top: 5px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: #64748b;
+  }
+</style>
+</head>
+<body>
+
+<!-- ==================== PAGE 1: EXECUTIVE OVERVIEW & ARCHITECTURE SKETCH ==================== -->
+<div class="page">
+  <div class="header-table">
+    <div class="header-left">
+      <h2>NATIONAL UNIVERSITY BANGLADESH</h2>
+      <p>Division of Academic Affairs & Information Technology</p>
+    </div>
+    <div class="header-right">
+      <span class="badge">Official Technical Overview</span>
+      <p>Version 2.0 • Production Ready • 2026</p>
+    </div>
+  </div>
+
+  <div class="title-section">
+    <h1>National University AI Academic Assistant & Support Platform</h1>
+    <div class="subtitle">Autonomous AI Conversational Assistant, Tracked Support Ticket Service & 24/7 Knowledge Enrichment Ecosystem</div>
+  </div>
+
+  <div class="callout-box">
+    <h3>🌟 Project Mission & Executive Overview</h3>
+    <p>
+      National University (<strong>nu.ac.bd</strong>) is the largest higher-education affiliating university in Bangladesh, serving over 3 million students across 2,200+ affiliated colleges. Due to high query volumes during admissions, exam schedules, EMS portal logins, and certificate issuances, this enterprise AI platform was architected. It provides instant verified academic guidance and manages official, encrypted support tickets for departmental solvers.
+    </p>
+  </div>
+
+  <div class="grid-3">
+    <div class="card green">
+      <h4>⚡ Sub-Millisecond Response</h4>
+      <p>High-frequency queries (greetings, admissions, exam routines) served in <strong>0.018 ms</strong> from in-memory cache.</p>
+    </div>
+    <div class="card amber">
+      <h4>🎫 Atomic Support Tokens</h4>
+      <p>EMS lockout, form fill-up, and certificate issues resolved via <strong>NU-2026-XXXXXX</strong> tracked tickets.</p>
+    </div>
+    <div class="card blue">
+      <h4>🤖 24/7 Autonomous Agents</h4>
+      <p>Continuously crawl, extract key dates/fees, vectorize Q&As, and update ChromaDB vector storage in real time.</p>
+    </div>
+  </div>
+
+  <div class="section-title">
+    1. Full System Architecture & Data Flow Diagram
+  </div>
+
+  <div class="diagram-container">
+    <svg width="100%" height="225" viewBox="0 0 740 225" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="740" height="225" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+      <rect x="0" y="0" width="740" height="26" rx="8" fill="#0f172a"/>
+      <text x="15" y="17" fill="#ffffff" font-family="'Inter', sans-serif" font-size="11" font-weight="700">End-to-End System Architecture & Component Data Flow</text>
+      
+      <!-- Box 1: User Channels -->
+      <rect x="15" y="38" width="125" height="85" rx="6" fill="#ecfdf5" stroke="#059669" stroke-width="1.5"/>
+      <text x="22" y="56" fill="#065f46" font-family="'Inter'" font-size="11" font-weight="700">1. User Channels</text>
+      <text x="22" y="73" fill="#334155" font-family="'Inter'" font-size="9.5">• Responsive Web UI</text>
+      <text x="22" y="89" fill="#334155" font-family="'Inter'" font-size="9.5">• Mobile Camera QR</text>
+      <text x="22" y="105" fill="#334155" font-family="'Inter'" font-size="9.5">• Support Token Portal</text>
+
+      <!-- Arrow 1 -> 2 -->
+      <path d="M 140 80 L 168 80" stroke="#059669" stroke-width="2" marker-end="url(#arrow-green)"/>
+
+      <!-- Box 2: FastAPI Gateway -->
+      <rect x="170" y="35" width="165" height="92" rx="6" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+      <text x="178" y="54" fill="#1e40af" font-family="'Inter'" font-size="11" font-weight="700">2. FastAPI Gateway & Core</text>
+      <text x="178" y="70" fill="#334155" font-family="'Inter'" font-size="9.5">• Async Thread Offload (asyncio)</text>
+      <text x="178" y="85" fill="#334155" font-family="'Inter'" font-size="9.5">• Preloaded Fast Cache (18 µs)</text>
+      <text x="178" y="100" fill="#334155" font-family="'Inter'" font-size="9.5">• Intent & Skill Router</text>
+      <text x="178" y="115" fill="#334155" font-family="'Inter'" font-size="9.5">• Google Gemini 3 Flash LLM</text>
+
+      <!-- Arrow 2 -> 3 -->
+      <path d="M 335 80 L 363 80" stroke="#2563eb" stroke-width="2" marker-end="url(#arrow-blue)"/>
+
+      <!-- Box 3: MCP Tool Suite -->
+      <rect x="365" y="38" width="135" height="85" rx="6" fill="#faf5ff" stroke="#9333ea" stroke-width="1.5"/>
+      <text x="373" y="56" fill="#6b21a8" font-family="'Inter'" font-size="11" font-weight="700">3. MCP Server Suite</text>
+      <text x="373" y="73" fill="#334155" font-family="'Fira Code', monospace" font-size="9">• token_mcp (8 tools)</text>
+      <text x="373" y="89" fill="#334155" font-family="'Fira Code', monospace" font-size="9">• knowledge_mcp</text>
+      <text x="373" y="105" fill="#334155" font-family="'Fira Code', monospace" font-size="9">• credential_mcp</text>
+
+      <!-- Arrow 3 -> 4 (Down) -->
+      <path d="M 432 123 L 432 140" stroke="#9333ea" stroke-width="2" marker-end="url(#arrow-purple)"/>
+
+      <!-- Box 4: Database Core -->
+      <rect x="345" y="142" width="175" height="74" rx="6" fill="#fffbeb" stroke="#d97706" stroke-width="1.5"/>
+      <text x="353" y="159" fill="#92400e" font-family="'Inter'" font-size="11" font-weight="700">4. Database & Vault Core</text>
+      <text x="353" y="174" fill="#334155" font-family="'Inter'" font-size="9.5">• ChromaDB Semantic Vector Store</text>
+      <text x="353" y="189" fill="#334155" font-family="'Inter'" font-size="9.5">• SQLite (WAL Mode) Ticket Store</text>
+      <text x="353" y="204" fill="#334155" font-family="'Inter'" font-size="9.5">• Fernet AES-128 Credential Vault</text>
+
+      <!-- Box 5: 24/7 Autonomous Agents -->
+      <rect x="15" y="142" width="155" height="74" rx="6" fill="#fdf2f8" stroke="#db2777" stroke-width="1.5"/>
+      <text x="22" y="159" fill="#9d174d" font-family="'Inter'" font-size="11" font-weight="700">5. 24/7 Autonomous Agents</text>
+      <text x="22" y="174" fill="#334155" font-family="'Inter'" font-size="9.5">• ScrapedDataAnalyzerAgent</text>
+      <text x="22" y="189" fill="#334155" font-family="'Inter'" font-size="9.5">• KnowledgeEnricherAgent</text>
+      <text x="22" y="204" fill="#334155" font-family="'Inter'" font-size="9.5">• JSONL Stream & RFC 8259 Manifest</text>
+
+      <!-- Arrow 5 -> 4 -->
+      <path d="M 170 178 L 343 178" stroke="#db2777" stroke-width="2" stroke-dasharray="4,3" marker-end="url(#arrow-pink)"/>
+
+      <!-- Box 6: Solvers & Admin -->
+      <rect x="180" y="142" width="155" height="74" rx="6" fill="#f1f5f9" stroke="#475569" stroke-width="1.5"/>
+      <text x="188" y="159" fill="#0f172a" font-family="'Inter'" font-size="11" font-weight="700">6. Department Solvers & Admin</text>
+      <text x="188" y="174" fill="#334155" font-family="'Inter'" font-size="9.5">• ICT, Exam & Registration Desks</text>
+      <text x="188" y="189" fill="#334155" font-family="'Inter'" font-size="9.5">• Self-Learning Vector Feedback</text>
+      <text x="188" y="204" fill="#334155" font-family="'Inter'" font-size="9.5">• RBAC Role Permission Gates</text>
+
+      <!-- Box 7: External Portals -->
+      <rect x="530" y="38" width="195" height="178" rx="6" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+      <text x="540" y="58" fill="#166534" font-family="'Inter'" font-size="11" font-weight="700">7. National University Portals</text>
+      <text x="540" y="78" fill="#334155" font-family="'Inter'" font-size="9.5">🌐 nu.ac.bd (Main Site & Notices)</text>
+      <text x="540" y="96" fill="#334155" font-family="'Inter'" font-size="9.5">📝 app1.nu.edu.bd (Admissions)</text>
+      <text x="540" y="114" fill="#334155" font-family="'Inter'" font-size="9.5">📊 results.nu.ac.bd (Archive)</text>
+      <text x="540" y="132" fill="#334155" font-family="'Inter'" font-size="9.5">🔐 ems.nu.ac.bd (Student Portal)</text>
+      <text x="540" y="150" fill="#334155" font-family="'Inter'" font-size="9.5">💳 Sonali Seba Payment Gateway</text>
+      <rect x="540" y="165" width="175" height="38" rx="4" fill="#dcfce7" stroke="#86efac"/>
+      <text x="546" y="180" fill="#166534" font-family="'Inter'" font-size="9" font-weight="700">Intelligent Deep Crawler & RAG Sync</text>
+      <text x="546" y="194" fill="#166534" font-family="'Inter'" font-size="8">Periodically crawls & indexes 10 sections</text>
+
+      <defs>
+        <marker id="arrow-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 1 L 8 5 L 0 9 z" fill="#059669"/></marker>
+        <marker id="arrow-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 1 L 8 5 L 0 9 z" fill="#2563eb"/></marker>
+        <marker id="arrow-purple" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 1 L 8 5 L 0 9 z" fill="#9333ea"/></marker>
+        <marker id="arrow-pink" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 1 L 8 5 L 0 9 z" fill="#db2777"/></marker>
+      </defs>
+    </svg>
+  </div>
+
+  <div class="page-footer">
+    <span>National University AI Assistant • Project Overview & Architecture</span>
+    <span>Page 1 of 3</span>
+  </div>
+</div>
+
+<!-- ==================== PAGE 2: TECH STACK & ENRICHMENT ==================== -->
+<div class="page">
+  <div class="header-table">
+    <div class="header-left">
+      <h2>TECHNOLOGY STACK & WORKING MECHANISMS</h2>
+      <p>Comprehensive breakdown of libraries, frameworks, and mechanisms</p>
+    </div>
+    <div class="header-right">
+      <span class="badge">Core Engineering Stack</span>
+      <p>Python 3.13 • FastAPI • ChromaDB • MCP</p>
+    </div>
+  </div>
+
+  <div class="section-title">
+    2. Core Technologies & Architecture Principles
+  </div>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th style="width: 22%;">Technology</th>
+        <th style="width: 20%;">Version / Component</th>
+        <th>Role & Engineering Mechanism</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>FastAPI Backend</strong></td>
+        <td><span class="tag green">v0.115+ (Python 3.13)</span></td>
+        <td>Non-blocking asynchronous REST API gateway. Uses <code>asyncio.to_thread</code> to offload heavy disk I/O and generative AI calls, preventing event-loop latency.</td>
+      </tr>
+      <tr>
+        <td><strong>Google Gemini 3 Flash</strong></td>
+        <td><span class="tag blue">gemini-3-flash-preview</span></td>
+        <td>High-speed bilingual generative LLM core. Synthesizes contextual responses with verified official circular citations and active hyperlinks.</td>
+      </tr>
+      <tr>
+        <td><strong>ChromaDB Vector Store</strong></td>
+        <td><span class="tag purple">gemini-embedding-001</span></td>
+        <td>Persistent vector database for academic notices and solved support cases. Includes resilient pseudo-embedding fallback during quota limits.</td>
+      </tr>
+      <tr>
+        <td><strong>MCP Server Suite</strong></td>
+        <td><span class="tag amber">5 Dedicated Servers</span></td>
+        <td>Model Context Protocol tool suite adhering to Antigravity & Anthropic standards (<code>token_mcp</code>, <code>knowledge_mcp</code>, <code>document_mcp</code>, <code>credential_mcp</code>, <code>enrichment_mcp</code>).</td>
+      </tr>
+      <tr>
+        <td><strong>SQLite Relational Core</strong></td>
+        <td><span class="tag slate">WAL Mode Enabled</span></td>
+        <td>ACID relational engine for support tickets, credentials, crawler pages, and audit logs. Configured with Write-Ahead Logging for high write concurrency.</td>
+      </tr>
+      <tr>
+        <td><strong>Fernet AES-128 Vault</strong></td>
+        <td><span class="tag green">CBC + HMAC-SHA256</span></td>
+        <td>Protects student service passwords with AES-128 encryption and PBKDF2 hashing (100,000 iterations). Plaintext passwords are never stored or logged.</td>
+      </tr>
+      <tr>
+        <td><strong>Preloaded Fast Cache</strong></td>
+        <td><span class="tag blue">In-Memory Trie (18 µs)</span></td>
+        <td>Preloads greetings (hi, hello), admissions criteria, routine FAQs, and SMS result formats into memory to respond in <strong>0.018 milliseconds</strong>.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-title">
+    3. 24/7 Autonomous Multi-Agent Knowledge Enrichment Ecosystem
+  </div>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th style="width: 28%;">Agent Identifier</th>
+        <th style="width: 47%;">Core Responsibilities</th>
+        <th style="width: 25%;">Standard Output</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>ScrapedDataAnalyzerAgent</strong></td>
+        <td>Scans crawled web pages & PDFs, extracts academic entities (dates, fees, degrees), and synthesizes bilingual Q&A pairs.</td>
+        <td><span class="tag blue">JSON Entities & QAs</span></td>
+      </tr>
+      <tr>
+        <td><strong>KnowledgeEnricherAgent</strong></td>
+        <td>Ingests Q&A pairs into ChromaDB vector store and updates in-memory fast caches for high-frequency user questions.</td>
+        <td><span class="tag purple">ChromaDB Ingestion</span></td>
+      </tr>
+      <tr>
+        <td><strong>KnowledgeProvenanceAgent</strong></td>
+        <td>Maintains append-only audit trail so peer AI models (Claude, Codex, Subagents) can synchronize and act on new knowledge.</td>
+        <td><span class="tag green">JSONL Stream & Manifest</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout-box" style="margin-top: 10px; background: #faf5ff; border-color: #d8b4fe; border-left-color: #9333ea;">
+    <h3 style="color: #6b21a8;">💡 Self-Learning Vector Feedback Loop</h3>
+    <p style="color: #581c87;">
+      When an authorized departmental officer marks a support ticket as <strong>SOLVED</strong> with verified resolution instructions, the system anonymizes student identifiers and embeds the problem-solution pair into ChromaDB. Future students facing the same problem instantly receive the verified answer from the AI!
+    </p>
+  </div>
+
+  <div class="page-footer">
+    <span>National University AI Assistant • Project Overview & Architecture</span>
+    <span>Page 2 of 3</span>
+  </div>
+</div>
+
+<!-- ==================== PAGE 3: USER PLAYBOOK & ROADMAP ==================== -->
+<div class="page">
+  <div class="header-table">
+    <div class="header-left">
+      <h2>0-LEVEL USER PLAYBOOK & STRATEGIC ROADMAP</h2>
+      <p>Step-by-step user operations, service directories, and future expansion</p>
+    </div>
+    <div class="header-right">
+      <span class="badge">Operations & Vision</span>
+      <p>Token Lifecycle • Roadmap 2026-2027</p>
+    </div>
+  </div>
+
+  <div class="section-title">
+    4. 0-Level Beginner User Operations Playbook
+  </div>
+
+  <div class="grid-3" style="grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+    <div class="card green">
+      <h4>1. Ask the AI Assistant</h4>
+      <p>Type any inquiry in natural English or Bengali (e.g. <i>"Honours admission date"</i> or <i>"Forgot EMS password"</i>). Receive instant answers with verified portal links.</p>
+    </div>
+    <div class="card amber">
+      <h4>2. Apply for Support Token</h4>
+      <p>For account or exam issues, click <strong>Token Service</strong>, choose your service, and submit. Receive an atomic tracking ID (e.g. <strong>NU-2026-000140</strong>).</p>
+    </div>
+    <div class="card blue">
+      <h4>3. Live Status Tracking</h4>
+      <p>Click <strong>Check Token</strong> to see real-time solver updates (<span class="tag amber">PENDING</span> ➔ <span class="tag blue">PROCESSING</span> ➔ <span class="tag green">SOLVED</span>) and download official resolution PDFs.</p>
+    </div>
+    <div class="card purple">
+      <h4>4. Smartphone QR Code Access</h4>
+      <p>Click <strong>Mobile QR</strong> to display a QR code. Scan with any mobile camera to access the full platform instantly without downloading applications.</p>
+    </div>
+  </div>
+
+  <div class="section-title">
+    5. Support Token Service Directory & Solver Desks
+  </div>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th style="width: 15%;">Service Code</th>
+        <th style="width: 40%;">Service Scope & Description</th>
+        <th style="width: 27%;">Responsible Desk</th>
+        <th style="width: 18%;">Resolution SLA</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>EMS</strong></td>
+        <td>EMS Student Portal Login & Account Lockout Assistance</td>
+        <td>ICT Support Desk</td>
+        <td>24-48 Hours</td>
+      </tr>
+      <tr>
+        <td><strong>FORM_FILLUP</strong></td>
+        <td>Exam Form Fill-up & College Fee Verification Issues</td>
+        <td>Exam Controller Wing</td>
+        <td>12-24 Hours</td>
+      </tr>
+      <tr>
+        <td><strong>RESCRUTINY</strong></td>
+        <td>Result Re-check / Board Challenge Application Tracking</td>
+        <td>Evaluation Wing</td>
+        <td>3-7 Business Days</td>
+      </tr>
+      <tr>
+        <td><strong>CERTIFICATE</strong></td>
+        <td>Original & Provisional Certificate Processing & Release</td>
+        <td>Certificate Section</td>
+        <td>2-5 Business Days</td>
+      </tr>
+      <tr>
+        <td><strong>MARKSHEET</strong></td>
+        <td>Academic Transcript & Grade Sheet Corrections</td>
+        <td>Registrar Department</td>
+        <td>2-4 Business Days</td>
+      </tr>
+      <tr>
+        <td><strong>TC / CORRECTION</strong></td>
+        <td>College Migration Transfer & Student Profile Corrections</td>
+        <td>Registration Cell</td>
+        <td>5-10 Business Days</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-title">
+    6. Strategic Multi-Phase Expansion Roadmap
+  </div>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th style="width: 22%;">Phase</th>
+        <th style="width: 15%;">Timeline</th>
+        <th>Planned Features & Engineering Capabilities</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Phase 2 (Upcoming)</strong></td>
+        <td><span class="tag blue">Q4 2026</span></td>
+        <td><strong>Bangla Voice AI Assistant:</strong> Bidirectional real-time voice streaming for rural and visually impaired students.</td>
+      </tr>
+      <tr>
+        <td><strong>Phase 3</strong></td>
+        <td><span class="tag amber">Q1 2027</span></td>
+        <td><strong>Automated SMS & WhatsApp Alerts:</strong> Instant notifications to student smartphones upon ticket resolution or urgent circulars.</td>
+      </tr>
+      <tr>
+        <td><strong>Phase 4</strong></td>
+        <td><span class="tag green">Q2 2027</span></td>
+        <td><strong>Robotic Digital Certificate Dispatch:</strong> University central database integration for instant digital-signature e-certificates.</td>
+      </tr>
+      <tr>
+        <td><strong>Phase 5</strong></td>
+        <td><span class="tag purple">Q3 2027</span></td>
+        <td><strong>Federated Sub-Agent Clusters:</strong> Regional sub-agent pods for Dhaka, Chittagong, Rajshahi, and other administrative divisions.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="page-footer">
+    <span>National University AI Assistant • Project Overview & Architecture</span>
+    <span>Page 3 of 3</span>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>National University AI Portal & Assistant</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Marked.js for rich Markdown parsing -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <!-- DOMPurify for HTML sanitization -->
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+  <style>
+    /* Custom Scrollbar */
+    #chat-messages::-webkit-scrollbar, .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    #chat-messages::-webkit-scrollbar-track, .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    #chat-messages::-webkit-scrollbar-thumb, .custom-scrollbar::-webkit-scrollbar-thumb {
+      background-color: #cbd5e1;
+      border-radius: 6px;
+    }
+    #chat-messages::-webkit-scrollbar-thumb:hover, .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background-color: #94a3b8;
+    }
+
+    /* Markdown Styling inside Bot Bubbles */
+    .prose-chat h1, .prose-chat h2, .prose-chat h3, .prose-chat h4 {
+      font-weight: 700;
+      color: #0f172a;
+      margin-top: 0.6rem;
+      margin-bottom: 0.3rem;
+      font-size: 0.95rem;
+    }
+    .prose-chat p {
+      margin-bottom: 0.45rem;
+      line-height: 1.55;
+    }
+    .prose-chat p:last-child {
+      margin-bottom: 0;
+    }
+    .prose-chat ul, .prose-chat ol {
+      margin-left: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+    .prose-chat ul {
+      list-style-type: disc;
+    }
+    .prose-chat ol {
+      list-style-type: decimal;
+    }
+    .prose-chat li {
+      margin-bottom: 0.25rem;
+    }
+    .prose-chat strong {
+      color: #065f46;
+      font-weight: 600;
+    }
+    .prose-chat code {
+      background-color: #f1f5f9;
+      color: #047857;
+      padding: 0.15rem 0.35rem;
+      border-radius: 0.375rem;
+      font-size: 0.85em;
+      font-family: monospace;
+    }
+    .prose-chat table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+      font-size: 0.8rem;
+    }
+    .prose-chat th, .prose-chat td {
+      border: 1px solid #e2e8f0;
+      padding: 0.35rem 0.5rem;
+      text-align: left;
+    }
+    .prose-chat th {
+      background-color: #f8fafc;
+      font-weight: 600;
+      color: #0f172a;
+    }
+    .prose-chat a {
+      color: #047857;
+      text-decoration: underline;
+      font-weight: 600;
+      transition: color 0.15s ease;
+    }
+    .prose-chat a:hover {
+      color: #065f46;
+    }
+
+    /* Notice & PDF Link Badges */
+    .pdf-download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      background-color: #ecfdf5;
+      color: #065f46 !important;
+      border: 1px solid #a7f3d0;
+      border-radius: 0.5rem;
+      padding: 0.35rem 0.65rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-decoration: none !important;
+      margin-top: 0.35rem;
+      margin-bottom: 0.35rem;
+      transition: all 0.2s ease;
+    }
+    .pdf-download-btn:hover {
+      background-color: #d1fae5;
+      border-color: #6ee7b7;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      transform: translateY(-1px);
+    }
+  </style>
+</head>
+<body class="bg-slate-100 min-h-screen font-sans antialiased text-slate-800 flex flex-col justify-between">
+
+  <!-- Main Showcase Container -->
+  <main class="max-w-5xl mx-auto px-4 py-8 w-full">
+    <!-- Header Banner -->
+    <div class="bg-gradient-to-r from-emerald-800 to-teal-800 rounded-3xl p-6 sm:p-8 text-white shadow-xl mb-8 relative overflow-hidden">
+      <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div class="flex items-center gap-4">
+          <div class="w-16 h-16 rounded-2xl bg-white/15 border border-white/30 flex items-center justify-center font-bold text-2xl tracking-wider text-emerald-100 shadow-inner">
+            NU
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">জাতীয় বিশ্ববিদ্যালয় এআই সহকারী</h1>
+              <span class="bg-emerald-500/30 border border-emerald-400/40 text-emerald-100 text-xs px-2.5 py-0.5 rounded-full font-mono">v1.2 Smart RAG</span>
+            </div>
+            <p class="text-emerald-100/90 text-sm mt-1">National University of Bangladesh • Official Smart Portal Navigator & AI Assistant</p>
+          </div>
+        </div>
+        
+        <div class="flex flex-wrap items-center gap-3">
+          <button onclick="toggleChat(true)" class="bg-white hover:bg-emerald-50 text-emerald-800 font-bold px-5 py-2.5 rounded-xl shadow-md hover:shadow-lg transition transform active:scale-95 flex items-center gap-2 text-sm">
+            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+            <span>Open AI Assistant</span>
+          </button>
+          <button onclick="triggerKnowledgeUpdate()" title="Update notices from nu.ac.bd" class="bg-emerald-700/60 hover:bg-emerald-700 border border-emerald-500/40 text-white font-medium px-4 py-2.5 rounded-xl transition text-sm flex items-center gap-1.5">
+            <svg id="refresh-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            <span>Refresh Notices</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Network Access Alert -->
+      <div class="mt-6 pt-4 border-t border-emerald-700/60 flex flex-wrap items-center justify-between gap-3 text-xs text-emerald-100">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span><strong>Online:</strong> Running on IP / Local Network (LAN)</span>
+        </div>
+        <div class="bg-emerald-900/40 px-3 py-1 rounded-lg font-mono text-emerald-200 border border-emerald-700/50">
+          Access from any device on your Wi-Fi at: <span id="lan-address-display" class="underline">http://192.168.0.230:8080</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Official Quick Links Hub -->
+    <div class="mb-8">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <span>🌐</span> জাতীয় বিশ্ববিদ্যালয় অফিসিয়াল পোর্টাল হাব (Quick Portals)
+          </h2>
+          <p class="text-xs text-slate-500">১-ক্লিকে জাতীয় বিশ্ববিদ্যালয়ের যেকোনো সার্ভার ও পোর্টালে প্রবেশ করুন</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="portal-cards-grid">
+        <!-- Admission Card -->
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs hover:shadow-md hover:border-emerald-300 transition group flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-2xl">🎓</span>
+              <span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">Admission</span>
+            </div>
+            <h3 class="font-bold text-slate-800 group-hover:text-emerald-700 transition text-sm mb-1">ভর্তি ও আবেদন পোর্টাল</h3>
+            <p class="text-xs text-slate-500 leading-relaxed mb-3">অনার্স, ডিগ্রি ও মাস্টার্স কোর্সে অনলাইন আবেদন ও রিলিজ স্লিপ পোর্টাল।</p>
+          </div>
+          <div class="space-y-1.5 pt-2 border-t border-slate-100">
+            <a href="http://app1.nu.edu.bd/" target="_blank" class="block w-full text-center bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-semibold py-1.5 px-3 rounded-lg text-xs transition">
+              🚀 app1.nu.edu.bd খুলুন
+            </a>
+            <a href="https://www.nu.ac.bd/admission-notice.php" target="_blank" class="block w-full text-center text-slate-500 hover:text-emerald-700 py-1 text-[11px] transition">
+              📄 ভর্তি নোটিশ বোর্ড &rarr;
+            </a>
+          </div>
+        </div>
+
+        <!-- Results Card -->
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs hover:shadow-md hover:border-emerald-300 transition group flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-2xl">🏆</span>
+              <span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">Results</span>
+            </div>
+            <h3 class="font-bold text-slate-800 group-hover:text-emerald-700 transition text-sm mb-1">ফলাফল ও রেজাল্ট আর্কাইভ</h3>
+            <p class="text-xs text-slate-500 leading-relaxed mb-3">অনলাইনে মার্কশিট, সিজিপিএ এবং ফলাফল যাচাই করুন।</p>
+          </div>
+          <div class="space-y-1.5 pt-2 border-t border-slate-100">
+            <a href="https://results.nu.ac.bd/" target="_blank" class="block w-full text-center bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-semibold py-1.5 px-3 rounded-lg text-xs transition">
+              🔍 results.nu.ac.bd খুলুন
+            </a>
+            <a href="http://103.113.200.7/" target="_blank" class="block w-full text-center text-slate-500 hover:text-emerald-700 py-1 text-[11px] transition">
+              🌐 ডেডিকেটেড আর্কাইভ সার্ভার &rarr;
+            </a>
+          </div>
+        </div>
+
+        <!-- Routine & EMS Card -->
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs hover:shadow-md hover:border-emerald-300 transition group flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-2xl">📅</span>
+              <span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">Exams</span>
+            </div>
+            <h3 class="font-bold text-slate-800 group-hover:text-emerald-700 transition text-sm mb-1">পরীক্ষার রুটিন ও ফরম পূরণ</h3>
+            <p class="text-xs text-slate-500 leading-relaxed mb-3">পরীক্ষা রুটিন, কেন্দ্র তালিকা ও অনলাইন ফরম পূরণ (EMS)।</p>
+          </div>
+          <div class="space-y-1.5 pt-2 border-t border-slate-100">
+            <a href="http://ems.nu.ac.bd/" target="_blank" class="block w-full text-center bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-semibold py-1.5 px-3 rounded-lg text-xs transition">
+              📝 ems.nu.ac.bd ফরম পূরণ
+            </a>
+            <a href="https://www.nu.ac.bd/examination-notice.php" target="_blank" class="block w-full text-center text-slate-500 hover:text-emerald-700 py-1 text-[11px] transition">
+              📅 পরীক্ষার রুটিন নোটিশ &rarr;
+            </a>
+          </div>
+        </div>
+
+        <!-- Student Services Card -->
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs hover:shadow-md hover:border-emerald-300 transition group flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-2xl">🏛️</span>
+              <span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">Services</span>
+            </div>
+            <h3 class="font-bold text-slate-800 group-hover:text-emerald-700 transition text-sm mb-1">সার্টিফিকেট ও শিক্ষার্থী সেবা</h3>
+            <p class="text-xs text-slate-500 leading-relaxed mb-3">মূল সনদপত্র, সাময়িক সনদ, মার্কশিট যাচাই ও সিলেবাস ডাউনলোড।</p>
+          </div>
+          <div class="space-y-1.5 pt-2 border-t border-slate-100">
+            <a href="https://www.nu.ac.bd/certificate-verification.php" target="_blank" class="block w-full text-center bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-semibold py-1.5 px-3 rounded-lg text-xs transition">
+              ✅ সার্টিফিকেট যাচাই করুন
+            </a>
+            <a href="http://service.nu.edu.bd/" target="_blank" class="block w-full text-center text-slate-500 hover:text-emerald-700 py-1 text-[11px] transition">
+              👨‍🎓 স্টুডেন্ট সার্ভিস পোর্টাল &rarr;
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Floating Chat Toggle Button -->
+  <button
+    id="chat-toggle-btn"
+    onclick="toggleChat()"
+    aria-label="Open chat"
+    class="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white font-semibold px-5 py-3.5 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 transform active:scale-95 group focus:outline-none focus:ring-4 focus:ring-emerald-300"
+  >
+    <svg id="toggle-icon-open" class="w-6 h-6 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+    </svg>
+    <svg id="toggle-icon-close" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+    </svg>
+    <span class="text-sm tracking-wide">Ask NU AI</span>
+  </button>
+
+  <!-- Interactive Chat Window Modal -->
+  <div
+    id="chat-window"
+    class="fixed bottom-24 right-6 z-50 w-[94vw] sm:w-[460px] h-[630px] max-h-[85vh] bg-white rounded-3xl shadow-2xl flex flex-col border border-slate-200 overflow-hidden transform transition-all duration-300 opacity-0 scale-95 pointer-events-none"
+  >
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-emerald-800 to-teal-800 text-white p-4 flex items-center justify-between border-b border-emerald-900/50 shadow-sm shrink-0">
+      <div class="flex items-center gap-3">
+        <div class="relative">
+          <div class="w-10 h-10 rounded-2xl bg-white/15 border border-white/25 flex items-center justify-center font-bold text-sm tracking-wider text-emerald-100 shadow-inner">
+            NU
+          </div>
+          <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-400 border-2 border-emerald-800 rounded-full"></span>
+        </div>
+        <div>
+          <h3 class="text-sm font-bold leading-tight flex items-center gap-1.5">
+            National University AI
+            <span class="text-[10px] bg-emerald-500/30 text-emerald-200 px-1.5 py-0.5 rounded font-mono font-normal">v1.2</span>
+          </h3>
+          <p class="text-[11px] text-emerald-200/90 font-medium">Smart Academic & Notice Assistant</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-1">
+        <!-- Clear Chat Button -->
+        <button
+          onclick="clearChatHistory()"
+          title="Clear Conversation"
+          class="text-emerald-100/80 hover:text-white rounded-lg p-1.5 hover:bg-white/10 transition focus:outline-none"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+        </button>
+        <!-- Close Button -->
+        <button
+          onclick="toggleChat(false)"
+          title="Minimize Chat"
+          class="text-emerald-100/80 hover:text-white rounded-lg p-1.5 hover:bg-white/10 transition focus:outline-none"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Message Stream -->
+    <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50 text-sm">
+      <!-- Rich Interactive Intro Banner -->
+      <div class="flex items-start gap-2.5">
+        <div class="w-8 h-8 rounded-full bg-emerald-800 text-white text-xs font-bold flex items-center justify-center shrink-0 shadow-sm mt-0.5">
+          NU
+        </div>
+        <div class="flex flex-col gap-2 max-w-[88%]">
+          <div class="bg-white border border-slate-200 rounded-2xl rounded-tl-none p-4 text-slate-800 shadow-sm leading-relaxed prose-chat text-xs sm:text-sm">
+            <p><strong>স্বাগতম! (Welcome to National University AI)</strong></p>
+            <p>আমি জাতীয় বিশ্ববিদ্যালয়ের স্মার্ট এআই সহকারী। নিচের গুরুত্বপূর্ণ পোর্টাল বোতামগুলো ব্যবহার করতে পারেন অথবা যেকোনো প্রশ্ন সরাসরি করতে পারেন:</p>
+            
+            <!-- In-Chat Quick Action Tiles -->
+            <div class="grid grid-cols-2 gap-2 my-2.5 not-prose">
+              <a href="http://app1.nu.edu.bd/" target="_blank" class="flex items-center gap-2 p-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-900 transition">
+                <span class="text-base">🎓</span>
+                <div class="text-[11px] leading-tight font-semibold">ভর্তি পোর্টাল<br><span class="text-[9px] text-emerald-700 font-normal">app1.nu.edu.bd</span></div>
+              </a>
+              <a href="https://results.nu.ac.bd/" target="_blank" class="flex items-center gap-2 p-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-900 transition">
+                <span class="text-base">🏆</span>
+                <div class="text-[11px] leading-tight font-semibold">রেজাল্ট আর্কাইভ<br><span class="text-[9px] text-emerald-700 font-normal">results.nu.ac.bd</span></div>
+              </a>
+              <a href="http://ems.nu.ac.bd/" target="_blank" class="flex items-center gap-2 p-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-900 transition">
+                <span class="text-base">📝</span>
+                <div class="text-[11px] leading-tight font-semibold">ফরম পূরণ (EMS)<br><span class="text-[9px] text-emerald-700 font-normal">ems.nu.ac.bd</span></div>
+              </a>
+              <a href="https://www.nu.ac.bd/recent-news-notice.php" target="_blank" class="flex items-center gap-2 p-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-900 transition">
+                <span class="text-base">📄</span>
+                <div class="text-[11px] leading-tight font-semibold">সকল নোটিশ<br><span class="text-[9px] text-emerald-700 font-normal">nu.ac.bd/notices</span></div>
+              </a>
+            </div>
+            
+            <p class="text-[11px] text-slate-600">আপনি পরীক্ষার রুটিন, ফলাফল, গ্রেডিং ও ভর্তির বিষয়ে বাংলা বা ইংরেজিতে প্রশ্ন করতে পারেন।</p>
+          </div>
+          <div class="text-[10px] text-slate-400 pl-1">Official Assistant • 24/7 Smart Navigator</div>
+        </div>
+      </div>
+
+      <!-- Quick Suggested Chips -->
+      <div id="dynamic-chips" class="flex flex-wrap gap-1.5 pt-1 pl-10">
+        <button onclick="sendQuickMessage('Honours 4th year exam routine')" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 px-3 py-1.5 rounded-full transition font-medium shadow-2xs">
+          📅 Honours 4th Year Routine
+        </button>
+        <button onclick="sendQuickMessage('ফলাফল দেখার ওয়েবসাইট ও SMS নিয়ম')" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 px-3 py-1.5 rounded-full transition font-medium shadow-2xs">
+          🌐 ফলাফল দেখার নিয়ম (Results)
+        </button>
+        <button onclick="sendQuickMessage('সাম্প্রতিক নোটিশ ও মাস্টার্স ফাইনাল')" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 px-3 py-1.5 rounded-full transition font-medium shadow-2xs">
+          📄 সাম্প্রতিক নোটিশ
+        </button>
+        <button onclick="sendQuickMessage('CGPA হিসাব ও প্রমোশন নিয়ম')" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 px-3 py-1.5 rounded-full transition font-medium shadow-2xs">
+          📊 গ্রেডিং ও CGPA স্কেল
+        </button>
+      </div>
+    </div>
+
+    <!-- Typing Indicator -->
+    <div id="typing-indicator" class="hidden px-4 py-2 bg-slate-50 flex items-center gap-2 text-slate-400 text-xs pl-12 border-t border-slate-100 shrink-0">
+      <span class="inline-flex gap-1 items-center">
+        <span class="w-2 h-2 bg-emerald-500 rounded-full animate-bounce"></span>
+        <span class="w-2 h-2 bg-emerald-500 rounded-full animate-bounce [animation-delay:0.2s]"></span>
+        <span class="w-2 h-2 bg-emerald-500 rounded-full animate-bounce [animation-delay:0.4s]"></span>
+      </span>
+      <span class="font-medium text-emerald-700">Searching National University database...</span>
+    </div>
+
+    <!-- Input Footer -->
+    <footer class="p-3 bg-white border-t border-slate-200 shrink-0">
+      <form id="chat-form" onsubmit="handleChatSubmit(event)" class="flex items-center gap-2">
+        <input
+          type="text"
+          id="chat-input"
+          placeholder="Ask anything (e.g. routine, results, admission, notice)..."
+          class="flex-1 bg-slate-100 text-slate-800 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 border border-slate-200 focus:bg-white transition"
+          autocomplete="off"
+        />
+        <button
+          type="submit"
+          id="send-btn"
+          class="bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white p-2.5 rounded-xl shadow-md hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none shrink-0"
+        >
+          <svg class="w-4 h-4 transform rotate-90" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+          </svg>
+        </button>
+      </form>
+    </footer>
+  </div>
+
+  <script>
+    const chatWindow = document.getElementById("chat-window");
+    const openIcon = document.getElementById("toggle-icon-open");
+    const closeIcon = document.getElementById("toggle-icon-close");
+    const chatMessages = document.getElementById("chat-messages");
+    const chatInput = document.getElementById("chat-input");
+    const typingIndicator = document.getElementById("typing-indicator");
+    const lanDisplay = document.getElementById("lan-address-display");
+    let dynamicChips = document.getElementById("dynamic-chips");
+
+    let isChatOpen = false;
+    let conversationHistory = []; // Multi-turn memory
+
+    // Dynamically detect server host
+    const API_BASE = window.location.origin.startsWith("http") ? window.location.origin : "http://127.0.0.1:8080";
+    if (lanDisplay && window.location.origin.startsWith("http")) {
+      lanDisplay.textContent = window.location.origin;
+    }
+
+    // Toggle Chat Window Open/Close
+    function toggleChat(forceState) {
+      if (forceState !== undefined) {
+        isChatOpen = forceState;
+      } else {
+        isChatOpen = !isChatOpen;
+      }
+
+      if (isChatOpen) {
+        chatWindow.classList.remove("opacity-0", "scale-95", "pointer-events-none");
+        chatWindow.classList.add("opacity-100", "scale-100", "pointer-events-auto");
+        openIcon.classList.add("hidden");
+        closeIcon.classList.remove("hidden");
+        chatInput.focus();
+      } else {
+        chatWindow.classList.add("opacity-0", "scale-95", "pointer-events-none");
+        chatWindow.classList.remove("opacity-100", "scale-100", "pointer-events-auto");
+        openIcon.classList.remove("hidden");
+        closeIcon.classList.add("hidden");
+      }
+    }
+
+    // Handle Quick Action Chips
+    function sendQuickMessage(text) {
+      if (dynamicChips) dynamicChips.remove();
+      chatInput.value = text;
+      handleChatSubmit();
+    }
+
+    // Trigger Knowledge Base Update
+    async function triggerKnowledgeUpdate() {
+      const refreshIcon = document.getElementById("refresh-icon");
+      if (refreshIcon) refreshIcon.classList.add("animate-spin");
+      try {
+        const res = await fetch(`${API_BASE}/api/update-knowledge`, { method: "POST" });
+        const data = await res.json();
+        alert("✅ Knowledge update started in background! Newly published circulars will be embedded into the AI database.");
+      } catch (err) {
+        alert("⚠️ Could not connect to backend server: " + err.message);
+      } finally {
+        if (refreshIcon) refreshIcon.classList.remove("animate-spin");
+      }
+    }
+
+    // Clear Chat History
+    function clearChatHistory() {
+      if (confirm("Clear conversation history and restart session?")) {
+        conversationHistory = [];
+        chatMessages.innerHTML = `
+          <div class="flex items-start gap-2.5">
+            <div class="w-8 h-8 rounded-full bg-emerald-800 text-white text-xs font-bold flex items-center justify-center shrink-0 shadow-sm mt-0.5">
+              NU
+            </div>
+            <div class="flex flex-col gap-2 max-w-[88%]">
+              <div class="bg-white border border-slate-200 rounded-2xl rounded-tl-none p-4 text-slate-800 shadow-sm leading-relaxed prose-chat text-xs sm:text-sm">
+                <p><strong>স্বাগতম! (New Session Started)</strong></p>
+                <p>You can ask me about notices, exam routines, results, grading rules, or admission circulars.</p>
+              </div>
+              <div class="text-[10px] text-slate-400 pl-1">Official Assistant</div>
+            </div>
+          </div>
+          <div id="dynamic-chips" class="flex flex-wrap gap-1.5 pt-1 pl-10">
+            <button onclick="sendQuickMessage('Honours 4th year exam routine')" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 px-3 py-1.5 rounded-full transition font-medium shadow-2xs">
+              📅 Honours 4th Year Routine
+            </button>
+            <button onclick="sendQuickMessage('ফলাফল দেখার ওয়েবসাইট ও SMS নিয়ম')" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 px-3 py-1.5 rounded-full transition font-medium shadow-2xs">
+              🌐 ফলাফল দেখার নিয়ম (Results)
+            </button>
+            <button onclick="sendQuickMessage('সাম্প্রতিক নোটিশ')" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 px-3 py-1.5 rounded-full transition font-medium shadow-2xs">
+              📄 সাম্প্রতিক নোটিশ
+            </button>
+          </div>
+        `;
+        dynamicChips = document.getElementById("dynamic-chips");
+      }
+    }
+
+    // Render Clean HTML from Markdown with PDF Link Enhancement
+    function formatMarkdown(rawText) {
+      if (!rawText) return "";
+      try {
+        let html = marked.parse(rawText);
+        let cleanHtml = DOMPurify.sanitize(html, {
+          ADD_ATTR: ['target', 'rel']
+        });
+
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = cleanHtml;
+
+        const links = tempDiv.querySelectorAll("a");
+        links.forEach(a => {
+          a.setAttribute("target", "_blank");
+          a.setAttribute("rel", "noopener noreferrer");
+          const href = a.getAttribute("href") || "";
+          if (href.toLowerCase().endsWith(".pdf") || href.includes("/uploads/notices/")) {
+            a.className = "pdf-download-btn";
+            a.innerHTML = `
+              <svg class="w-3.5 h-3.5 text-emerald-700 inline shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <span>${a.textContent || "Download Notice PDF"}</span>
+            `;
+          }
+        });
+
+        return tempDiv.innerHTML;
+      } catch (e) {
+        return rawText;
+      }
+    }
+
+    // Copy Message Text
+    function copyMessage(btn, text) {
+      navigator.clipboard.writeText(text).then(() => {
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = `
+          <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <span class="text-[10px] text-emerald-600 font-semibold">Copied</span>
+        `;
+        setTimeout(() => {
+          btn.innerHTML = originalHTML;
+        }, 2000);
+      });
+    }
+
+    // Append Message Bubbles
+    function appendMessage(sender, text, suggestedChips = []) {
+      const msgDiv = document.createElement("div");
+      
+      if (sender === "user") {
+        msgDiv.className = "flex justify-end";
+        msgDiv.innerHTML = `
+          <div class="bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-2xl rounded-tr-none px-4 py-2.5 max-w-[85%] shadow-sm leading-relaxed break-words text-xs sm:text-sm">
+            ${escapeHTML(text)}
+          </div>
+        `;
+      } else {
+        msgDiv.className = "flex items-start gap-2.5";
+        const formattedContent = formatMarkdown(text);
+        const encodedRawText = encodeURIComponent(text);
+
+        let chipsHtml = "";
+        if (suggestedChips && suggestedChips.length > 0) {
+          chipsHtml = `
+            <div class="flex flex-wrap gap-1.5 pt-2">
+              ${suggestedChips.map(chip => `
+                <button onclick="sendQuickMessage('${escapeHTML(chip)}')" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 px-2.5 py-1 rounded-full transition font-medium shadow-2xs">
+                  ${escapeHTML(chip)}
+                </button>
+              `).join("")}
+            </div>
+          `;
+        }
+
+        msgDiv.innerHTML = `
+          <div class="w-8 h-8 rounded-full bg-emerald-800 text-white text-xs font-bold flex items-center justify-center shrink-0 shadow-sm mt-0.5">
+            NU
+          </div>
+          <div class="flex flex-col gap-1 max-w-[88%]">
+            <div class="bg-white border border-slate-200 rounded-2xl rounded-tl-none p-3.5 text-slate-800 shadow-sm leading-relaxed prose-chat text-xs sm:text-sm">
+              ${formattedContent}
+            </div>
+            <div class="flex items-center justify-between px-1 text-[10px] text-slate-400">
+              <span>NU Academic Assistant</span>
+              <button onclick="copyMessage(this, decodeURIComponent('${encodedRawText}'))" class="hover:text-slate-600 flex items-center gap-1 transition focus:outline-none">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+                <span>Copy</span>
+              </button>
+            </div>
+            ${chipsHtml}
+          </div>
+        `;
+      }
+
+      chatMessages.appendChild(msgDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // Form Submission & API Call
+    async function handleChatSubmit(e) {
+      if (e) e.preventDefault();
+      const message = chatInput.value.trim();
+      if (!message) return;
+
+      // Render user message & reset input
+      appendMessage("user", message);
+      chatInput.value = "";
+      if (dynamicChips) dynamicChips.remove();
+
+      // Show typing indicator
+      typingIndicator.classList.remove("hidden");
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      try {
+        const payload = {
+          message: message,
+          history: conversationHistory
+        };
+
+        const response = await fetch(`${API_BASE}/api/chat`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+        typingIndicator.classList.add("hidden");
+
+        const botReply = data.reply || "No response received.";
+        
+        conversationHistory.push({ role: "user", content: message });
+        conversationHistory.push({ role: "bot", content: botReply });
+
+        appendMessage("bot", botReply, data.suggested_chips || []);
+
+      } catch (err) {
+        typingIndicator.classList.add("hidden");
+        console.error("Chat error:", err);
+        appendMessage(
+          "bot",
+          `⚠️ **Connection Issue:** ${err.message || 'Unable to communicate with the server.'}\nPlease verify that the backend is active at \`${API_BASE}\`.`
+        );
+      }
+    }
+
+    // Helper: Prevent HTML Injection
+    function escapeHTML(str) {
+      return String(str).replace(/[&<>'"]/g, 
+        tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+      );
+    }
+  </script>
+</body>
+</html>

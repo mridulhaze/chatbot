@@ -1,0 +1,47 @@
+{
+  "university_info": {
+    "name": "National University of Bangladesh",
+    "name_bn": "জাতীয় বিশ্ববিদ্যালয়",
+    "established": 1992,
+    "headquarters": "Board Bazar, Gazipur 1704, Dhaka Division, Bangladesh",
+    "official_website": "https://www.nu.ac.bd",
+    "nature": "Affiliating university with over 2,250 colleges across Bangladesh providing tertiary education."
+  },
+  "modules": [
+    {
+      "topic": "Results and Archive Checking System",
+      "topic_bn": "ফলাফল ও রেজাল্ট আর্কাইভ দেখার পদ্ধতি",
+      "content": "To check National University results online, students can visit https://results.nu.ac.bd/ or http://www.nu.ac.bd/results/ and http://103.113.200.7/. Select course (Honours, Degree, Masters, Professional), enter Roll Number, Registration Number, Examination Year, solve captcha, and click Search Result. For SMS results, send to 16222 from any mobile phone using the format: Honours: 'NU H1/H2/H3/H4 Roll' -> 16222; Degree: 'NU DEG Roll' -> 16222; Masters Final: 'NU MF Roll' -> 16222; Masters Preliminary: 'NU MP Roll' -> 16222; Professional: 'NU HP Roll' -> 16222."
+    },
+    {
+      "topic": "Grading System and CGPA Scale",
+      "topic_bn": "গ্রেডিং সিস্টেম ও সিজিপিএ স্কেল",
+      "content": "National University follows a 4.00 GPA/CGPA grading scale: 80% to 100% = A+ (4.00, Outstanding); 75% to <80% = A (3.75, Excellent); 70% to <75% = A- (3.50, Very Good); 65% to <70% = B+ (3.25, Good); 60% to <65% = B (3.00, Satisfactory); 55% to <60% = B- (2.75, Above Average); 50% to <55% = C+ (2.50, Average); 45% to <50% = C (2.25, Below Average); 40% to <45% = D (2.00, Pass); Below 40% = F (0.00, Fail). Minimum passing CGPA required for degree completion is 2.00."
+    },
+    {
+      "topic": "Admission Process and Release Slips",
+      "topic_bn": "ভর্তি প্রক্রিয়া ও রিলিজ স্লিপ",
+      "content": "Undergraduate admission (Honours 4-year, Degree Pass 3-year, Professional) is conducted online via http://app1.nu.edu.bd without any written admission test. Merit is calculated from SSC (40%) and HSC (60%) results. Candidates not selected in the 1st or 2nd merit list can apply for 1st Release Slip and 2nd Release Slip across multiple colleges and subjects."
+    },
+    {
+      "topic": "Examination, Form Fill-up and Promotion Rules",
+      "topic_bn": "পরীক্ষা, ফর্ম পূরণ ও প্রমোশন নিয়মাবলী",
+      "content": "Online examination form fill-up is hosted on http://ems.nu.ac.bd/. Honours students must pass minimum required courses per academic year (at least 3 theoretical courses in 1st/2nd year, 4 courses in 3rd year) with a minimum GPA of 2.00 to be promoted to the next academic session. Improvement examination is allowed for courses with 'C', 'D', or 'F' grades during the immediate subsequent regular examination session (grade capped at B+ for C and D improvements)."
+    },
+    {
+      "topic": "Answer Script Re-scrutiny and Board Challenge",
+      "topic_bn": "খাতা পুনর্নিরীক্ষণ বা বোর্ড চ্যালেঞ্জ",
+      "content": "Students unsatisfied with published results can apply for answer script re-scrutiny (খাতা পুনর্নিরীক্ষণ) online on https://www.nu.ac.bd/ within 30 calendar days of result publication. Fees are payable through Sonali Bank Sonali Seba. Results of re-scrutiny are published on the official notice board within 30 to 45 days."
+    },
+    {
+      "topic": "University Administration and Governance",
+      "topic_bn": "বিশ্ববিদ্যালয় প্রশাসন ও উপাচার্য",
+      "content": "The Chancellor of the National University of Bangladesh is the Honorable President of the People's Republic of Bangladesh. The Vice-Chancellor (VC / উপাচার্য) of National University is Professor Dr. A. S. M. Amanullah (প্রফেসর ড. এ এস এম আমানুল্লাহ). The Pro-Vice Chancellors (উপ-উপাচার্য) are Prof. Md. Lutfor Rahaman and Professor Dr. Mohammad Ali Zinnah. The Treasurer (কোষাধ্যক্ষ) is Professor Dr. Md. Nazmul Hossain / Prof. Dr. A. T. M. Zafrul Azam. Main administrative headquarters is located in Board Bazar, Gazipur 1704. Central Registrar contact: registrar@nu.ac.bd."
+    },
+    {
+      "topic": "Certificate and Marksheet Verification",
+      "topic_bn": "সার্টিফিকেট ও নম্বরপত্র যাচাই",
+      "content": "Official degree certificates, provisional certificates, and academic transcripts can be verified online through the National University Certificate Verification portal at https://www.nu.ac.bd/certificate-verification.php and the student service portal http://103.113.200.68/nu-app/."
+    }
+  ]
+}

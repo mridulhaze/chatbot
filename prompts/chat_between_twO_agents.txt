@@ -1,0 +1,1450 @@
+You are going to build and operate a continuous autonomous
+AI Quality Assurance + Research + Development loop for my existing
+NU AI Assistant / Chatbot project.
+
+IMPORTANT:
+
+Do NOT treat this as a one-time testing task.
+
+I want TWO autonomous agents working continuously together.
+
+============================================================
+AGENT 1 — AI RESEARCHER / QA / HUMAN SIMULATOR
+============================================================
+
+Agent 1 is responsible for:
+
+- researching best practices for professional AI assistants
+- researching chatbot UX
+- researching conversational AI behavior
+- researching RAG systems
+- researching AI agent architecture
+- researching MCP architecture
+- researching Skills architecture
+- researching chatbot evaluation
+- researching hallucination prevention
+- researching source attribution
+- researching conversational memory
+- researching multilingual assistants
+- researching Bangla conversational AI
+- researching customer-support chatbot behavior
+- researching intelligent tool selection
+- researching agentic AI
+- researching modern chatbot evaluation techniques
+
+Agent 1 must also TEST MY ACTUAL CHATBOT.
+
+It should interact with my chatbot as if it were a real human user.
+
+It must NOT only inspect source code.
+
+It must actually perform realistic conversations and workflows.
+
+============================================================
+AGENT 2 — AI DEVELOPER / IMPLEMENTER
+============================================================
+
+Agent 2 is responsible for:
+
+- analyzing Agent 1's findings
+- inspecting the source code
+- identifying the root cause
+- implementing improvements
+- fixing bugs
+- improving prompts
+- improving Skills
+- improving MCP tools
+- improving RAG
+- improving crawler integration
+- improving database queries
+- improving chatbot UX
+- improving response quality
+- adding tests
+- running tests
+- validating fixes
+- documenting changes
+
+Agent 2 must NOT blindly implement every suggestion.
+
+It must evaluate whether Agent 1's recommendation is technically valid.
+
+============================================================
+CORE LOOP
+============================================================
+
+The system must operate continuously:
+
+                +----------------------+
+                ¦      AGENT 1         ¦
+                ¦ Research + QA +      ¦
+                ¦ Human Simulation     ¦
+                +----------------------+
+                           ¦
+                           ?
+                  TEST / FIND PROBLEMS
+                           ¦
+                           ?
+                   QA REPORT / TASKS
+                           ¦
+                           ?
+                +----------------------+
+                ¦      AGENT 2         ¦
+                ¦ Developer / Fixer    ¦
+                +----------------------+
+                           ¦
+                           ?
+                    IMPLEMENT FIXES
+                           ¦
+                           ?
+                      RUN TESTS
+                           ¦
+                           ?
+                  DEPLOY TO TEST ENV
+                           ¦
+                           ?
+                +----------------------+
+                ¦      AGENT 1         ¦
+                ¦ Re-test everything   ¦
+                +----------------------+
+                           ¦
+                           ?
+                    FIND NEW ISSUES
+                           ¦
+                           +--------------? LOOP
+
+This loop continues until I manually stop it.
+
+============================================================
+IMPORTANT: CONTINUOUS OPERATION
+============================================================
+
+The system should be designed to operate:
+
+24 HOURS A DAY
+7 DAYS A WEEK
+
+until I explicitly stop it.
+
+Do NOT interpret:
+
+"continue until satisfied"
+
+as:
+
+"run for only one iteration."
+
+The system must keep improving the application.
+
+However, implement appropriate:
+
+- resource limits
+- concurrency limits
+- API usage limits
+- browser limits
+- test limits
+- retry limits
+- cooldown periods
+
+so that the loop does not accidentally consume unlimited resources.
+
+============================================================
+STOP CONTROL
+============================================================
+
+Create a global control:
+
+AUTONOMOUS_MODE
+
+Values:
+
+RUNNING
+PAUSED
+STOPPED
+
+Default:
+
+STOPPED
+
+I must explicitly start the autonomous loop.
+
+Provide:
+
+START
+PAUSE
+STOP
+RESUME
+
+controls.
+
+When STOP is pressed:
+
+- stop starting new tasks
+- allow currently executing safe operations to finish
+- save state
+- save reports
+- save unfinished tasks
+- shut down workers cleanly
+
+When RESUME is pressed:
+
+continue from the saved state.
+
+============================================================
+AGENT 1 — RESEARCH MODE
+============================================================
+
+Agent 1 should periodically research the web for:
+
+- current chatbot best practices
+- AI assistant UX
+- conversational AI evaluation
+- RAG evaluation
+- MCP best practices
+- agentic AI patterns
+- prompt engineering
+- tool-use reliability
+- AI hallucination prevention
+- source citation
+- retrieval quality
+- context management
+- memory management
+- Bangla NLP
+- multilingual chatbot design
+
+IMPORTANT:
+
+Do not blindly copy random internet recommendations.
+
+Prefer:
+
+official documentation
+technical documentation
+reputable engineering sources
+research papers
+established AI engineering practices
+
+Agent 1 should distinguish:
+
+FACT
+RECOMMENDATION
+EXPERIMENTAL IDEA
+OPINION
+
+============================================================
+AGENT 1 — HUMAN SIMULATION
+============================================================
+
+Agent 1 must simulate different types of users.
+
+Create personas.
+
+Examples:
+
+PERSONA 1
+Normal student
+
+PERSONA 2
+Confused student
+
+PERSONA 3
+Angry user
+
+PERSONA 4
+User who knows very little about NU
+
+PERSONA 5
+Technically knowledgeable user
+
+PERSONA 6
+College administrator
+
+PERSONA 7
+Teacher
+
+PERSONA 8
+User asking incomplete questions
+
+PERSONA 9
+User making spelling mistakes
+
+PERSONA 10
+Bangla-speaking user
+
+PERSONA 11
+English-speaking user
+
+PERSONA 12
+Banglish-speaking user
+
+PERSONA 13
+User changing topic frequently
+
+PERSONA 14
+User asking follow-up questions
+
+PERSONA 15
+User asking the same question differently
+
+============================================================
+CONVERSATION TESTING
+============================================================
+
+Agent 1 should conduct realistic conversations.
+
+Example:
+
+User:
+
+"NU te admission kobe?"
+
+Then:
+
+"Honours er ta bolen."
+
+Then:
+
+"deadline kobe?"
+
+Then:
+
+"official notice ta den."
+
+Then:
+
+"PDF ache?"
+
+The agent must determine whether the chatbot maintains context.
+
+============================================================
+MULTI-TURN TESTING
+============================================================
+
+Test:
+
+Question
+?
+Follow-up
+?
+Clarification
+?
+Another follow-up
+?
+Context switch
+?
+Return to previous topic
+
+Verify that the assistant understands context.
+
+============================================================
+AMBIGUOUS QUERY TESTING
+============================================================
+
+Test questions such as:
+
+"????? ????"
+
+"result ????"
+
+"form fillup ????"
+
+"???? deadline ???"
+
+"?? ??????? ????"
+
+"??? ?? ???? ????"
+
+The chatbot should ask appropriate clarification questions when necessary.
+
+============================================================
+TYPO TESTING
+============================================================
+
+Test:
+
+"admissoin"
+"formfilup"
+"reslt"
+"certifcate"
+"ems"
+"markshit"
+
+Also Banglish:
+
+"nu te form fillup kobe"
+
+"result ber hoise?"
+
+"admission er notice den"
+
+============================================================
+HALLUCINATION TESTING
+============================================================
+
+Agent 1 must deliberately ask questions where information may not exist.
+
+Examples:
+
+"NU admission deadline 2035?"
+
+"?? NU ?? ???? notice ???????"
+
+"?? notice-?? exact deadline ???"
+
+If the system cannot verify the information:
+
+The chatbot should NOT invent an answer.
+
+It should say that the information could not be verified.
+
+============================================================
+SOURCE TESTING
+============================================================
+
+For factual NU information test:
+
+"Where did you get this information?"
+
+"Give me the official source."
+
+"Which notice contains this?"
+
+The chatbot should provide reliable source information.
+
+============================================================
+RAG TESTING
+============================================================
+
+Agent 1 must test:
+
+- retrieval accuracy
+- irrelevant retrieval
+- missing retrieval
+- duplicate chunks
+- stale information
+- outdated documents
+- latest information
+- conflicting documents
+
+============================================================
+LATEST INFORMATION TEST
+============================================================
+
+Test:
+
+"latest notice"
+
+"today's notice"
+
+"most recent admission notice"
+
+"newest exam routine"
+
+Verify that the assistant does NOT simply return the most semantically similar old document.
+
+It must consider:
+
+publication date
+update date
+document date
+crawl date
+
+appropriately.
+
+============================================================
+TOKEN SERVICE TESTING
+============================================================
+
+Test the complete Token Service.
+
+Examples:
+
+"I want token service."
+
+"EMS problem."
+
+"certificate problem."
+
+"form fillup problem."
+
+"my token status?"
+
+"check token NU-2026-000123"
+
+"has my problem been solved?"
+
+"who solved my problem?"
+
+"show the solution."
+
+Test:
+
+- token creation
+- token type selection
+- token status
+- solver
+- solution message
+- timestamps
+- conversation context
+
+============================================================
+SERVICE CREDENTIAL TESTING
+============================================================
+
+Test credential workflows.
+
+Examples:
+
+"Save my EMS credentials."
+
+"Do I have EMS credentials?"
+
+"Test my EMS login."
+
+"Change my EMS password."
+
+"Delete my EMS credentials."
+
+Verify that:
+
+- credentials are encrypted
+- password never appears in AI response
+- password never appears in logs
+- password never enters RAG
+- password never enters vector database
+- unauthorized users cannot access credentials
+
+============================================================
+MCP TESTING
+============================================================
+
+Agent 1 should test whether the AI selects the correct MCP tool.
+
+Example:
+
+latest notice
+? Knowledge MCP
+
+token status
+? Token MCP
+
+crawler status
+? Crawler MCP
+
+document search
+? Document MCP
+
+credential status
+? Credential MCP
+
+The agent should detect:
+
+wrong tool selection
+unnecessary tool calls
+missing tool calls
+duplicate tool calls
+unsafe tool calls
+
+============================================================
+SKILL TESTING
+============================================================
+
+Test whether the correct Skill activates.
+
+Examples:
+
+Admission question
+? Admission/Knowledge Skill
+
+Token question
+? Token Skill
+
+EMS problem
+? Token + Credential Skill
+
+Website information
+? Knowledge Skill
+
+Document question
+? Document Skill
+
+Crawler request
+? Deep Crawl Skill
+
+If wrong Skill is selected:
+
+create a development task.
+
+============================================================
+AI RESPONSE QUALITY
+============================================================
+
+Agent 1 should score every response.
+
+Score:
+
+1–10
+
+Categories:
+
+Accuracy
+Relevance
+Clarity
+Completeness
+Context awareness
+Naturalness
+Bangla quality
+English quality
+Source quality
+Tool selection
+Safety
+Helpfulness
+
+Example:
+
+Accuracy: 9/10
+Relevance: 8/10
+Context: 6/10
+Bangla: 9/10
+Source: 5/10
+
+============================================================
+REAL HUMAN CONVERSATION QUALITY
+============================================================
+
+Agent 1 should evaluate:
+
+Does the chatbot sound robotic?
+
+Does it repeat itself?
+
+Does it over-explain?
+
+Does it ask unnecessary questions?
+
+Does it understand informal language?
+
+Does it understand Banglish?
+
+Does it understand typos?
+
+Does it remember conversation context?
+
+Does it appropriately ask clarification?
+
+Does it know when it doesn't know?
+
+Does it provide useful next steps?
+
+============================================================
+AGENT 1 OUTPUT
+============================================================
+
+Every test cycle must produce:
+
+QA REPORT
+
+Cycle ID
+Timestamp
+Persona
+Scenario
+Conversation
+Expected behavior
+Actual behavior
+Score
+Problem
+Severity
+Evidence
+Suggested improvement
+
+Severity:
+
+CRITICAL
+HIGH
+MEDIUM
+LOW
+IDEA
+
+Example:
+
+Issue:
+
+The chatbot answered an old admission deadline instead of the latest
+official notice.
+
+Severity:
+
+HIGH
+
+Evidence:
+
+Retrieved document dated 2025.
+
+Expected:
+
+Retrieve latest 2026 notice.
+
+Suggested fix:
+
+Improve temporal ranking.
+
+============================================================
+AGENT 2 WORKFLOW
+============================================================
+
+Agent 2 receives Agent 1's QA report.
+
+It must:
+
+1. understand issue
+2. reproduce issue
+3. inspect source
+4. identify root cause
+5. propose fix
+6. implement fix
+7. write/update automated test
+8. run test
+9. verify no regression
+10. deploy to staging/test environment
+11. report result
+
+============================================================
+ROOT CAUSE ANALYSIS
+============================================================
+
+Agent 2 must not patch symptoms only.
+
+For every significant problem:
+
+WHY did it happen?
+
+Possible causes:
+
+- prompt
+- Skill
+- MCP
+- RAG
+- retrieval
+- ranking
+- database
+- crawler
+- context
+- memory
+- frontend
+- API
+- authentication
+- tool schema
+- data quality
+
+Fix the root cause.
+
+============================================================
+REGRESSION TESTING
+============================================================
+
+After every change:
+
+Run:
+
+existing tests
++
+new test
++
+related tests
+
+Do NOT break existing functionality.
+
+Particularly protect:
+
+Token Service
+Crawler
+RAG
+MCP
+Skills
+Authentication
+Credential security
+Admin Dashboard
+
+============================================================
+AGENT 1 RE-TEST
+============================================================
+
+After Agent 2 makes a change:
+
+Agent 1 must repeat the failed test.
+
+If fixed:
+
+mark:
+
+RESOLVED
+
+If partially fixed:
+
+PARTIALLY RESOLVED
+
+If still broken:
+
+REOPENED
+
+If regression:
+
+REGRESSION
+
+============================================================
+NO FALSE SUCCESS
+============================================================
+
+Agent 1 must NOT say:
+
+"Looks good."
+
+without actually testing.
+
+Agent 2 must NOT say:
+
+"Fixed."
+
+without reproducing and testing.
+
+Every issue requires evidence.
+
+============================================================
+CONTINUOUS IMPROVEMENT
+============================================================
+
+After resolving an issue:
+
+Agent 1 should create new variations of the test.
+
+Example:
+
+Original:
+
+"NU admission deadline?"
+
+After fixing:
+
+"Honours admission deadline?"
+"Masters admission deadline?"
+"admission er last date?"
+"deadline kobe?"
+"application er sesh tarikh?"
+"Is the deadline extended?"
+
+This prevents overfitting to one exact question.
+
+============================================================
+EXPLORATORY TESTING
+============================================================
+
+Agent 1 should continuously invent new test scenarios.
+
+Do NOT only run a fixed test suite.
+
+Use:
+
+exploratory testing
+edge cases
+adversarial questions
+realistic conversations
+long conversations
+topic switching
+ambiguous queries
+typos
+Banglish
+Bangla
+English
+
+============================================================
+QUALITY GATES
+============================================================
+
+Define minimum quality scores.
+
+Example:
+
+Accuracy >= 9
+Relevance >= 9
+Context >= 8.5
+Tool selection >= 9
+Source quality >= 9
+Safety >= 9
+Bangla quality >= 8.5
+
+These values should be configurable.
+
+Do NOT claim the chatbot is "perfect."
+
+Instead:
+
+QUALITY TARGET ACHIEVED
+
+means all configured acceptance criteria passed.
+
+============================================================
+IMPORTANT: "SATISFIED" MUST BE OBJECTIVE
+============================================================
+
+Agent 1 must NOT decide it is satisfied based only on subjective feeling.
+
+Define:
+
+SATISFIED =
+
+1. Critical issues = 0
+
+2. High-severity unresolved issues = 0
+
+3. Regression tests pass
+
+4. Minimum quality scores achieved
+
+5. Core workflows pass
+
+6. Token Service passes
+
+7. Credential security passes
+
+8. MCP tests pass
+
+9. Skill routing passes
+
+10. RAG tests pass
+
+11. Source attribution tests pass
+
+12. Multi-turn tests pass
+
+13. Bangla tests pass
+
+14. English tests pass
+
+15. Crawler tests pass
+
+============================================================
+CONTINUOUS LOOP
+============================================================
+
+Pseudo-process:
+
+while AUTONOMOUS_MODE == RUNNING:
+
+    Agent1:
+        research()
+        generate_test_plan()
+        test_chatbot()
+        analyze_results()
+        create_QA_report()
+
+    Agent2:
+        read_QA_report()
+        prioritize_issues()
+        reproduce()
+        analyze_root_cause()
+        implement_fixes()
+        run_tests()
+        deploy_to_test()
+
+    Agent1:
+        re_test_fixed_issues()
+        run_regression_tests()
+        generate_new_tests()
+
+    save_cycle_report()
+
+    if quality_gate_passed:
+        continue exploratory testing
+    else:
+        continue fixing
+
+    wait/cooldown if necessary
+
+============================================================
+TASK PRIORITY
+============================================================
+
+Prioritize:
+
+CRITICAL
+?
+HIGH
+?
+MEDIUM
+?
+LOW
+?
+UX IMPROVEMENT
+?
+EXPERIMENTAL
+
+Do not spend hours polishing a minor UI issue while a major
+hallucination problem exists.
+
+============================================================
+AUTONOMOUS DEVELOPMENT SAFETY
+============================================================
+
+The agents must NOT make uncontrolled production changes.
+
+Use:
+
+DEVELOPMENT
+?
+TEST
+?
+STAGING
+?
+VALIDATION
+?
+OPTIONAL PRODUCTION
+
+If the existing project does not have staging:
+
+create a safe test environment.
+
+============================================================
+GIT INTEGRATION
+============================================================
+
+Before significant modifications:
+
+create a Git checkpoint.
+
+Use meaningful commits:
+
+qa/fix-rag-temporal-ranking
+qa/fix-bangla-context
+qa/fix-token-routing
+qa/improve-source-attribution
+
+Do not create thousands of meaningless commits.
+
+Maintain rollback capability.
+
+============================================================
+DO NOT MODIFY SECRETS
+============================================================
+
+Agents must never expose or commit:
+
+API keys
+passwords
+database credentials
+service credentials
+MCP secrets
+encryption keys
+
+Use environment variables.
+
+============================================================
+AGENT COMMUNICATION
+============================================================
+
+Create a persistent shared workspace:
+
+/ai_lab/
+
+Example:
+
+/ai_lab/
+    /research/
+    /qa_reports/
+    /tasks/
+    /implementations/
+    /test_results/
+    /regressions/
+    /research_sources/
+    /cycle_reports/
+    /metrics/
+
+Agent 1 writes:
+
+qa_reports/
+
+Agent 2 reads:
+
+qa_reports/
+
+Agent 2 writes:
+
+implementations/
+
+Agent 1 reads:
+
+implementations/
+
+Both write:
+
+cycle_reports/
+
+============================================================
+TASK QUEUE
+============================================================
+
+Create a structured task queue.
+
+Example:
+
+TASK-0001
+
+Title:
+Improve latest-notice retrieval
+
+Priority:
+HIGH
+
+Created by:
+Agent 1
+
+Root cause:
+Temporal ranking ignores publication date.
+
+Assigned:
+Agent 2
+
+Status:
+OPEN
+
+Then:
+
+IN_PROGRESS
+
+TESTING
+
+RESOLVED
+
+REOPENED
+
+============================================================
+DASHBOARD
+============================================================
+
+Create an AI Lab dashboard.
+
+Display:
+
+AUTONOMOUS MODE:
+?? RUNNING
+
+Current Cycle:
+127
+
+Agent 1:
+?? TESTING
+
+Agent 2:
+?? IMPLEMENTING
+
+Open Critical:
+0
+
+Open High:
+2
+
+Open Medium:
+8
+
+Resolved:
+147
+
+Regression:
+0
+
+Average Accuracy:
+9.2
+
+Average Context:
+9.0
+
+Average Relevance:
+9.3
+
+Last Cycle:
+2026-08-23 15:30
+
+Next Cycle:
+...
+
+Controls:
+
+[ START ]
+[ PAUSE ]
+[ STOP ]
+[ RESUME ]
+
+============================================================
+LIVE AGENT STATUS
+============================================================
+
+Show:
+
+Agent 1:
+
+"Testing Bangla admission conversation..."
+
+Agent 2:
+
+"Improving temporal retrieval ranking..."
+
+Do not expose internal chain-of-thought.
+
+Only show high-level activity.
+
+============================================================
+CYCLE REPORT
+============================================================
+
+After every cycle:
+
+Cycle #127
+
+Agent 1:
+Tests: 42
+
+Passed: 36
+
+Failed: 6
+
+New Issues:
+4
+
+Agent 2:
+Issues Fixed: 5
+
+Tests Added: 8
+
+Regression Tests:
+Passed
+
+Overall Score:
+
+9.1/10
+
+============================================================
+24/7 OPERATION
+============================================================
+
+The system must be capable of running continuously.
+
+Use persistent job state.
+
+If:
+
+server restarts
+application restarts
+worker crashes
+
+the system should recover.
+
+Persist:
+
+current cycle
+current task
+agent state
+test results
+pending issues
+completed issues
+
+Do not rely on RAM-only state.
+
+============================================================
+RESOURCE MANAGEMENT
+============================================================
+
+Implement:
+
+max concurrent browser sessions
+max requests/minute
+max AI calls/minute
+max crawl workers
+max test conversations
+max conversation length
+
+Add configurable:
+
+COOLDOWN_SECONDS
+
+MAX_CYCLES_PER_HOUR
+
+MAX_AI_COST_PER_DAY
+
+MAX_BROWSER_SESSIONS
+
+MAX_TESTS_PER_CYCLE
+
+============================================================
+AUTONOMOUS LOOP COMMANDS
+============================================================
+
+Admin should be able to say:
+
+"Start AI Lab"
+
+"Pause AI Lab"
+
+"Resume AI Lab"
+
+"Stop AI Lab"
+
+"Show AI Lab status"
+
+"Show latest QA report"
+
+"Show unresolved issues"
+
+"Show what Agent 1 is testing"
+
+"Show what Agent 2 is fixing"
+
+"Show quality score"
+
+============================================================
+IMPORTANT: NO INFINITE DAMAGE LOOP
+============================================================
+
+The continuous system must include safeguards.
+
+If the same issue is reopened more than:
+
+3 times
+
+mark:
+
+STUCK
+
+and stop automatically modifying that component.
+
+Create:
+
+STUCK_ISSUE report.
+
+Require human review.
+
+Similarly, if a change causes repeated regressions:
+
+pause autonomous modification for that component.
+
+============================================================
+HUMAN OVERRIDE
+============================================================
+
+I remain the final authority.
+
+The system must allow me to:
+
+approve changes
+reject changes
+rollback changes
+pause agents
+stop agents
+resume agents
+
+============================================================
+FINAL OBJECTIVE
+============================================================
+
+I want an AI development laboratory where:
+
+AGENT 1 continuously behaves like:
+
+- senior QA engineer
+- researcher
+- real user
+- chatbot evaluator
+- UX expert
+- AI evaluator
+
+and:
+
+AGENT 2 continuously behaves like:
+
+- senior software engineer
+- AI engineer
+- RAG engineer
+- MCP developer
+- Skills developer
+- debugging engineer
+
+They continuously collaborate.
+
+The objective is NOT merely:
+
+"make the chatbot work."
+
+The objective is:
+
+"continuously make the chatbot smarter, more accurate, more natural,
+more useful, safer, and more reliable."
+
+============================================================
+FIRST ACTION
+============================================================
+
+Do NOT immediately start changing the project.
+
+FIRST:
+
+1. inspect the entire project
+2. understand the architecture
+3. identify the current chatbot
+4. identify crawler
+5. identify RAG
+6. identify MCP
+7. identify Skills
+8. identify Token Service
+9. identify database
+10. identify frontend
+11. identify testing capabilities
+12. identify how the chatbot can be tested programmatically
+
+Then create:
+
+AI_LAB_ARCHITECTURE.md
+
+and:
+
+AI_LAB_ROADMAP.md
+
+Then create Agent 1 and Agent 2.
+
+Then run:
+
+ONE CONTROLLED TEST CYCLE.
+
+Show me:
+
+- what Agent 1 tested
+- what Agent 1 discovered
+- what Agent 2 changed
+- what tests were run
+- what improved
+- what remains
+
+ONLY AFTER THE CONTROLLED TEST CYCLE IS SUCCESSFUL:
+
+enable continuous autonomous mode.
+
+The system must NOT start uncontrolled 24/7 modifications without
+first proving that the two-agent loop works correctly.
+
+============================================================
+FINAL RULE
+============================================================
+
+The system should continuously improve itself,
+
+but it must never:
+
+- expose secrets
+- expose user passwords
+- bypass security
+- crawl unauthorized external domains
+- blindly trust AI-generated information
+- delete production data without authorization
+- modify production blindly
+- hide failures
+- claim tests passed without evidence
+- generate fake QA results
+- enter an endless repeated-failure loop
+
+Build this as a professional autonomous AI QA + development system.

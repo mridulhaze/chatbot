@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0",
+  "created_at": "2026-08-24T08:00:43.203209+00:00",
+  "timestamp": "20260824_080043",
+  "system": "National University Bangladesh AI Assistant",
+  "stats": {
+    "tokens_count": 171,
+    "users_count": 8,
+    "solvers_count": 8,
+    "services_count": 0
+  },
+  "checksums": {
+    "nu_tokens.db": "e854ce742a85b12485d50244a4bdd39a8a3539526b20ce8ff6e46755db79ab5d",
+    "nu_assistant.db": "603546d73742d857d8e9984e0469f4b1bab6676efebcba9abe6da859a5dd6b75"
+  }
+}
