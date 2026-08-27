@@ -466,3 +466,32 @@ async def restore_system_backup(file: UploadFile = File(...), user: dict = Depen
         return res
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# --- Hermes Agent Interactive Learning Brain Admin Endpoints ---
+from backend.services.hermes_brain_service import get_hermes_brain
+
+@router.get("/hermes/status", summary="Get Hermes Learning Brain status")
+def get_hermes_brain_status(user: dict = Depends(get_current_user_required)):
+    brain = get_hermes_brain()
+    return brain.get_brain_status()
+
+@router.post("/hermes/trigger-cycle", summary="Trigger autonomous Hermes learning cycle")
+def trigger_hermes_learning_cycle(limit: int = 25, user: dict = Depends(get_current_user_required)):
+    brain = get_hermes_brain()
+    return brain.run_interactive_learning_cycle(limit_gaps=limit)
+
+@router.post("/hermes/resolve-gap/{gap_id}", summary="Auto-resolve single knowledge gap with Hermes")
+def hermes_resolve_gap(gap_id: int, user: dict = Depends(get_current_user_required)):
+    brain = get_hermes_brain()
+    return brain.auto_resolve_gap(gap_id)
+
+@router.post("/hermes/extract-notice/{notice_id}", summary="Extract structured FAQs from notice with Hermes")
+def hermes_extract_notice_faqs(notice_id: int, user: dict = Depends(get_current_user_required)):
+    brain = get_hermes_brain()
+    return brain.extract_notice_faqs(notice_id)
+
+@router.get("/hermes/suggest-solution/{token_id}", summary="Solver Co-Pilot solution recommendation")
+def hermes_suggest_token_solution(token_id: str, user: dict = Depends(get_current_user_required)):
+    brain = get_hermes_brain()
+    return brain.suggest_token_solution(token_id)

@@ -189,6 +189,16 @@ def run_full_crawl() -> Dict[str, Any]:
         # 9. Index into Vector Store
         chunks_count = vector_store.split_and_add_documents(all_docs)
 
+        # 10. Autonomous Hermes Learning Brain Cycle
+        try:
+            from backend.services.hermes_brain_service import get_hermes_brain
+            hermes_brain = get_hermes_brain()
+            hermes_res = hermes_brain.run_interactive_learning_cycle(limit_gaps=20)
+            logger.info(f"Hermes Autonomous Learning Brain processed {hermes_res.get('resolved_gaps_count', 0)} knowledge gaps.")
+        except Exception as eh:
+            logger.warning(f"Hermes learning brain cycle warning: {eh}")
+
+
         status_str = "success" if not errors else "partial"
         sql_store.finish_crawl_log(
             log_id=log_id,
