@@ -62,10 +62,10 @@ class SQLStore:
             cursor = conn.cursor()
             if category:
                 cursor.execute("""
-                    SELECT * FROM notices WHERE category LIKE ? ORDER BY id DESC LIMIT ?
+                    SELECT * FROM notices WHERE category LIKE ? ORDER BY COALESCE(iso_date, '1970-01-01') DESC, id DESC LIMIT ?
                 """, (f"%{category}%", limit))
             else:
-                cursor.execute("SELECT * FROM notices ORDER BY id DESC LIMIT ?", (limit,))
+                cursor.execute("SELECT * FROM notices ORDER BY COALESCE(iso_date, '1970-01-01') DESC, id DESC LIMIT ?", (limit,))
             return [dict(row) for row in cursor.fetchall()]
 
     def search_notices(self, query_terms: list[str], limit: int = 10) -> list[dict[str, Any]]:
@@ -78,7 +78,7 @@ class SQLStore:
             for term in query_terms:
                 params.extend([f"%{term}%", f"%{term}%"])
             params.append(limit)
-            cursor.execute(f"SELECT * FROM notices WHERE {conditions} ORDER BY id DESC LIMIT ?", params)
+            cursor.execute(f"SELECT * FROM notices WHERE {conditions} ORDER BY COALESCE(iso_date, '1970-01-01') DESC, id DESC LIMIT ?", params)
             return [dict(row) for row in cursor.fetchall()]
 
     # --- Admission Info CRUD ---

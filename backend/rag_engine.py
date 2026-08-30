@@ -172,6 +172,27 @@ class RAGEngine:
             return "greeting"
         return "general"
 
+    def _detect_course(self, query: str) -> Tuple[Optional[str], List[str]]:
+        q_lower = query.lower()
+        mapping = {
+            "বি.এড (অনার্স) / B.Ed Honours": ["bedhons", "bed", "b.ed", "বি.এড", "বিএড", "বি.এমএড", "b.med"],
+            "কম্পিউটার সায়েন্স এন্ড ইঞ্জিনিয়ারিং (CSE)": ["cse", "computer science", "কম্পিউটার সায়েন্স"],
+            "বিবিএ / ব্যবসা প্রশাসন (BBA / THM)": ["bba", "বিবিএ", "ব্যবসায় প্রশাসন", "thm"],
+            "ইলেক্ট্রনিক্স এন্ড কমিউনিকেশন (ECE)": ["ece", "ইসিই", "ইলেক্ট্রনিক্স"],
+            "অনার্স ৪র্থ বর্ষ (Honours 4th Year)": ["honours 4th", "hons 4th", "4th year", "৪র্থ বর্ষ", "চতুর্থ বর্ষ"],
+            "অনার্স ৩য় বর্ষ (Honours 3rd Year)": ["honours 3rd", "hons 3rd", "3rd year", "৩য় বর্ষ", "তৃতীয় বর্ষ"],
+            "অনার্স ২য় বর্ষ (Honours 2nd Year)": ["honours 2nd", "hons 2nd", "2nd year", "২য় বর্ষ", "দ্বিতীয় বর্ষ"],
+            "অনার্স ১ম বর্ষ (Honours 1st Year)": ["honours 1st", "hons 1st", "1st year", "১ম বর্ষ", "প্রথম বর্ষ"],
+            "ডিগ্রী পাস (Degree Pass)": ["degree", "ডিগ্রী", "ডিগ্রি", "পাস কোর্স"],
+            "মাস্টার্স (Masters)": ["masters", "মাস্টার্স", "স্নাতকোত্তর", "m.sc", "m.a", "m.s.s", "প্রাইভেট মাস্টার্স"],
+            "এলএলবি / আইন (LLB)": ["llb", "আইন", "এলএলবি", "law"],
+            "প্রফেশনাল ও ডিপ্লোমা কোর্স (Professional Courses)": ["professional", "প্রফেশনাল", "পোস্ট গ্র্যাজুয়েট", "pgd", "ডিপ্লোমা", "amt", "kmt", "fdt"]
+        }
+        for course_name, terms in mapping.items():
+            if any(t in q_lower for t in terms):
+                return course_name, terms
+        return None, []
+
     def _safe_vector_search(self, query: str, k: int = 5):
         try:
             return self.vector_store.similarity_search(query, k=k)
@@ -371,10 +392,16 @@ class RAGEngine:
                 url="https://www.nu.ac.bd/recent-news-notice.php",
                 category="Official Notices"
             ))
-            recent_notices = self.sql_store.get_recent_notices(limit=8)
-            if recent_notices:
-                notice_text = "### National University Live Official Notices & Circulars:\n"
-                for n in recent_notices:
+            course_name, search_terms = self._detect_course(query)
+            if search_terms:
+                matched_notices = self.sql_store.search_notices(search_terms, limit=10)
+            else:
+                matched_notices = self.sql_store.get_recent_notices(limit=8)
+
+            if matched_notices:
+                header = f"### National University Live Official Notices for {course_name or 'General Notices'}:\n"
+                notice_text = header
+                for n in matched_notices:
                     notice_text += f"- **[{n.get('published_date', 'Recent')}] {n['title']}**\n  Direct Link: {n['url']}\n\n"
                     citations.append(SourceCitation(
                         title=n['title'][:60],
@@ -573,7 +600,7 @@ Compose a structured, formatted markdown response in Bengali (বাংলা):
             yield f"data: {json.dumps({'type': 'done', 'response_time_sec': round(elapsed, 2), 'intent': 'greeting', 'confidence': 1.0})}\n\n"
             return
 
-        if intent in ["token_service_menu", "token_lookup"] or (intent == "notices" and any(w in query.lower() for w in ["সাম্প্রতিক", "সকল নোটিশ", "সব নোটিশ", "recent", "latest notice", "all notice", "বিজ্ঞপ্তি"])):
+        if intent in ["token_service_menu", "token_lookup", "notices"] or any(w in query.lower() for w in ["bedhons", "b.ed", "bed", "বিজ্ঞপ্তি", "notice"]):
             fast_resp = self.answer_query(query, history, session_id)
             elapsed = time.perf_counter() - start_time
             yield f"data: {json.dumps({'type': 'token', 'content': fast_resp.reply}, ensure_ascii=False)}\n\n"
@@ -785,21 +812,59 @@ Compose a structured, formatted markdown response in Bengali (বাংলা):
                     is_fallback=False
                 )
 
-        # Fast path for General Recent Notices Request with Clickable Links
-        if intent == "notices" and any(w in query.lower() for w in ["সাম্প্রতিক", "সকল নোটিশ", "সব নোটিশ", "recent", "latest notice", "all notice", "বিজ্ঞপ্তি"]):
-            recent_notices = self.sql_store.get_recent_notices(limit=8)
-            if recent_notices:
-                notice_bullets = []
-                for n in recent_notices:
-                    n_title = n['title']
-                    n_date = n['published_date']
-                    n_url = n['url']
-                    notice_bullets.append(f"• **{n_date}:** [{n_title}]({n_url})")
+        # Fast path for Course-Wise & General Notices Request with Date Sorting & Clickable Links
+        if intent == "notices" or any(w in query.lower() for w in ["notice", "নোটিশ", "বিজ্ঞপ্তি", "রুটিন", "routine", "bedhons", "b.ed"]):
+            course_name, search_terms = self._detect_course(query)
+            if search_terms:
+                matched_notices = self.sql_store.search_notices(search_terms, limit=10)
+                if matched_notices:
+                    notice_bullets = []
+                    for n in matched_notices:
+                        n_title = n['title']
+                        n_date = n.get('published_date') or "Recent"
+                        n_url = n['url']
+                        notice_bullets.append(f"• **{n_date}:** [{n_title}]({n_url})")
 
-                bullet_text = "\n\n".join(notice_bullets)
-                notice_fast_reply = f"""### 📄 জাতীয় বিশ্ববিদ্যালয়ের সাম্প্রতিক নোটিশসমূহ:
+                    bullet_text = "\n\n".join(notice_bullets)
+                    course_fast_reply = f"""### 📄 জাতীয় বিশ্ববিদ্যালয় {course_name} সংক্রান্ত নোটিশসমূহ:
 
-জাতীয় বিশ্ববিদ্যালয়ের অফিশিয়াল ওয়েবসাইট ([nu.ac.bd](https://www.nu.ac.bd/recent-news-notice.php)) অনুযায়ী প্রকাশিত সাম্প্রতিক নোটিশ নিচে সরাসরি দেখার সুবিধার্থে তালিকাভুক্ত করা হলো:
+জাতীয় বিশ্ববিদ্যালয়ের অফিশিয়াল ওয়েবসাইট ([nu.ac.bd](https://www.nu.ac.bd/recent-news-notice.php)) অনুযায়ী **{course_name}** সম্পর্কিত সাম্প্রতিক নোটিশ নিচে সরাসরি দেখার সুবিধার্থে তারিখ অনুযায়ী ক্রমানুসারে সাজিয়ে দেওয়া হলো:
+
+{bullet_text}
+
+---
+🔗 **সকল নোটিশ বোর্ড:** [সকল নোটিশ বোর্ড (nu.ac.bd)](https://www.nu.ac.bd/recent-news-notice.php)
+💡 *যেকোনো নোটিশের শিরোনামে ক্লিক করে সরাসরি মূল বিজ্ঞপ্তি ও PDF দেখতে পারবেন।*"""
+
+                    citations = [
+                        SourceCitation(title=n['title'], url=n['url'], date=n.get('published_date', ''), category="Notice")
+                        for n in matched_notices
+                    ]
+                    return ChatResponse(
+                        reply=course_fast_reply,
+                        sources=[c.url for c in citations],
+                        citations=citations,
+                        suggested_chips=["📄 সকল নোটিশ বোর্ড", f"📅 {course_name} পরীক্ষার রুটিন", "🌐 ফলাফল ও SMS নিয়ম"],
+                        confidence=1.0,
+                        intent="notices",
+                        language=lang,
+                        is_fallback=False
+                    )
+
+            if any(w in query.lower() for w in ["সাম্প্রতিক", "সকল নোটিশ", "সব নোটিশ", "recent", "latest notice", "all notice", "বিজ্ঞপ্তি", "notice"]):
+                recent_notices = self.sql_store.get_recent_notices(limit=8)
+                if recent_notices:
+                    notice_bullets = []
+                    for n in recent_notices:
+                        n_title = n['title']
+                        n_date = n.get('published_date') or "Recent"
+                        n_url = n['url']
+                        notice_bullets.append(f"• **{n_date}:** [{n_title}]({n_url})")
+
+                    bullet_text = "\n\n".join(notice_bullets)
+                    notice_fast_reply = f"""### 📄 জাতীয় বিশ্ববিদ্যালয়ের সাম্প্রতিক নোটিশসমূহ:
+
+জাতীয় বিশ্ববিদ্যালয়ের অফিশিয়াল ওয়েবসাইট ([nu.ac.bd](https://www.nu.ac.bd/recent-news-notice.php)) অনুযায়ী প্রকাশিত সাম্প্রতিক নোটিশ নিচে সরাসরি দেখার সুবিধার্থে তারিখ অনুযায়ী ক্রমানুসারে তালিকাভুক্ত করা হলো:
 
 {bullet_text}
 
@@ -807,20 +872,20 @@ Compose a structured, formatted markdown response in Bengali (বাংলা):
 🔗 **সকল নোটিশ দেখতে:** [সকল নোটিশ বোর্ড (nu.ac.bd)](https://www.nu.ac.bd/recent-news-notice.php)
 💡 *যেকোনো নোটিশের শিরোনামে ক্লিক করে সরাসরি মূল বিজ্ঞপ্তি ও PDF দেখতে পারবেন।*"""
 
-                citations = [
-                    SourceCitation(title=n['title'], url=n['url'], date=n['published_date'], category="Notice")
-                    for n in recent_notices
-                ]
-                return ChatResponse(
-                    reply=notice_fast_reply,
-                    sources=[c.url for c in citations],
-                    citations=citations,
-                    suggested_chips=["📄 সকল নোটিশ বোর্ড", "📅 পরীক্ষার রুটিন", "🌐 ফলাফল ও SMS নিয়ম"],
-                    confidence=1.0,
-                    intent="notices",
-                    language=lang,
-                    is_fallback=False
-                )
+                    citations = [
+                        SourceCitation(title=n['title'], url=n['url'], date=n.get('published_date', ''), category="Notice")
+                        for n in recent_notices
+                    ]
+                    return ChatResponse(
+                        reply=notice_fast_reply,
+                        sources=[c.url for c in citations],
+                        citations=citations,
+                        suggested_chips=["📄 সকল নোটিশ বোর্ড", "📅 পরীক্ষার রুটিন", "🌐 ফলাফল ও SMS নিয়ম"],
+                        confidence=1.0,
+                        intent="notices",
+                        language=lang,
+                        is_fallback=False
+                    )
 
         context, citations, confidence = self.retrieve_context(query, intent)
 
