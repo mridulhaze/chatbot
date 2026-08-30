@@ -365,6 +365,25 @@ class RAGEngine:
             context_parts.append(svc_text)
             confidence = 0.95
 
+        elif intent == "notices":
+            citations.append(SourceCitation(
+                title="জাতীয় বিশ্ববিদ্যালয় অফিশিয়াল নোটিশ বোর্ড",
+                url="https://www.nu.ac.bd/recent-news-notice.php",
+                category="Official Notices"
+            ))
+            recent_notices = self.sql_store.get_recent_notices(limit=8)
+            if recent_notices:
+                notice_text = "### National University Live Official Notices & Circulars:\n"
+                for n in recent_notices:
+                    notice_text += f"- **[{n.get('published_date', 'Recent')}] {n['title']}**\n  Direct Link: {n['url']}\n\n"
+                    citations.append(SourceCitation(
+                        title=n['title'][:60],
+                        url=n['url'],
+                        category=n.get('category', 'Notice')
+                    ))
+                context_parts.append(notice_text)
+                confidence = 0.98
+
         elif intent == "admissions":
             citations.append(SourceCitation(
                 title="জাতীয় বিশ্ববিদ্যালয় অনলাইন ভর্তি পোর্টাল",

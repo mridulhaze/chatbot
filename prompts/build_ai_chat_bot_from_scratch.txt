@@ -1,0 +1,130 @@
+# TASK: Build the National University Bangladesh AI Assistant & Token Support System from Scratch
+
+Act as a Principal Full-Stack AI Engineer and Software Architect. Your mission is to build the complete, production-ready **National University Bangladesh AI Assistant & Autonomous Token Support System** from scratch. Write clean, complete, robust code without placeholders, dummy mocks, or `TODO` comments.
+
+---
+
+## 1. TECH STACK & SYSTEM ARCHITECTURE
+- **Backend**: Python 3.11+, FastAPI, Uvicorn, SQLite3 (with WAL mode enabled), ChromaDB (Vector Search), BCrypt (Password Hashing), PyCryptodome/Cryptography (AES-128-CBC credential encryption), ReportLab & OpenPyXL (PDF & Excel Exports).
+- **Autonomous Engine**: Python Asyncio / APScheduler background multi-agent crawlers (running every 60 minutes), BeautifulSoup4, Requests/HTTPX.
+- **Frontend**: Single-Page Application (SPA) in `static/index.html` using Tailwind CSS (CDN), FontAwesome / Heroicons, vanilla JavaScript (ES6+), QR Code generator, jsPDF, and html2canvas.
+- **Storage Layout**:
+  - `data/nu_assistant.db` (Knowledge base, 33+ Department directories, 1000+ Officers, Notices, FAQs).
+  - `data/nu_tokens.db` (Support tickets, Encrypted user credentials, RBAC User accounts, Audit logs).
+  - `nu_vector_db/` (ChromaDB persistent vector store).
+  - `backups/` (Portable atomic `.zip` disaster recovery snapshots).
+
+---
+
+## 2. STRICT DOMAIN RULES & URL GOVERNANCE
+1. **Official National University Bangladesh URLs (Mandatory):**
+   - Student Services (TC, Certificate, Marksheet, Transcript, Correction): `http://103.113.200.68/nu-app/`
+   - Admission Portal: `http://app11.nu.edu.bd/`
+   - EMS Examination & Result Portal: `http://ems.nu.ac.bd/`
+   - Main University Portal: `https://www.nu.ac.bd/`
+   - ?? **Strictly Forbidden:** Never use deprecated or malicious URLs (such as `services.nu.edu.bd` or `103.113.200.36`).
+2. **Phone & Mobile Number Formatting:**
+   - All contact and mobile numbers across SQLite databases and AI chat replies MUST be converted and presented in **English digits (`0-9`)** (e.g., `01711240173`, `+8802996691511`), never Bengali digits (`?-?`).
+3. **Zero-Hallucination Policy:**
+   - The AI must never hallucinate unpublished exam dates, circular fees, or admission deadlines. If a circular is pending, it provides the official portal link.
+
+---
+
+## 3. DATABASE SCHEMAS
+
+### A. `data/nu_assistant.db`
+1. `officers_directory` (`id`, `department_name`, `department_bn`, `office_url`, `name_en`, `name_bn`, `designation_en`, `designation_bn`, `email`, `phone_en`, `mobile_en`, `updated_at`)
+2. `notices` (`id`, `title`, `publish_date`, `category`, `source_url`, `pdf_url`, `extracted_text`, `scraped_at`)
+3. `faq_knowledge` (`id`, `category`, `question_bn`, `question_en`, `answer_bn`, `answer_en`, `reference_url`)
+4. `knowledge_gaps` (`id`, `user_query`, `suggested_answer`, `reviewed`, `created_at`)
+
+### B. `data/nu_tokens.db`
+1. `users` (`id`, `username`, `password_hash`, `full_name`, `role`, `department`, `active`, `created_at`)
+   - Seed default Super Admin: `username: "admin"`, `password: "admin123"`, `role: "SUPER_ADMIN"`.
+2. `support_tokens` (`id`, `token_id`, `student_name`, `student_phone`, `reg_no`, `session`, `service_code`, `department_desk`, `problem_description`, `encrypted_credentials`, `status`, `assigned_to`, `solver_notes`, `solution_document_url`, `is_deleted`, `created_at`, `updated_at`)
+   - `status` enum: `PENDING`, `PROCESSING`, `SOLVED`, `CANCELLED`.
+   - `token_id` format: `NU-YYYY-XXXXXX` (e.g., `NU-2026-000123`).
+3. `service_definitions` (`code`, `name_en`, `name_bn`, `assigned_desk`, `requires_credentials`, `instructions_bn`)
+4. `system_audit_logs` (`id`, `event_type`, `service_code`, `user_identifier`, `solver_actor`, `status`, `details`, `timestamp`)
+
+---
+
+## 4. BACKEND & RAG IMPLEMENTATION
+
+### Module 1: `backend/services/token_service.py`
+- Token generation with atomic numeric increment: `NU-YYYY-000001`.
+- AES-128-CBC encryption/decryption helper for student credentials.
+- Lifecycle transitions with audit logging (`CREATE` -> `ASSIGN` -> `PROCESSING` -> `SOLVE` -> `SOFT_DELETE` -> `RESTORE`).
+
+### Module 2: `backend/services/backup_service.py`
+- Create point-in-time `.zip` archives containing database snapshots and metadata manifests.
+- Safe restore mechanism with automated pre-restore rollback snapshots.
+
+### Module 3: `backend/rag_engine.py`
+- Hybrid retrieval: Exact SQL officer/notice matches + ChromaDB semantic vector search.
+- Preloaded instant sub-millisecond triggers (`hi`, `?????`, `?????`, `ems`, `???????`).
+- System prompt enforcing English numerals for phones, official portal citations, and bilingual support (Bangla/English).
+
+### Module 4: `crawler/` (Autonomous 60-Minute Agent)
+- `departments_scraper.py`: Iterates across 33+ official departments (VC Office, Registrar, Controller of Exams, Transport, ICT Cell, Accounts, etc.), parses faculty cards, normalizes Bengali digits to English, and populates `nu_assistant.db` + ChromaDB.
+- `scheduler.py`: Background cron worker running every 60 minutes during FastAPI app lifespan.
+
+### Module 5: `backend/api/` FastAPI Routes
+- `POST /api/v1/chat`: AI Assistant queries with RAG context.
+- `POST /api/v1/tokens/create`: Public student support token generation.
+- `GET /api/v1/tokens/status/{token_id}`: Public ticket tracking.
+- `POST /api/v1/auth/login`: JWT login for Admins and Solvers.
+- `GET /api/v1/admin/tokens`: RBAC-filtered token listing.
+- `POST /api/v1/admin/tokens/{id}/solve` & `POST /api/v1/admin/tokens/{id}/send-back`.
+- `GET /api/v1/admin/backup/list`, `POST /api/v1/admin/backup/create`, `POST /api/v1/admin/backup/restore`.
+- `GET /api/v1/admin/logs/export/pdf` & `GET /api/v1/admin/logs/export/excel`.
+
+---
+
+## 5. ROLE-BASED ACCESS CONTROL (RBAC)
+- **SUPER_ADMIN**: Full system control, Department Desk management, User creation/passwords, Disaster Recovery (Backup/Restore), Trash soft-delete & recovery.
+- **ADMIN**: Token management, Website structure map, Autonomous Crawler engine triggers, Activity logs & PDF/Excel exports.
+- **SOLVER**: Desk-restricted view. Solvers ONLY see the `Token Support Center` tab and ONLY tickets assigned to their department desk. Solvers have only 2 actions: `Solve` or `Send Back to Admin (Not Solved)`.
+
+---
+
+## 6. FRONTEND USER INTERFACE (`static/index.html`)
+Build a beautiful, modern, mobile-responsive SPA with emerald and slate accents:
+1. **Header**: NU Logo, Version Badge (`v2.0 RAG`), Token Service button, Check Token button, Mobile QR button, User Manual ("Help & Guide"), and Admin/Staff Login.
+2. **Chat Viewport**:
+   - Fixed full-screen height (`h-screen overflow-hidden`), isolated scrolling message container (`#chat-messages`).
+   - Sticky suggestion chips bar pinned permanently above the input box.
+   - Floating scroll-to-bottom jump button when scrolled up.
+3. **Modals & Drawers**:
+   - **User Manual (`#help-drawer`)**: Clean 4-step visual guide for students (How to chat, How to create a token, How to track status, Mobile QR scan).
+   - **Student Token Form Modal**: Intuitive form with service type dropdown, credential fields, and instant token ID display with one-click copy.
+   - **Token Tracking Modal**: Real-time status badge (`PENDING` / `PROCESSING` / `SOLVED`), solver remarks, and PDF Certificate generator.
+   - **Mobile QR Modal**: Interactive QR code generator for smartphone access.
+   - **Admin & Solver Dashboard Modal**: Full-featured management hub with tabs: `Token Support Center`, `Website Structure Map`, `AI Autonomous Engine`, `User Accounts`, `Activity Logs`, `Backup & Restore`, and `?? System & Operations Manual`.
+
+---
+
+## 7. PROJECT STRUCTURE & AUTOMATED TESTS
+Create the following directory layout:
+```text
++-- backend/
+¦   +-- api/ (admin_routes.py, chat_routes.py, token_routes.py)
+¦   +-- core/ (config.py, security.py, audit.py, db.py)
+¦   +-- services/ (token_service.py, backup_service.py, report_exporter.py)
+¦   +-- rag_engine.py
+¦   +-- app.py
++-- crawler/
+¦   +-- departments_scraper.py
+¦   +-- homepage_scraper.py
+¦   +-- scheduler.py
++-- data/
+¦   +-- nu_assistant.db
+¦   +-- nu_tokens.db
++-- static/
+¦   +-- index.html
++-- tests/
+¦   +-- test_token_service_domain.py
+¦   +-- test_backup_and_delete.py
++-- .gitignore
++-- README.md
++-- requirements.txt

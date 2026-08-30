@@ -29,7 +29,8 @@ class BaseScraper:
                 time.sleep(self.delay)
                 response = self.session.get(url, timeout=self.timeout, verify=False)
                 response.raise_for_status()
-                response.encoding = response.apparent_encoding or "utf-8"
+                # Enforce UTF-8 for National University portals to prevent chardet misdetecting Bengali as MacCyrillic/CP1252
+                response.encoding = "utf-8"
                 return response.text
             except Exception as e:
                 logger.warning(f"Error fetching {url} (attempt {attempt + 1}): {e}")

@@ -37,11 +37,14 @@ class NoticesScraper(BaseScraper):
             rows = soup.find_all("tr")
             board_notices = []
 
-            for row in rows:
+            for row in rows[:100]:
                 cols = row.find_all("td")
                 if len(cols) >= 2:
-                    date_col = cols[0].get_text(strip=True) if len(cols) > 2 else ""
-                    title_col = cols[1].get_text(strip=True) if len(cols) > 2 else cols[0].get_text(strip=True)
+                    # In nu.ac.bd notice tables: cols[0] is Title, cols[1] is Date, cols[2] is Download
+                    title_col = cols[0].get_text(strip=True)
+                    date_col = cols[1].get_text(strip=True) if len(cols) >= 2 else ""
+                    if not title_col and len(cols) > 1:
+                        title_col = cols[1].get_text(strip=True)
                     
                     a_tag = row.find("a")
                     href = a_tag.get("href") if a_tag else ""
