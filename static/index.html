@@ -5047,12 +5047,11 @@
           const data = await res.json();
           const manifestJson = JSON.stringify(data.data, null, 2);
           const manifestWindow = window.open("", "_blank");
-          manifestWindow.document.write(`
-            <html>
-              <head><title>Machine-Readable AI Knowledge Manifest</title><style>body{font-family:monospace;background:#0f172a;color:#38bdf8;padding:20px;white-space:pre-wrap;}</style></head>
-              <body>${manifestJson}</body>
-            </html>
-          `);
+          if (manifestWindow) {
+            manifestWindow.document.title = "Machine-Readable AI Knowledge Manifest";
+            manifestWindow.document.body.style.cssText = "font-family:monospace;background:#0f172a;color:#38bdf8;padding:20px;white-space:pre-wrap;";
+            manifestWindow.document.body.textContent = manifestJson;
+          }
         }
       } catch (e) {
         alert("Error loading manifest: " + e.message);
@@ -5391,7 +5390,7 @@
       modal.classList.toggle("hidden");
       const scriptPre = document.getElementById("embed-code-script");
       if (scriptPre) {
-        scriptPre.textContent = `<!-- National University AI Chat Assistant Widget -->\n<script src="${API_BASE}/static/widget.js" async><\/script>`;
+        scriptPre.textContent = '<!-- National University AI Chat Assistant Widget -->\n<' + 'script src="' + API_BASE + '/static/widget.js" async><' + '/script>';
       }
     }
 
