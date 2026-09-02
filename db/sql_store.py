@@ -112,18 +112,60 @@ class SQLStore:
                 cursor.execute("SELECT * FROM admission_info ORDER BY id DESC LIMIT 20")
             return [dict(row) for row in cursor.fetchall()]
 
-    # --- FAQ & Self-Learned Entries ---
-    def insert_faq_entry(self, question: str, answer: str, source_url: str = "", language: str = "bn", 
+    def batch_upsert_faqs(self, faq_list: list[dict[str, Any]]) -> int:
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            count = 0
+            for item in faq_list:
+                q = item["question"]
+                a = item["answer"]
+                url = item.get("source_url", "")
+                lang = item.get("language", "bn")
+                cat = item.get("category", "General")
+                conf = item.get("confidence", 1.0)
+                v = item.get("verified_by_admin", 1)
+
+                cursor.execute("SELECT id FROM faq_entries WHERE question = ?", (q,))
+                row = cursor.fetchone()
+                if row:
+                    cursor.execute("""
+                        UPDATE faq_entries
+                        SET answer = ?, source_url = ?, language = ?, category = ?, confidence = ?, verified_by_admin = ?, updated_at = CURRENT_TIMESTAMP
+                        WHERE id = ?
+                    """, (a, url, lang, cat, conf, v, row["id"]))
+                else:
+                    cursor.execute("""
+                        INSERT INTO faq_entries (question, answer, source_url, language, category, confidence, verified_by_admin)
+                        VALUES (?, ?, ?, ?, ?, ?, ?)
+                    """, (q, a, url, lang, cat, conf, v))
+                count += 1
+            return count
+
+    def upsert_faq_entry(self, question: str, answer: str, source_url: str = "", language: str = "bn", 
                          category: str = "General", confidence: float = 1.0, verified_by_admin: int = 0) -> int:
         with self._get_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("""
-                INSERT INTO faq_entries (question, answer, source_url, language, category, confidence, verified_by_admin)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-            """, (question, answer, source_url, language, category, confidence, verified_by_admin))
-            return cursor.lastrowid
+            cursor.execute("SELECT id FROM faq_entries WHERE question = ?", (question,))
+            row = cursor.fetchone()
+            if row:
+                cursor.execute("""
+                    UPDATE faq_entries
+                    SET answer = ?, source_url = ?, language = ?, category = ?, confidence = ?, verified_by_admin = ?, updated_at = CURRENT_TIMESTAMP
+                    WHERE id = ?
+                """, (answer, source_url, language, category, confidence, verified_by_admin, row["id"]))
+                return row["id"]
+            else:
+                cursor.execute("""
+                    INSERT INTO faq_entries (question, answer, source_url, language, category, confidence, verified_by_admin)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                """, (question, answer, source_url, language, category, confidence, verified_by_admin))
+                return cursor.lastrowid
 
-    def get_faqs(self, verified_only: bool = False, limit: int = 50) -> list[dict[str, Any]]:
+    def insert_faq_entry(self, question: str, answer: str, source_url: str = "", language: str = "bn", 
+                         category: str = "General", confidence: float = 1.0, verified_by_admin: int = 0) -> int:
+        return self.upsert_faq_entry(question, answer, source_url, language, category, confidence, verified_by_admin)
+
+    def get_faqs(self, verified_only: bool = False, limit: int = 500) -> list[dict[str, Any]]:
         with self._get_connection() as conn:
             cursor = conn.cursor()
             if verified_only:

@@ -297,22 +297,22 @@
       <!-- Dedicated Persistent Shortcuts & Suggested Chips Bar (Always visible in viewport) -->
       <div id="chips-bar-wrapper" class="px-3 sm:px-4 py-2 bg-slate-50/95 border-t border-slate-200/80 shrink-0 z-10">
         <div id="dynamic-chips" class="flex items-center gap-1.5 overflow-x-auto pb-0.5 no-scrollbar flex-nowrap sm:flex-wrap">
-          <button onclick="sendQuickMessage('Token Service')" class="text-xs shrink-0 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 px-3 py-1.5 rounded-full transition font-semibold shadow-2xs">
+          <button onclick="openTokenModal()" class="text-xs shrink-0 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 px-3 py-1.5 rounded-full transition font-semibold shadow-2xs cursor-pointer">
             🎫 টোকেন সার্ভিস (Token Service)
           </button>
-          <button onclick="sendQuickMessage('Check token status')" class="text-xs shrink-0 bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-300 px-3 py-1.5 rounded-full transition font-medium shadow-2xs">
+          <button onclick="openTokenCheckModal()" class="text-xs shrink-0 bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-300 px-3 py-1.5 rounded-full transition font-medium shadow-2xs cursor-pointer">
             📋 টোকেন স্ট্যাটাস চেক
           </button>
-          <button onclick="sendQuickMessage('আইসিটি দপ্তরের কর্মকর্তা ও কর্মচারীবৃন্দের তালিকা')" class="text-xs shrink-0 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 px-3 py-1.5 rounded-full transition font-medium shadow-2xs">
+          <button onclick="handleChipClick('আইসিটি দপ্তরের কর্মকর্তা ও কর্মচারীবৃন্দের তালিকা')" class="text-xs shrink-0 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 px-3 py-1.5 rounded-full transition font-medium shadow-2xs cursor-pointer">
             💻 আইসিটি কর্মকর্তা তালিকা
           </button>
-          <button onclick="sendQuickMessage('Honours 4th year exam routine')" class="text-xs shrink-0 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 px-3 py-1.5 rounded-full transition font-medium shadow-2xs">
+          <button onclick="handleChipClick('Honours 4th year exam routine')" class="text-xs shrink-0 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 px-3 py-1.5 rounded-full transition font-medium shadow-2xs cursor-pointer">
             📅 Honours 4th Year Routine
           </button>
-          <button onclick="sendQuickMessage('ফলাফল দেখার ওয়েবসাইট ও SMS নিয়ম')" class="text-xs shrink-0 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 px-3 py-1.5 rounded-full transition font-medium shadow-2xs">
+          <button onclick="handleChipClick('ফলাফল দেখার ওয়েবসাইট ও SMS নিয়ম')" class="text-xs shrink-0 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 px-3 py-1.5 rounded-full transition font-medium shadow-2xs cursor-pointer">
             🌐 ফলাফল ও SMS নিয়ম
           </button>
-          <button onclick="sendQuickMessage('সকল নোটিশ বোর্ডের লিংক')" class="text-xs shrink-0 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 px-3 py-1.5 rounded-full transition font-medium shadow-2xs">
+          <button onclick="handleChipClick('সকল নোটিশ বোর্ডের লিংক')" class="text-xs shrink-0 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 px-3 py-1.5 rounded-full transition font-medium shadow-2xs cursor-pointer">
             📄 সকল নোটিশ লিংক
           </button>
         </div>
@@ -2537,7 +2537,99 @@
       return `${hours}:${minutesStr} ${ampm}`;
     }
 
+    function handleChipClick(chipText) {
+      const clean = String(chipText || "").trim();
+      const lower = clean.toLowerCase();
+
+      // 1. Token Service Open Triggers
+      if (
+        lower === "token service" ||
+        lower === "টোকেন সার্ভিস" ||
+        lower === "টোকেন সেবা" ||
+        lower === "নতুন টোকেন" ||
+        lower === "🎫 টোকেন সার্ভিস" ||
+        lower === "🎫 টোকেন সার্ভিস (token service)" ||
+        lower === "🎫 নতুন টোকেন" ||
+        lower === "🎫 সাপোর্ট টোকেন খুলুন" ||
+        lower === "🎫 ভর্তি সহায়তা টোকেন" ||
+        lower === "🎫 পরীক্ষার টোকেন খুলুন" ||
+        lower === "🎫 ফলাফল সংক্রান্ত টোকেন" ||
+        lower === "🎫 টিসি সহায়তা টোকেন" ||
+        lower === "🎫 সংশোধন সাপোর্ট টোকেন" ||
+        lower === "🎫 সার্টিফিকেট সহায়তা টোকেন" ||
+        lower === "🎫 ভেরিফিকেশন টোকেন" ||
+        lower.includes("টোকেন ফর্ম") ||
+        lower.includes("টোকেন খুলুন")
+      ) {
+        openTokenModal();
+        return;
+      }
+
+      // 2. Token Status Check Triggers
+      if (
+        lower === "check token status" ||
+        lower === "token status" ||
+        lower === "token status check" ||
+        lower === "check token" ||
+        lower === "টোকেন স্ট্যাটাস" ||
+        lower === "টোকেন স্ট্যাটাস চেক" ||
+        lower === "টোকেন চেক" ||
+        lower === "📋 টোকেন স্ট্যাটাস চেক" ||
+        lower === "📋 টোকেন স্ট্যাটাস" ||
+        lower === "📑 টোকেন স্ট্যাটাস চেক"
+      ) {
+        openTokenCheckModal();
+        return;
+      }
+
+      // 3. Specific Token ID check (e.g. "📋 Check NU-2026-000140" or "Check NU-2026-000140")
+      const tokenMatch = clean.match(/NU-\d{4}-\d{6}/i);
+      if (tokenMatch) {
+        openTokenCheckModal(tokenMatch[0].toUpperCase());
+        return;
+      }
+
+      // 4. Mobile QR Modal
+      if (lower.includes("mobile qr") || lower.includes("qr কোড")) {
+        openQRModal();
+        return;
+      }
+
+      sendQuickMessage(clean);
+    }
+
     function sendQuickMessage(text) {
+      const clean = String(text || "").trim();
+      const lower = clean.toLowerCase();
+
+      if (
+        lower === "token service" ||
+        lower === "টোকেন সার্ভিস" ||
+        lower === "🎫 টোকেন সার্ভিস (token service)" ||
+        lower === "🎫 টোকেন সার্ভিস" ||
+        lower === "🎫 নতুন টোকেন"
+      ) {
+        openTokenModal();
+        return;
+      }
+      if (
+        lower === "check token status" ||
+        lower === "token status" ||
+        lower === "token status check" ||
+        lower === "টোকেন স্ট্যাটাস চেক" ||
+        lower === "📋 টোকেন স্ট্যাটাস চেক" ||
+        lower === "📋 টোকেন স্ট্যাটাস" ||
+        lower === "📑 টোকেন স্ট্যাটাস চেক"
+      ) {
+        openTokenCheckModal();
+        return;
+      }
+      const tokenMatch = clean.match(/NU-\d{4}-\d{6}/i);
+      if (tokenMatch && (lower.includes("check") || lower.includes("status") || lower.includes("টোকেন"))) {
+        openTokenCheckModal(tokenMatch[0].toUpperCase());
+        return;
+      }
+
       chatInput.value = text;
       handleChatSubmit();
     }
@@ -2715,7 +2807,6 @@
       const userTime = formatTime(new Date());
       appendUserMessage(message, userTime);
       chatInput.value = "";
-      if (dynamicChips) dynamicChips.remove();
 
       conversationHistory.push({ role: "user", content: message });
       typingIndicator.classList.remove("hidden");
@@ -2828,9 +2919,7 @@
           `;
         }
 
-        if (finalChips && finalChips.length > 0) {
-          renderDynamicChips(finalChips);
-        }
+        renderDynamicChips(finalChips);
 
         conversationHistory.push({ role: "bot", content: accumulatedText });
 
@@ -2839,20 +2928,62 @@
         const elapsedSec = ((performance.now() - startTime) / 1000).toFixed(2);
         const botTime = formatTime(new Date());
         appendBotMessage(`⚠️ সরি, সার্ভারের সাথে সংযোগে সাময়িক সমস্যা হচ্ছে: ${err.message}`, [], ["🎫 টোকেন সার্ভিস", "📋 টোকেন স্ট্যাটাস"], botTime, elapsedSec);
+        renderDynamicChips(["🎫 টোকেন সার্ভিস", "📋 টোকেন স্ট্যাটাস"]);
       }
 
       chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
-    function renderDynamicChips(chips) {
-      if (!chips || chips.length === 0) return;
+    const CORE_SHORTCUTS = [
+      { label: "🎫 টোকেন সার্ভিস (Token Service)", action: "openTokenModal()", style: "bg-amber-50 hover:bg-amber-100 text-amber-900 border-amber-300 font-semibold" },
+      { label: "📋 টোকেন স্ট্যাটাস চেক", action: "openTokenCheckModal()", style: "bg-purple-50 hover:bg-purple-100 text-purple-800 border-purple-300 font-medium" },
+      { label: "💻 আইসিটি কর্মকর্তা তালিকা", query: "আইসিটি দপ্তরের কর্মকর্তা ও কর্মচারীবৃন্দের তালিকা", style: "bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-emerald-200 font-medium" },
+      { label: "📅 Honours 4th Year Routine", query: "Honours 4th year exam routine", style: "bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-emerald-200 font-medium" },
+      { label: "🌐 ফলাফল ও SMS নিয়ম", query: "ফলাফল দেখার ওয়েবসাইট ও SMS নিয়ম", style: "bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-emerald-200 font-medium" },
+      { label: "📄 সকল নোটিশ লিংক", query: "সকল নোটিশ বোর্ডের লিংক", style: "bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-emerald-200 font-medium" }
+    ];
+
+    function renderDynamicChips(dynamicList = []) {
       const chipsEl = document.getElementById("dynamic-chips");
       if (!chipsEl) return;
-      chipsEl.innerHTML = chips.map(c => `
-        <button onclick="sendQuickMessage('${c.replace(/'/g, "\\'")}')" class="text-xs shrink-0 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 px-3 py-1.5 rounded-full transition font-medium shadow-2xs whitespace-nowrap">
-          ${escapeHTML(c)}
-        </button>
-      `).join("");
+
+      let html = "";
+      if (dynamicList && Array.isArray(dynamicList) && dynamicList.length > 0) {
+        const coreLabels = new Set(CORE_SHORTCUTS.map(s => s.label.toLowerCase()));
+        const coreQueries = new Set(CORE_SHORTCUTS.filter(s => s.query).map(s => s.query.toLowerCase()));
+
+        dynamicList.forEach(c => {
+          if (!c) return;
+          const clean = String(c).trim();
+          if (!clean) return;
+          const isCore = coreLabels.has(clean.toLowerCase()) || coreQueries.has(clean.toLowerCase());
+          if (!isCore) {
+            html += `
+              <button onclick="handleChipClick('${clean.replace(/'/g, "\\'")}')" class="text-xs shrink-0 bg-teal-50 hover:bg-teal-100 text-teal-900 border border-teal-300 px-3 py-1.5 rounded-full transition font-semibold shadow-2xs whitespace-nowrap cursor-pointer">
+                ${escapeHTML(clean)}
+              </button>
+            `;
+          }
+        });
+      }
+
+      CORE_SHORTCUTS.forEach(item => {
+        if (item.action) {
+          html += `
+            <button onclick="${item.action}" class="text-xs shrink-0 ${item.style} border px-3 py-1.5 rounded-full transition shadow-2xs whitespace-nowrap cursor-pointer">
+              ${escapeHTML(item.label)}
+            </button>
+          `;
+        } else {
+          html += `
+            <button onclick="handleChipClick('${(item.query || item.label).replace(/'/g, "\\'")}')" class="text-xs shrink-0 ${item.style} border px-3 py-1.5 rounded-full transition shadow-2xs whitespace-nowrap cursor-pointer">
+              ${escapeHTML(item.label)}
+            </button>
+          `;
+        }
+      });
+
+      chipsEl.innerHTML = html;
     }
 
     function scrollToChatBottom() {

@@ -36,3 +36,13 @@ Backup/
 *.zip
 hermes_agent_repo/
 graphify-out/
+.env
+.env.*
+.env.local
+docs/*.png
+docs/test_*.html
+docs/test_*.pdf
+docs/test_*.png
+backend/test_pdf_render.py
+backend/render_test_v2.py
+

@@ -21,7 +21,7 @@
     {
       "topic": "Admission Process and Release Slips",
       "topic_bn": "ভর্তি প্রক্রিয়া ও রিলিজ স্লিপ",
-      "content": "Undergraduate admission (Honours 4-year, Degree Pass 3-year, Professional) is conducted online via http://app1.nu.edu.bd without any written admission test. Merit is calculated from SSC (40%) and HSC (60%) results. Candidates not selected in the 1st or 2nd merit list can apply for 1st Release Slip and 2nd Release Slip across multiple colleges and subjects."
+      "content": "Undergraduate admission (Honours 4-year, Degree Pass 3-year, Professional) is conducted online via http://app11.nu.edu.bd/ without any written admission test. Merit is calculated from SSC (40%) and HSC (60%) results. Candidates not selected in the 1st or 2nd merit list can apply for 1st Release Slip and 2nd Release Slip across up to 5 colleges and subjects."
     },
     {
       "topic": "Examination, Form Fill-up and Promotion Rules",
@@ -34,6 +34,21 @@
       "content": "Students unsatisfied with published results can apply for answer script re-scrutiny (খাতা পুনর্নিরীক্ষণ) online on https://www.nu.ac.bd/ within 30 calendar days of result publication. Fees are payable through Sonali Bank Sonali Seba. Results of re-scrutiny are published on the official notice board within 30 to 45 days."
     },
     {
+      "topic": "College Transfer (TC) Regulations",
+      "topic_bn": "ছাড়পত্র (TC) মাধ্যমে কলেজ পরিবর্তনের নিয়মাবলী",
+      "content": "Transfer Certificate (TC) applications are submitted online through the Student Services portal http://103.113.200.68/nu-app/. TC is only allowed in the identical subject and academic year where vacant approved seats exist in the destination college, with mutual clearance. Simultaneous subject change during college transfer is prohibited."
+    },
+    {
+      "topic": "Registration and Student Corrections",
+      "topic_bn": "রেজিস্ট্রেশন কার্ড ও তথ্য সংশোধন",
+      "content": "Original Registration Cards are issued by National University to affiliated colleges after 1st-year admission. For Name Correction, Father's/Mother's Name Correction, Date of Birth Correction, and Duplicate Registration Cards, students apply online via http://103.113.200.68/nu-app/ with academic certificates and fee payment via Sonali Seba."
+    },
+    {
+      "topic": "Certificate, Transcript and WES Services",
+      "topic_bn": "সার্টিফিকেট, ট্রান্সক্রিপ্ট ও ডব্লিউইএস সেবা",
+      "content": "Original Degree Certificates, Provisional Certificates, Academic Transcripts, Migration Certificates, and WES / International Verification are applied online via http://103.113.200.68/nu-app/. Fees are paid through Sonali Seba e-pay slips."
+    },
+    {
       "topic": "University Administration and Governance",
       "topic_bn": "বিশ্ববিদ্যালয় প্রশাসন ও উপাচার্য",
       "content": "The Chancellor of the National University of Bangladesh is the Honorable President of the People's Republic of Bangladesh. The Vice-Chancellor (VC / উপাচার্য) of National University is Professor Dr. A. S. M. Amanullah (প্রফেসর ড. এ এস এম আমানুল্লাহ). The Pro-Vice Chancellors (উপ-উপাচার্য) are Prof. Md. Lutfor Rahaman and Professor Dr. Mohammad Ali Zinnah. The Treasurer (কোষাধ্যক্ষ) is Professor Dr. Md. Nazmul Hossain / Prof. Dr. A. T. M. Zafrul Azam. Main administrative headquarters is located in Board Bazar, Gazipur 1704. Central Registrar contact: registrar@nu.ac.bd."
@@ -42,6 +57,11 @@
       "topic": "Certificate and Marksheet Verification",
       "topic_bn": "সার্টিফিকেট ও নম্বরপত্র যাচাই",
       "content": "Official degree certificates, provisional certificates, and academic transcripts can be verified online through the National University Certificate Verification portal at https://www.nu.ac.bd/certificate-verification.php and the student service portal http://103.113.200.68/nu-app/."
+    },
+    {
+      "topic": "e-Payment and PAMS Services (Re-Evaluation, Dormitory, On-Campus Payslip, Payment Check)",
+      "topic_bn": "ই-পেমেন্ট ও প্যামস (PAMS) সেবা পোর্টাল",
+      "content": "The National University e-Payment (PAMS) portal at http://103.113.200.36/PAMS/Default.aspx hosts key academic and administrative payment services: 1. Re-Evaluation Fee (http://103.113.200.36/PAMS/ICTUnit/Re-Evaluation.aspx) for answer sheet re-evaluation for BBA, PGD in LIS, AMT, FDT, KMT and other semester programs. 2. Exam Centre Change for examination centre transfer applications and fees. 3. Dormitory Reservation (http://103.113.200.36/PAMS/Dormitory/Reservation.aspx) for teachers, researchers, trainees, resource persons, retired employees, foreign guests, and university personnel to book guest rooms and pay via Sonali Bank. 4. On-Campus Payslip (http://103.113.200.36/PAMS/ICTUnit/OnCampusPayslip.aspx) for main campus students to download registration and semester fee pay slips. 5. Check Payment (http://103.113.200.36/PAMS/ICTUnit/PaymentChk.aspx) to verify Sonali Seba payment status using NU TransID, Bank Ref No, Roll or Registration number."
     }
   ]
 }

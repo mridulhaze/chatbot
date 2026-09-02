@@ -785,9 +785,7 @@
             `</div>`;
         }
 
-        if (finalChips && finalChips.length > 0) {
-          renderChips(finalChips);
-        }
+        renderChips(finalChips);
 
         conversationHistory.push({ role: "bot", content: accumulatedText });
 
@@ -796,6 +794,7 @@
         const elapsedSec = ((performance.now() - startTime) / 1000).toFixed(2);
         const botTime = formatTime(new Date());
         appendMessage("bot", `⚠️ সার্ভার সংযোগে সমস্যা হয়েছে: ${err.message}`, [], botTime, elapsedSec);
+        renderChips(["🎫 টোকেন সার্ভিস", "📋 টোকেন স্ট্যাটাস"]);
       }
 
       messagesBox.scrollTop = messagesBox.scrollHeight;
@@ -839,12 +838,37 @@
       messagesBox.scrollTop = messagesBox.scrollHeight;
     }
 
-    function renderChips(chips) {
+    const CORE_WIDGET_SHORTCUTS = [
+      { label: "🎫 টোকেন সার্ভিস", query: "Token Service" },
+      { label: "📋 টোকেন স্ট্যাটাস", query: "Check token status" },
+      { label: "💻 আইসিটি কর্মকর্তা", query: "আইসিটি দপ্তরের কর্মকর্তা ও কর্মচারীবৃন্দের তালিকা" },
+      { label: "📅 Honours Routine", query: "Honours 4th year exam routine" },
+      { label: "🌐 ফলাফল ও SMS নিয়ম", query: "ফলাফল দেখার ওয়েবসাইট ও SMS নিয়ম" },
+      { label: "📄 সকল নোটিশ লিংক", query: "সকল নোটিশ বোর্ডের লিংক" }
+    ];
+
+    function renderChips(chips = []) {
       if (chipsEl) chipsEl.remove();
       chipsEl = document.createElement("div");
       chipsEl.id = "nu-chips";
       chipsEl.className = "nu-chips-container";
-      chipsEl.innerHTML = chips.map(c => `<button class="nu-chip-btn" data-query="${c}">${c}</button>`).join("");
+
+      let html = "";
+      if (chips && Array.isArray(chips) && chips.length > 0) {
+        chips.forEach(c => {
+          if (!c) return;
+          const isCore = CORE_WIDGET_SHORTCUTS.some(s => s.label.toLowerCase() === String(c).toLowerCase() || s.query.toLowerCase() === String(c).toLowerCase());
+          if (!isCore) {
+            html += `<button class="nu-chip-btn" data-query="${c}">${c}</button>`;
+          }
+        });
+      }
+
+      CORE_WIDGET_SHORTCUTS.forEach(s => {
+        html += `<button class="nu-chip-btn" data-query="${s.query}">${s.label}</button>`;
+      });
+
+      chipsEl.innerHTML = html;
       messagesBox.appendChild(chipsEl);
       messagesBox.scrollTop = messagesBox.scrollHeight;
     }
@@ -861,6 +885,27 @@
       const chip = e.target.closest(".nu-chip-btn");
       if (chip) {
         const q = chip.getAttribute("data-query");
+        const lower = (q || "").toLowerCase();
+
+        if (lower === "token service" || lower.includes("টোকেন সার্ভিস") || lower.includes("নতুন টোকেন")) {
+          if (typeof window.openTokenModal === "function") {
+            window.openTokenModal();
+            return;
+          } else if (window.parent && typeof window.parent.openTokenModal === "function") {
+            window.parent.openTokenModal();
+            return;
+          }
+        }
+        if (lower === "check token status" || lower.includes("টোকেন স্ট্যাটাস") || lower.includes("টোকেন চেক")) {
+          if (typeof window.openTokenCheckModal === "function") {
+            window.openTokenCheckModal();
+            return;
+          } else if (window.parent && typeof window.parent.openTokenCheckModal === "function") {
+            window.parent.openTokenCheckModal();
+            return;
+          }
+        }
+
         sendMessage(q);
       }
     });

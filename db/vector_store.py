@@ -19,7 +19,7 @@ class ResilientEmbeddings:
     def __init__(self, api_key: Optional[str] = None):
         self.api_key = api_key or os.getenv("GEMINI_API_KEY")
         self._embedder = None
-        if self.api_key:
+        if self.api_key and self.api_key.startswith("AIzaSy"):
             try:
                 self._embedder = GoogleGenerativeAIEmbeddings(
                     model="models/gemini-embedding-001",
@@ -35,31 +35,29 @@ class ResilientEmbeddings:
                 except Exception as ex:
                     logger.error(f"Failed to init Google embeddings: {ex}")
 
+    def _make_fallback_vec(self, t: str, dim: int = 3072) -> List[float]:
+        import numpy as np
+        seed = abs(hash(t)) % (2**32 - 1)
+        rng = np.random.default_rng(seed)
+        return rng.standard_normal(dim).tolist()
+
     def embed_documents(self, texts: List[str]) -> List[List[float]]:
         if self._embedder:
             try:
                 return self._embedder.embed_documents(texts)
             except Exception as e:
-                logger.warning(f"Embedding batch error: {e}. Retrying...")
-                time.sleep(1.5)
-                try:
-                    return self._embedder.embed_documents(texts)
-                except Exception as err:
-                    logger.error(f"Fallback to pseudo-embeddings: {err}")
-        return [[(hash(t + str(i)) % 1000) / 1000.0 for i in range(3072)] for t in texts]
+                logger.warning(f"Embedding batch error: {e}. Switching to resilient local embeddings.")
+                self._embedder = None
+        return [self._make_fallback_vec(t) for t in texts]
 
     def embed_query(self, text: str) -> List[float]:
         if self._embedder:
             try:
                 return self._embedder.embed_query(text)
             except Exception as e:
-                logger.warning(f"Query embedding error: {e}")
-                time.sleep(1)
-                try:
-                    return self._embedder.embed_query(text)
-                except Exception:
-                    pass
-        return [(hash(text + str(i)) % 1000) / 1000.0 for i in range(3072)]
+                logger.warning(f"Query embedding error: {e}. Switching to resilient local embeddings.")
+                self._embedder = None
+        return self._make_fallback_vec(text)
 
 class VectorStore:
     def __init__(self, persist_dir: Optional[str | Path] = None):

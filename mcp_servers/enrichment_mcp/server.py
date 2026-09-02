@@ -6,13 +6,12 @@ Provides standardized MCP tools for 24/7 knowledge analysis, enrichment telemetr
 import logging
 from typing import Dict, Any, Optional
 
-from backend.agents.autonomous_24x7_worker import get_24x7_worker
-from backend.agents.knowledge_provenance import get_knowledge_provenance
-
 logger = logging.getLogger("NU_ENRICHMENT_MCP")
 
 class EnrichmentMCPServer:
     def __init__(self):
+        from backend.agents.autonomous_24x7_worker import get_24x7_worker
+        from backend.agents.knowledge_provenance import get_knowledge_provenance
         self.worker = get_24x7_worker()
         self.provenance = get_knowledge_provenance()
 

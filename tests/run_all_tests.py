@@ -229,5 +229,8 @@ class TestNUAIAssistantPlatform(unittest.TestCase):
         self.assertTrue(res["success"])
         self.assertIn("is_running", res["data"])
 
+from tests.test_officer_search import TestOfficerSearchEngine
+from tests.test_result_search import TestResultSearchEngine
+
 if __name__ == "__main__":
     unittest.main()

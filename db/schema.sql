@@ -75,8 +75,11 @@ CREATE TABLE IF NOT EXISTS officers_directory (
 );
 CREATE INDEX IF NOT EXISTS idx_officer_dept ON officers_directory (department_slug);
 CREATE INDEX IF NOT EXISTS idx_officer_name ON officers_directory (name);
-CREATE INDEX IF NOT EXISTS idx_officer_desig ON officers_directory (designation_bn, designation_en);
-
+CREATE INDEX IF NOT EXISTS idx_officer_desig_en ON officers_directory (designation_en);
+CREATE INDEX IF NOT EXISTS idx_officer_desig_bn ON officers_directory (designation_bn);
+CREATE INDEX IF NOT EXISTS idx_officer_phone ON officers_directory (phone);
+CREATE INDEX IF NOT EXISTS idx_officer_email ON officers_directory (email);
+CREATE INDEX IF NOT EXISTS idx_officer_dept_desig ON officers_directory (department_slug, designation_en);
 
 CREATE INDEX IF NOT EXISTS idx_notices_date ON notices(published_date);
 CREATE INDEX IF NOT EXISTS idx_faq_question ON faq_entries(question);

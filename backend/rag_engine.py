@@ -12,6 +12,8 @@ from db.sql_store import get_sql_store
 from db.vector_store import get_vector_store
 from token_service.service import get_token_service
 from .orchestrator.preloaded_responses import get_preloaded_response, WELCOME_REPLY, CITATIONS_GENERAL
+from .officer_search import get_officer_search_service, extract_directory_entities
+from .result_search import get_result_search_service, extract_result_entities
 
 logger = logging.getLogger("NU_RAG_ENGINE")
 
@@ -110,7 +112,7 @@ class RAGEngine:
         self.vector_store = get_vector_store()
         self.token_service = get_token_service()
         self.api_key = settings.GEMINI_API_KEY
-        self.client = genai.Client(api_key=self.api_key) if self.api_key else None
+        self.client = genai.Client(api_key=self.api_key) if (self.api_key and self.api_key.startswith("AIzaSy")) else None
         self.models = [settings.PRIMARY_MODEL] + settings.FALLBACK_MODELS
         self.greeted_sessions: set[str] = set()
 
@@ -140,7 +142,10 @@ class RAGEngine:
         # 2. Token service menu / creation request
         elif any(w in q for w in ["token service", "টোকেন সার্ভিস", "create token", "support token", "টোকেন খুলব", "টোকেন বানাব", "অভিযোগ", "সমস্যা জানাতে চাই", "support desk", "হেল্পডেস্ক"]):
             return "token_service_menu"
-        # 3. High-Priority Student Services & Admissions
+        # 3. Dedicated Result Search Engine (Highest Priority for Result inquiries)
+        elif get_result_search_service().is_result_query(query):
+            return "results"
+        # 4. High-Priority Student Services & Admissions
         elif any(w in q for w in ["tc", "transfer certificate", "college transfer", "ছাড়পত্র", "ছাড়পত্র", "কলেজ পরিবর্তন", "কলেজ ট্রান্সফার", "টিসি"]):
             return "tc_services"
         elif any(w in q for w in ["admission", "apply", "eligibility", "merit", "release slip", "ভর্তি", "আবেদন", "যোগ্যতা", "মেধা তালিকা", "রিলিজ", "app11"]):
@@ -155,19 +160,15 @@ class RAGEngine:
             return "services_menu"
         elif any(w in q for w in ["cmes", "tmis", "ttis", "wes", "viva bill", "ডরমিটরি", "ভিডিও লেকচার", "সত্যায়ন"]):
             return "specialized_services"
+        # 5. Office & Department Directory query
+        elif get_officer_search_service().is_directory_query(query):
+            return "department_offices"
         elif any(w in q for w in ["notice", "routine", "circular", "exam date", "schedule", "নোটিশ", "রুটিন", "পরীক্ষা", "বিজ্ঞপ্তি", "সময়সূচি"]):
             return "notices"
         elif any(w in q for w in ["result", "cgpa", "gpa", "grading", "marks", "sms", "scrutiny", "রেজাল্ট", "ফলাফল", "গ্রেডিং", "পুনর্নিরীক্ষণ", "নম্বর"]):
             return "results"
         elif any(w in q for w in ["form", "fillup", "fill-up", "ems", "sonali", "fee", "ফরম", "ফিলাপ", "ফি", "সোনালী সেবা"]):
             return "form_fillup"
-        # 4. Office & Department Directory query (Only when specific office / officer name is requested)
-        elif (
-            any(any(k in q for k in d["keywords"]) for d in OFFICES_DIRECTORY)
-            or any(k in q for k in NAME_TRANSLITERATIONS)
-            or any(w in q for w in ["who is", "কে আছেন", "দপ্তর কর্মকর্তা", "কর্মকর্তা তালিকা", "কর্মচারী তালিকা", "অফিসার", "ফোন নম্বর", "ইমেইল অ্যাড্রেস", "officer list", "employee list", "director", "programmer", "analyst", "engineer", "registrar", "controller", "vc", "উপ-উপাচার্য"])
-        ):
-            return "department_offices"
         elif any(w in q for w in ["hi", "hello", "hey", "salam", "assalamu", "সালাম", "কেমন", "নমস্কার"]):
             return "greeting"
         return "general"
@@ -230,129 +231,12 @@ class RAGEngine:
                     return t_text, citations, 1.0
 
         elif intent == "department_offices":
-            q_lower = query.lower()
-
-            # Check if user asks for full list of all departments
-            if any(w in q_lower for w in ["list all departments", "all departments", "all department", "সকল দপ্তর", "সকল বিভাগ", "দপ্তরের তালিকা", "list of departments", "list of all departments", "list of all departmets", "সকল দপ্তরের তালিকা"]):
-                dept_list_text = "### জাতীয় বিশ্ববিদ্যালয় অফিশিয়াল দপ্তর ও বিভাগ সমূহের পূর্ণাঙ্গ তালিকা (All 33 Official Departments Hierarchy):\n\n"
-                
-                # Group by Parent Office
-                hierarchy_groups = {}
-                for d in OFFICES_DIRECTORY:
-                    parent = d.get("parent", "সাধারণ দপ্তর")
-                    if parent not in hierarchy_groups:
-                        hierarchy_groups[parent] = []
-                    hierarchy_groups[parent].append(d)
-
-                for parent, depts in hierarchy_groups.items():
-                    dept_list_text += f"#### 🏛️ {parent}:\n"
-                    for d in depts:
-                        dept_list_text += f"- **[{d['name']}]({d['url']})**\n"
-                    dept_list_text += "\n"
-
-                context_parts.append(dept_list_text)
-                for d in OFFICES_DIRECTORY[:5]:
-                    citations.append(SourceCitation(
-                        title=d['name'],
-                        url=d['url'],
-                        category="Offices & Departments"
-                    ))
-                return dept_list_text, citations, 1.0
-
-            matched_depts = [d for d in OFFICES_DIRECTORY if any(k in q_lower for k in d["keywords"])]
-            
-            # Prioritize VC Office if VC keywords present
-            if any(k in q_lower for k in ["vc", "vice chancellor", "vice-chancellor", "উপাচার্য", "ভিসি"]):
-                matched_depts = [d for d in OFFICES_DIRECTORY if d["slug"] == "vc-office"]
-            elif not matched_depts:
-                # Default to ICT & Registrar if general officer query
-                matched_depts = [OFFICES_DIRECTORY[0], OFFICES_DIRECTORY[1]]
-
-            for dept in matched_depts:
-                citations.append(SourceCitation(
-                    title=f"{dept['name']} Directory & Officers",
-                    url=dept['url'],
-                    category="Offices & Departments"
-                ))
-
-            # 1. Direct Search in SQL Officers Directory
-            officers = []
-            
-            # First, fetch all verified officers & staff belonging to matched department(s)
-            for dept in matched_depts:
-                dept_officers = self.sql_store.get_officers_by_department(dept["slug"])
-                for o in dept_officers:
-                    if o not in officers:
-                        officers.append(o)
-
-            # Clean search terms for specific person/title search
-            search_terms = [w.strip().lower() for w in re.split(r'[\s\?\,\.\!]+', query) if len(w.strip()) > 2 and w.strip().lower() not in ["who", "is", "the", "of", "and", "in", "to", "for", "ke", "ki", "কারা", "কে", "কী", "দপ্তর", "তালিকা", "তথ্য", "দিন", "all", "list", "employee", "officer", "department"]]
-            for term in search_terms:
-                found = self.sql_store.search_officers(term, limit=10)
-                for o in found:
-                    if o not in officers:
-                        officers.append(o)
-                # Check transliteration variants
-                if term in NAME_TRANSLITERATIONS:
-                    for variant in NAME_TRANSLITERATIONS[term]:
-                        v_found = self.sql_store.search_officers(variant, limit=10)
-                        for vo in v_found:
-                            if vo not in officers:
-                                officers.append(vo)
-
-            # If specific designation queried
-            if any(p in q_lower for p in ["assistant programmer", "সহকারী প্রোগ্রামার", "সহকারি প্রোগ্রামার"]):
-                for o in self.sql_store.search_officers("assistant programmer", limit=20) + self.sql_store.search_officers("সহকারী প্রোগ্রামার", limit=20):
-                    if o not in officers:
-                        officers.append(o)
-            elif any(p in q_lower for p in ["senior programmer", "সিনিয়র প্রোগ্রামার", "সিনিয়র প্রোগ্রামার"]):
-                for o in self.sql_store.search_officers("senior programmer", limit=15) + self.sql_store.search_officers("সিনিয়র প্রোগ্রামার", limit=15):
-                    if o not in officers:
-                        officers.append(o)
-            elif any(p in q_lower for p in ["system analyst", "সিস্টেম এনালিস্ট"]):
-                for o in self.sql_store.search_officers("system analyst", limit=10) + self.sql_store.search_officers("সিস্টেম এনালিস্ট", limit=10):
-                    if o not in officers:
-                        officers.append(o)
-            elif any(p in q_lower for p in ["network administrator", "নেটওয়ার্ক এডমিনিস্ট্রেটর"]):
-                for o in self.sql_store.search_officers("network administrator", limit=10) + self.sql_store.search_officers("নেটওয়ার্ক এডমিনিস্ট্রেটর", limit=10):
-                    if o not in officers:
-                        officers.append(o)
-            elif any(p in q_lower for p in ["maintenance engineer", "মেইনটেন্যান্স ইঞ্জিনিয়ার"]):
-                for o in self.sql_store.search_officers("maintenance engineer", limit=10) + self.sql_store.search_officers("মেইনটেন্যান্স", limit=10):
-                    if o not in officers:
-                        officers.append(o)
-            elif any(p in q_lower for p in ["programmer", "প্রোগ্রামার"]):
-                for o in self.sql_store.search_officers("programmer", limit=15) + self.sql_store.search_officers("প্রোগ্রামার", limit=15):
-                    if o not in officers:
-                        officers.append(o)
-            elif any(p in q_lower for p in ["director", "পরিচালক"]):
-                for o in self.sql_store.search_officers("director", limit=10) + self.sql_store.search_officers("পরিচালক", limit=10):
-                    if o not in officers:
-                        officers.append(o)
-            elif any(p in q_lower for p in ["registrar", "রেজিস্ট্রার", "রেজিস্টার"]):
-                for o in self.sql_store.search_officers("registrar", limit=10) + self.sql_store.search_officers("রেজিস্ট্রার", limit=10):
-                    if o not in officers:
-                        officers.append(o)
-
-            if officers:
-                off_text = "### Official National University Officers & Employee Directory (Direct Database Match):\n"
-                for o in officers:
-                    name = o.get('name') or o.get('officer_name', '')
-                    desig = o.get('designation_bn') or o.get('designation_en') or o.get('designation', '')
-                    dept = o.get('department_name') or o.get('department', '')
-                    off_text += f"- **নাম (Name):** {name}\n"
-                    if desig:
-                        off_text += f"  **পদবি (Designation):** {desig}\n"
-                    if dept:
-                        off_text += f"  **দপ্তর (Department):** {dept}\n"
-                    if o.get('phone') and str(o['phone']).strip() not in ['-', 'None', '']:
-                        phone_en = convert_bn_to_en_digits(str(o['phone']).strip())
-                        off_text += f"  **ফোন/মোবাইল (Phone):** {phone_en}\n"
-                    if o.get('email') and str(o['email']).strip() not in ['-', 'None', '']:
-                        off_text += f"  **ইমেইল (Email):** {o['email']}\n"
-                    off_text += "\n"
-                context_parts.append(off_text)
-                confidence = 0.98
+            officer_service = get_officer_search_service()
+            reply_md, off_citations, off_conf, chips, debug_info = officer_service.search_and_format(query)
+            if reply_md:
+                context_parts.append(reply_md)
+                citations.extend(off_citations)
+                confidence = max(confidence, off_conf)
 
         elif intent == "tc_services":
             citations.append(SourceCitation(
@@ -435,19 +319,6 @@ class RAGEngine:
             faqs = self.sql_store.search_faqs(query, 2)
             vector_results = []
 
-        try:
-            solved_cases = self.token_service.find_similar_solved_cases(query, top_k=2, vector_matches=vector_results)
-            if solved_cases:
-                solved_text = "### Previously Solved Student Support Cases (Anonymized):\n"
-                for s in solved_cases:
-                    solved_text += f"- **Service:** {s.service_name}\n"
-                    solved_text += f"  **Problem:** {s.problem}\n"
-                    solved_text += f"  **Common Solution:** {s.solution}\n\n"
-                context_parts.append(solved_text)
-                confidence = max(confidence, 0.92)
-        except Exception as e:
-            logger.warning(f"Error retrieving solved cases: {e}")
-
         if faqs:
             faq_text = "### Verified Academic Knowledge & FAQs:\n"
             for f in faqs:
@@ -458,20 +329,25 @@ class RAGEngine:
                     category=f.get('category', 'FAQ')
                 ))
             context_parts.append(faq_text)
-            confidence = max(confidence, 0.90)
+            confidence = max(confidence, 0.95)
 
-        if vector_results:
-            vector_text = "### Related Official Portal Documentation:\n"
+        if vector_results and (not context_parts or intent in ["general", "specialized_services"]):
+            clean_vector_chunks = []
             for doc, score in vector_results:
-                vector_text += doc.page_content + "\n\n"
-                src = doc.metadata.get("source", "https://www.nu.ac.bd/recent-news-notice.php")
-                citations.append(SourceCitation(
-                    title=doc.metadata.get("category", "General Knowledge"),
-                    url=src,
-                    category=doc.metadata.get("type", "documentation")
-                ))
-            context_parts.append(vector_text)
-            confidence = max(confidence, 0.88)
+                content = doc.page_content.strip()
+                # Ensure content is clean readable text (not binary or corrupted)
+                if content and any(c.isalnum() for c in content) and not any(ord(c) < 32 and c not in '\n\r\t' for c in content):
+                    clean_vector_chunks.append(content)
+                    src = doc.metadata.get("source_url") or doc.metadata.get("source", "https://www.nu.ac.bd/recent-news-notice.php")
+                    citations.append(SourceCitation(
+                        title=doc.metadata.get("category", "General Knowledge"),
+                        url=src,
+                        category=doc.metadata.get("type", "documentation")
+                    ))
+            if clean_vector_chunks:
+                vector_text = "### Related Official Portal Documentation:\n" + "\n\n".join(clean_vector_chunks)
+                context_parts.append(vector_text)
+                confidence = max(confidence, 0.88)
 
         seen_urls = set()
         unique_citations = []
@@ -531,10 +407,11 @@ Your purpose is to answer student, teacher, and administrative queries accuratel
 3. **DEFAULT LANGUAGE IS BANGLA (বাংলা)**:
    - Always respond in clear, courteous, and grammatically accurate Bengali (বাংলা) by default.
    - Only respond in English if the user explicitly requests English.
-4. **Strict Grounding & Truthfulness**:
-   - Answer directly using the verified context below.
+4. **Strict Grounding & Anti-Hallucination Policy (কঠোর সত্যনিষ্ঠা ও অনুমান নিষেধ)**:
+   - Answer strictly and directly using the verified context below.
    - For official dates, circulars, and notices, always provide the published date and official URL.
-   - If the exact answer is not present, do NOT hallucinate dates. State what is available and link to the portal.
+   - NEVER hallucinate unverified dates, rumors, or unannounced schedules.
+   - If the exact information is not available from the trusted knowledge source (or if asked about unannounced future schedules), clearly state: 'বর্তমানে এ বিষয়ে নিশ্চিত তথ্য পাওয়া যাচ্ছে না। জাতীয় বিশ্ববিদ্যালয়ের সর্বশেষ অফিসিয়াল নোটিশ প্রকাশ হলে তথ্যটি নিশ্চিতভাবে জানানো যাবে।' and advise the student to check official NU notices at [nu.ac.bd](https://www.nu.ac.bd/recent-news-notice.php).
 5. **Accurate Official Portal & Office Links**:
    - All Notice Board (সকল নোটিশ): https://www.nu.ac.bd/recent-news-notice.php
    - Registrar Office (রেজিস্ট্রার দপ্তর): https://www.nu.ac.bd/Registrar-office.php
@@ -577,10 +454,33 @@ Your purpose is to answer student, teacher, and administrative queries accuratel
 Compose a structured, formatted markdown response in Bengali (বাংলা):
 """
 
+    @staticmethod
+    def _format_fallback_context(context: str) -> str:
+        if not context or not context.strip():
+            return ""
+        cleaned = context
+        # Remove any internal headers or case headers
+        cleaned = re.sub(r'###\s*Previously Solved Student Support Cases[^\n]*\n(?:- [^\n]*\n*)*', '', cleaned, flags=re.IGNORECASE)
+        cleaned = re.sub(r'###\s*Related Official Portal Documentation:\s*', '', cleaned, flags=re.IGNORECASE)
+        cleaned = cleaned.replace("### Verified Academic Knowledge & FAQs:\n", "")
+        return cleaned.strip()
+
     def stream_answer_query(self, query: str, history: List[ChatMessage], session_id: Optional[str] = None) -> Iterator[str]:
         start_time = time.perf_counter()
         lang = self.detect_language(query)
         intent = self.classify_intent(query)
+
+        # 1. Fast path for Intelligent Result Search Engine
+        result_service = get_result_search_service()
+        if intent == "results" or result_service.is_result_query(query, history):
+            reply_md, citations, conf, chips, debug_info = result_service.search_and_format(query, history)
+            if reply_md is not None:
+                elapsed = time.perf_counter() - start_time
+                yield f"data: {json.dumps({'type': 'token', 'content': reply_md}, ensure_ascii=False)}\n\n"
+                yield f"data: {json.dumps({'type': 'citations', 'citations': [c.model_dump() for c in citations]}, ensure_ascii=False)}\n\n"
+                yield f"data: {json.dumps({'type': 'chips', 'chips': chips}, ensure_ascii=False)}\n\n"
+                yield f"data: {json.dumps({'type': 'done', 'response_time_sec': round(elapsed, 2), 'intent': 'results', 'confidence': conf})}\n\n"
+                return
 
         preloaded = get_preloaded_response(query)
         if preloaded:
@@ -600,14 +500,22 @@ Compose a structured, formatted markdown response in Bengali (বাংলা):
             yield f"data: {json.dumps({'type': 'done', 'response_time_sec': round(elapsed, 2), 'intent': 'greeting', 'confidence': 1.0})}\n\n"
             return
 
-        if intent in ["token_service_menu", "token_lookup", "notices"] or any(w in query.lower() for w in ["bedhons", "b.ed", "bed", "বিজ্ঞপ্তি", "notice"]):
+        officer_service = get_officer_search_service()
+        result_service = get_result_search_service()
+        if (
+            intent in ["token_service_menu", "token_lookup", "notices", "department_offices", "results"]
+            or result_service.is_result_query(query, history)
+            or officer_service.is_directory_query(query, history)
+            or any(w in query.lower() for w in ["bedhons", "b.ed", "bed", "বিজ্ঞপ্তি", "notice"])
+        ):
             fast_resp = self.answer_query(query, history, session_id)
-            elapsed = time.perf_counter() - start_time
-            yield f"data: {json.dumps({'type': 'token', 'content': fast_resp.reply}, ensure_ascii=False)}\n\n"
-            yield f"data: {json.dumps({'type': 'citations', 'citations': [c.model_dump() for c in fast_resp.citations]}, ensure_ascii=False)}\n\n"
-            yield f"data: {json.dumps({'type': 'chips', 'chips': fast_resp.suggested_chips}, ensure_ascii=False)}\n\n"
-            yield f"data: {json.dumps({'type': 'done', 'response_time_sec': round(elapsed, 2), 'intent': fast_resp.intent, 'confidence': fast_resp.confidence})}\n\n"
-            return
+            if fast_resp:
+                elapsed = time.perf_counter() - start_time
+                yield f"data: {json.dumps({'type': 'token', 'content': fast_resp.reply}, ensure_ascii=False)}\n\n"
+                yield f"data: {json.dumps({'type': 'citations', 'citations': [c.model_dump() for c in fast_resp.citations]}, ensure_ascii=False)}\n\n"
+                yield f"data: {json.dumps({'type': 'chips', 'chips': fast_resp.suggested_chips}, ensure_ascii=False)}\n\n"
+                yield f"data: {json.dumps({'type': 'done', 'response_time_sec': round(elapsed, 2), 'intent': fast_resp.intent, 'confidence': fast_resp.confidence})}\n\n"
+                return
 
         yield f"data: {json.dumps({'type': 'status', 'content': 'তথ্য অনুসন্ধান করছি...'}, ensure_ascii=False)}\n\n"
 
@@ -642,10 +550,11 @@ Compose a structured, formatted markdown response in Bengali (বাংলা):
                     logger.warning(f"Streaming on {model_name} failed: {err}")
 
         if not stream_success:
-            if context.strip():
+            clean_ctx = self._format_fallback_context(context)
+            if clean_ctx:
                 fallback_text = (
                     "জাতীয় বিশ্ববিদ্যালয়ের ডাটাবেজ থেকে পাওয়া প্রাসঙ্গিক তথ্য নিচে দেওয়া হলো:\n\n"
-                    + context[:900]
+                    + clean_ctx[:900]
                     + "\n\nবিস্তারিত তথ্যের জন্য অফিশিয়াল ওয়েবসাইট ভিজিট করুন: [সকল নোটিশ বোর্ড](https://www.nu.ac.bd/recent-news-notice.php)"
                 )
             else:
@@ -669,9 +578,41 @@ Compose a structured, formatted markdown response in Bengali (বাংলা):
         yield f"data: {json.dumps({'type': 'chips', 'chips': chips}, ensure_ascii=False)}\n\n"
         yield f"data: {json.dumps({'type': 'done', 'response_time_sec': round(elapsed, 2), 'intent': intent, 'confidence': confidence})}\n\n"
 
-    def answer_query(self, query: str, history: List[ChatMessage], session_id: Optional[str] = None) -> ChatResponse:
+    def answer_query(self, query: str, history: Optional[List[ChatMessage]] = None, session_id: Optional[str] = None) -> ChatResponse:
         lang = self.detect_language(query)
         intent = self.classify_intent(query)
+
+        # 1. Fast path for Intelligent Result Search Engine
+        result_service = get_result_search_service()
+        if intent == "results" or result_service.is_result_query(query, history):
+            reply_md, citations, conf, chips, debug_info = result_service.search_and_format(query, history)
+            if reply_md is not None:
+                return ChatResponse(
+                    reply=reply_md,
+                    sources=[c.url for c in citations],
+                    citations=citations,
+                    suggested_chips=chips,
+                    confidence=conf,
+                    intent="results",
+                    language=lang,
+                    is_fallback=False
+                )
+
+        # 2. Fast path for Officers & Department Directory Search
+        officer_service = get_officer_search_service()
+        if intent == "department_offices" or officer_service.is_directory_query(query):
+            reply_md, citations, conf, chips, debug_info = officer_service.search_and_format(query)
+            if reply_md is not None:
+                return ChatResponse(
+                    reply=reply_md,
+                    sources=[c.url for c in citations],
+                    citations=citations,
+                    suggested_chips=chips,
+                    confidence=conf,
+                    intent="department_offices",
+                    language=lang,
+                    is_fallback=False
+                )
 
         preloaded = get_preloaded_response(query)
         if preloaded:
@@ -887,6 +828,116 @@ Compose a structured, formatted markdown response in Bengali (বাংলা):
                         is_fallback=False
                     )
 
+        # Fast path for Support Token Service & Status Check
+        if intent == "token_service_menu" or any(w in query.lower() for w in ["token service", "টোকেন সার্ভিস", "create token", "support token"]):
+            token_menu_reply = """### 🎫 জাতীয় বিশ্ববিদ্যালয় সাপোর্ট টোকেন সার্ভিস (Support Token Service)
+
+একাডেমিক যেকোনো জটিল সমস্যা (যেমন: ভর্তি জটিলতা, ইএমএস অ্যাকাউন্ট লক, ফরম পূরণ সংক্রান্ত ত্রুটি, ফলাফল পুনঃনিরীক্ষণ, মার্কশিট/সার্টিফিকেট সংশোধন)-এর জন্য আপনি অফিসিয়াল সাপোর্ট টোকেন দাখিল করতে পারেন:
+
+1. **টোকেন তৈরি করুন:** সরাসরি [🎫 নতুন টোকেন ফর্ম ওপেন করুন](javascript:openTokenModal()) অথবা উপরের **Token Service** বাটনে ক্লিক করুন।
+2. **নির্দিষ্ট সেবা নির্বাচন:** আপনার সমস্যার ক্যাটাগরি (EMS, Examination, Admission, Certificate ইত্যাদি) নির্বাচন করে বিস্তারিত লিখুন।
+3. **ইউনিক ট্র্যাকিং আইডি:** সাবমিট করার সাথে সাথে একটি ইউনিক ট্র্যাকিং নম্বর (যেমন: `NU-2026-000140`) পাবেন।
+4. **স্ট্যাটাস চেক:** পরবর্তীতে [📋 টোকেন স্ট্যাটাস চেক](javascript:openTokenCheckModal()) অপশনে আপনার টোকেন নম্বর দিয়ে সর্বশেষ অগ্রগতি দেখতে পারবেন।
+
+💡 *দ্রুত সহায়তার জন্য নিচের বাটন বা 'Token Service' ক্লিক করে ফর্ম পূরণ করুন।*"""
+            return ChatResponse(
+                reply=token_menu_reply,
+                sources=["http://103.113.200.68/nu-app/"],
+                citations=[
+                    SourceCitation(title="জাতীয় বিশ্ববিদ্যালয় সাপোর্ট টোকেন পোর্টাল", url="http://103.113.200.68/nu-app/", category="Support Token"),
+                    SourceCitation(title="EMS স্টুডেন্ট পোর্টাল", url="https://ems.nu.ac.bd/", category="EMS")
+                ],
+                suggested_chips=["🎫 টোকেন সার্ভিস (Token Service)", "📋 টোকেন স্ট্যাটাস চেক", "📄 সকল নোটিশ", "🏠 মূল মেনু"],
+                confidence=1.0,
+                intent="token_service_menu",
+                language=lang,
+                is_fallback=False
+            )
+
+        if intent == "token_lookup":
+            token_match = TOKEN_ID_REGEX.search(query)
+            if token_match:
+                token_id = token_match.group(1).upper()
+                token_data = self.token_service.get_public_token_details(token_id)
+                if token_data:
+                    status_badge = token_data.status_display
+                    t_reply = f"### 🎫 সাপোর্ট টোকেন বিবরণী (Token Details)\n\n"
+                    t_reply += f"• **টোকেন আইডি:** `{token_data.token_id}`\n"
+                    t_reply += f"• **সেবার নাম:** {token_data.service_name} ({token_data.service_type})\n"
+                    t_reply += f"• **বর্তমান অবস্থা (Status):** {status_badge}\n"
+                    t_reply += f"• **দায়িত্বপ্রাপ্ত ডেস্ক:** {token_data.solver_name or 'অপেক্ষারত (Under Review)'}\n"
+                    t_reply += f"• **দাখিলের তারিখ:** {token_data.created_date}\n"
+                    if token_data.solve_message:
+                        t_reply += f"\n---\n**✅ সমাধান বার্তা:**\n{token_data.solve_message}\n"
+                    if token_data.solved_date:
+                        t_reply += f"• **সমাধানের তারিখ:** {token_data.solved_date}\n"
+
+                    return ChatResponse(
+                        reply=t_reply,
+                        sources=["http://103.113.200.68/nu-app/"],
+                        citations=[SourceCitation(title=f"Support Token #{token_data.token_id}", url=f"http://103.113.200.68/nu-app/", category="Token Details")],
+                        suggested_chips=["🎫 টোকেন সার্ভিস (Token Service)", "📋 টোকেন স্ট্যাটাস চেক", "📄 সাম্প্রতিক নোটিশ"],
+                        confidence=1.0,
+                        intent="token_lookup",
+                        language=lang,
+                        is_fallback=False
+                    )
+                else:
+                    return ChatResponse(
+                        reply=f"⚠️ টোকেন আইডি `{token_id}` ডাটাবেজে পাওয়া যায়নি। অনুগ্রহ করে সঠিক টোকেন নম্বর (যেমন: `NU-2026-000140`) প্রদান করুন অথবা [📋 টোকেন স্ট্যাটাস চেক](javascript:openTokenCheckModal('{token_id}')) বাটনে ক্লিক করুন।",
+                        sources=[],
+                        citations=[],
+                        suggested_chips=["📋 টোকেন স্ট্যাটাস চেক", "🎫 টোকেন সার্ভিস (Token Service)", "🏠 মূল মেনু"],
+                        confidence=1.0,
+                        intent="token_lookup",
+                        language=lang,
+                        is_fallback=False
+                    )
+            else:
+                return ChatResponse(
+                    reply="### 📋 টোকেন স্ট্যাটাস চেক (Check Token Status)\n\nআপনার পূর্বে দাখিলকৃত সাপোর্ট টোকেনের সর্বশেষ অবস্থা জানতে:\n\n1. আপনার **টোকেন আইডি** মেসেজে লিখুন (যেমন: `NU-2026-000140`) অথবা\n2. সরাসরি [📋 টোকেন স্ট্যাটাস চেক পপআপ ওপেন করুন](javascript:openTokenCheckModal())।",
+                    sources=[],
+                    citations=[],
+                    suggested_chips=["📋 টোকেন স্ট্যাটাস চেক", "🎫 টোকেন সার্ভিস (Token Service)", "🏠 মূল মেনু"],
+                    confidence=1.0,
+                    intent="token_lookup",
+                    language=lang,
+                    is_fallback=False
+                )
+
+        # Fast path for Intelligent Result Search Engine
+        result_service = get_result_search_service()
+        if intent == "results" or result_service.is_result_query(query, history):
+            reply_md, citations, conf, chips, debug_info = result_service.search_and_format(query, history)
+            if reply_md is not None:
+                return ChatResponse(
+                    reply=reply_md,
+                    sources=[c.url for c in citations],
+                    citations=citations,
+                    suggested_chips=chips,
+                    confidence=conf,
+                    intent="results",
+                    language=lang,
+                    is_fallback=False
+                )
+
+        # Fast path for Robust Officer & Department Directory Search Engine
+        officer_service = get_officer_search_service()
+        if intent == "department_offices" or officer_service.is_directory_query(query, history):
+            reply_md, citations, conf, chips, debug_info = officer_service.search_and_format(query, history)
+            if reply_md is not None:
+                return ChatResponse(
+                    reply=reply_md,
+                    sources=[c.url for c in citations],
+                    citations=citations,
+                    suggested_chips=chips,
+                    confidence=conf,
+                    intent="department_offices",
+                    language=lang,
+                    is_fallback=False
+                )
+
+
         context, citations, confidence = self.retrieve_context(query, intent)
 
         # Log query to gap queue if confidence is low or query is unanswered
@@ -984,10 +1035,11 @@ Compose a structured, formatted markdown response in Bengali (বাংলা):
         # Resilient Graceful Degradation if Gemini API is unreachable or exhausted
         if not bot_reply:
             is_fallback = True
-            if context.strip():
+            clean_ctx = self._format_fallback_context(context)
+            if clean_ctx:
                 bot_reply = (
                     "জাতীয় বিশ্ববিদ্যালয়ের ডাটাবেজ থেকে পাওয়া প্রাসঙ্গিক তথ্য নিচে দেওয়া হলো:\n\n"
-                    + context[:900]
+                    + clean_ctx[:900]
                     + "\n\nবিস্তারিত তথ্যের জন্য অফিশিয়াল ওয়েবসাইট ভিজিট করুন: [সকল নোটিশ বোর্ড](https://www.nu.ac.bd/recent-news-notice.php)"
                 )
             else:

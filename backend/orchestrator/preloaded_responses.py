@@ -14,7 +14,7 @@ CITATIONS_ADMISSION = [
 
 CITATIONS_EMS = [
     SourceCitation(title="EMS স্টুডেন্ট পোর্টাল", url="https://ems.nu.ac.bd/", date="অফিসিয়াল সেবা"),
-    SourceCitation(title="ফরম পূরণ নোটিশ বোর্ড", url="https://www.nu.ac.bd/recent-notices.php", date="রুটিন")
+    SourceCitation(title="ফরম পূরণ নোটিশ বোর্ড", url="https://www.nu.ac.bd/examination-notice.php", date="রুটিন")
 ]
 
 CITATIONS_ERP_SERVICES = [
@@ -58,8 +58,8 @@ WELCOME_REPLY = """জাতীয় বিশ্ববিদ্যালয়ের
 • **অফিসিয়াল লিংক:** [জাতীয় বিশ্ববিদ্যালয় নোটিশ বোর্ড](https://www.nu.ac.bd/recent-notices.php)
 
 ### ৫. প্রশাসনিক ও দাপ্তরিক যোগাযোগ
-• [রেজিস্ট্রার দপ্তর](https://www.nu.ac.bd/) • [পরীক্ষা নিয়ন্ত্রক দপ্তর](https://www.nu.ac.bd/)
-• [আইসিটি দপ্তর](https://www.nu.ac.bd/) • [উপাচার্য দপ্তর](https://www.nu.ac.bd/)
+• [রেজিস্ট্রার দপ্তর](https://www.nu.ac.bd/Registrar-office.php/) • [পরীক্ষা নিয়ন্ত্রক দপ্তর](https://www.nu.ac.bd/exam-controller-office.php/)
+• [আইসিটি দপ্তর](https://www.nu.ac.bd/ict-department.php/) • [উপাচার্য দপ্তর](https://www.nu.ac.bd/vice-chancellor-office.php/)
 
 আপনার নির্দিষ্ট কোনো বিষয়, পরীক্ষা বা ভর্তি সম্পর্কিত প্রশ্ন থাকলে বিস্তারিত জানান।"""
 
@@ -87,7 +87,7 @@ EXAM_REPLY = """### 📝 পরীক্ষা ও রুটিন সংক্�
 2. **প্রবেশপত্র (Admit Card):** পরীক্ষা শুরুর সাধারণত ৩-৭ দিন পূর্বে স্ব-স্ব কলেজ অধ্যক্ষের মাধ্যমে সিল ও স্বাক্ষরযুক্ত প্রবেশপত্র বিতরণ করা হয়।
 3. **পরীক্ষার নিয়মাবলী:** প্রবেশপত্র এবং রেজিস্ট্রেশন কার্ড অবশ্যই পরীক্ষার হলে সাথে রাখতে হবে।
 
-👉 **পরীক্ষার সর্বশেষ নোটিশ ও রুটিন দেখুন:** [nu.ac.bd/recent-notices.php](https://www.nu.ac.bd/recent-notices.php)"""
+👉 **পরীক্ষার সর্বশেষ নোটিশ ও রুটিন দেখুন:** [nu.ac.bd/recent-notices.php](https://www.nu.ac.bd/recent-news-notice.php)"""
 
 # 4. Preloaded Results & SMS System
 RESULTS_REPLY = """### 📊 পরীক্ষার ফলাফল ও সিজিপিএ জানার নিয়ম (Results)
@@ -234,15 +234,184 @@ ERP_SERVICES_REPLY = """### 🌐 জাতীয় বিশ্ববিদ্য�
 • ✏️ **নাম ও তথ্যের ভুল সংশোধন (Document / Name Correction)**
 • 📋 **দ্বৈত সনদ ও মাইগ্রেশন সার্টিফিকেট (Duplicate Certificate & Migration)**
 • 💳 **সোনালী সেবা পে-স্লিপ ও অনলাইন ফি ট্র্যাকিং**
+👉 **স্টুডেন্ট ERP লগইন লিংক:** [http://103.113.200.68/nu-app/](http://103.113.200.68/nu-app/)"""
 
-👉 **স্টুডেন্ট ERP লগইন লিংক:** [http://103.113.200.68/nu-app/](http://103.113.200.68/nu-app/) অথবা [http://103.113.200.68/nu-app/](http://103.113.200.68/nu-app/)"""
+HALLUCINATION_DEFENSE_REPLY = """### ℹ️ নোটিশ ও তথ্য অনুসন্ধান স্ট্যাটাস
 
+বর্তমানে এ বিষয়ে নিশ্চিত কোনো তথ্য বা অফিসিয়াল বিজ্ঞপ্তি পাওয়া যাচ্ছে না (তথ্য নেই / অফিসিয়াল নোটিশ প্রকাশিত হয়নি)।
 
+জাতীয় বিশ্ববিদ্যালয়ের যেকোনো পরীক্ষা, ভর্তি ও অ্যাকাডেমিক কার্যক্রমের সর্বশেষ ও নিশ্চিত তথ্য বিশ্ববিদ্যালয়ের অফিসিয়াল নোটিশ বোর্ডে প্রকাশ করা হয়:
+- 📄 **অফিসিয়াল নোটিশ বোর্ড:** [nu.ac.bd Recent Notices](https://www.nu.ac.bd/recent-news-notice.php)
+- 🎓 **অনলাইন ভর্তি পোর্টাল:** [app11.nu.edu.bd](http://app11.nu.edu.bd/)
+- 🌐 **ফলাফল পোর্টাল:** [results.nu.ac.bd](https://results.nu.ac.bd/)
+
+অফিসিয়াল বিজ্ঞপ্তি প্রকাশ হওয়া মাত্রই সঠিক তথ্য নিশ্চিতভাবে জানানো যাবে।"""
+
+CITATIONS_PAMS = [
+    SourceCitation(title="জাতীয় বিশ্ববিদ্যালয় e-Payment (PAMS)", url="http://103.113.200.36/PAMS/Default.aspx", date="e-Payment পোর্টাল"),
+    SourceCitation(title="খাতা পুনঃমূল্যায়ন ফি পোর্টাল", url="http://103.113.200.36/PAMS/ICTUnit/Re-Evaluation.aspx", date="Re-Evaluation"),
+    SourceCitation(title="ডরমেটরী রিজার্ভেশন পোর্টাল", url="http://103.113.200.36/PAMS/Dormitory/Reservation.aspx", date="Dormitory"),
+    SourceCitation(title="অন-ক্যাম্পাস পে-স্লিপ", url="http://103.113.200.36/PAMS/ICTUnit/OnCampusPayslip.aspx", date="Payslip"),
+    SourceCitation(title="পেমেন্ট চেক", url="http://103.113.200.36/PAMS/ICTUnit/PaymentChk.aspx", date="Payment Check")
+]
+
+PAMS_REPLY = """### 💳 জাতীয় বিশ্ববিদ্যালয় e-Payment (PAMS) পোর্টাল ও সেবাসমূহ
+
+জাতীয় বিশ্ববিদ্যালয়ের **e-Payment (PAMS - Payment & Academic Management System)** পোর্টালের মাধ্যমে বিভিন্ন একাডেমিক ও দাপ্তরিক সেবার সোনালী সেবা পে-স্লিপ তৈরি ও ফি অনলাইনে পরিশোধ করা যায়:
+
+---
+
+### 📌 মূল সেবাসমূহ (Services):
+১. **Re-Evaluation Fee (খাতা পুনঃমূল্যায়ন ফি):** 
+   • প্রফেশনাল ও সেমিস্টার ভিত্তিক কোর্সের উত্তরপত্র পুনঃমূল্যায়নের অনলাইন আবেদন ও পে-স্লিপ।
+   • 🔗 [Re-Evaluation Fee Portal](http://103.113.200.36/PAMS/ICTUnit/Re-Evaluation.aspx)
+
+২. **Exam Centre Change (পরীক্ষা কেন্দ্র পরিবর্তন):**
+   • পরীক্ষা কেন্দ্র পরিবর্তনের নির্ধারিত ফি-এর সোনালী সেবা পে-স্লিপ সংগ্রহ ও আবেদন।
+
+৩. **Dormitory Reservation (ডরমেটরী রুম বুকিং):**
+   • শিক্ষক, গবেষক, প্রশিক্ষক, বিদেশি অতিথি ও বিশ্ববিদ্যালয়ের কর্মকর্তা-কর্মচারীদের জন্য গেস্ট হাউস রুম বুকিং।
+   • 🔗 [Dormitory Reservation Portal](http://103.113.200.36/PAMS/Dormitory/Reservation.aspx)
+
+৪. **On-Campus Payslip (অন-ক্যাম্পাস পে-স্লিপ):**
+   • গাজীপুর মূল ক্যাম্পাসের মাস্টার্স, পিজিডি ও বিশেষায়িত প্রোগ্রামের শিক্ষার্থীদের সেমিস্টার ফি পে-স্লিপ ডাউনলোড।
+   • 🔗 [On-Campus Payslip Portal](http://103.113.200.36/PAMS/ICTUnit/OnCampusPayslip.aspx)
+
+৫. **Check Payment (পেমেন্ট স্ট্যাটাস ভেরিফিকেশন):**
+   • NU TransID / Bank Ref No / Roll / Reg No দিয়ে জমাকৃত ফি-এর তাৎক্ষণিক স্ট্যাটাস চেক।
+   • 🔗 [Check Payment Portal](http://103.113.200.36/PAMS/ICTUnit/PaymentChk.aspx)
+
+---
+🔗 **মূল e-Payment পোর্টাল:** [http://103.113.200.36/PAMS/Default.aspx](http://103.113.200.36/PAMS/Default.aspx)"""
+
+RE_EVALUATION_REPLY = """### 📝 উত্তরপত্র পুনঃমূল্যায়ন (Re-Evaluation Fee) আবেদন নির্দেশিকা
+
+জাতীয় বিশ্ববিদ্যালয়ের প্রফেশনাল ও সেমিস্টার ভিত্তিক কোর্সের (যেমন: BBA, PGD in LIS, AMT, FDT, KMT ইত্যাদি) খাতা পুনঃমূল্যায়নের নিয়ম:
+
+১. **পোর্টালে প্রবেশ করুন:** [Re-Evaluation Portal](http://103.113.200.36/PAMS/ICTUnit/Re-Evaluation.aspx)
+২. **পরীক্ষা ও রেজিস্ট্রেশন নির্বাচন:**
+   - **Exam Name** ড্রপডাউন থেকে আপনার পরীক্ষা নির্বাচন করুন।
+   - **Reg. No** বক্সে রেজিস্ট্রেশন নম্বর লিখে **Search** বাটনে ক্লিক করুন।
+৩. **তথ্য ও মোবাইল নম্বর প্রদান:** শিক্ষার্থীর নাম স্বয়ংক্রিয়ভাবে আসবে। এরপর সক্রিয় **Mobile No** লিখুন।
+৪. **পেপার কোড নির্বাচন:** **Paper Codes** তালিকা থেকে পুনঃমূল্যায়ন করতে ইচ্ছুক পত্র সিলেক্ট করে নিশ্চিত করুন।
+৫. **পে-স্লিপ ডাউনলোড ও ফি জমা:** তৈরি হওয়া সোনালী সেবা পে-স্লিপটি প্রিন্ট করে সোনালী ব্যাংকের যেকোনো শাখায় জমা দিন।
+
+---
+🔗 **আবেদন পোর্টাল:** [Re-Evaluation Fee](http://103.113.200.36/PAMS/ICTUnit/Re-Evaluation.aspx)
+🔍 **পেমেন্ট যাচাই:** [Check Payment](http://103.113.200.36/PAMS/ICTUnit/PaymentChk.aspx)"""
+
+DORMITORY_REPLY = """### 🏨 জাতীয় বিশ্ববিদ্যালয় ডরমেটরী (গেস্ট হাউস) রিজার্ভেশন নির্দেশিকা
+
+জাতীয় বিশ্ববিদ্যালয়ের গাজীপুর ক্যাম্পাসের ডরমেটরী রুম বুকিং সংক্রান্ত তথ্যাবলী:
+
+👥 **কারা ব্যবহার করতে পারবেন:**
+• দাপ্তরিক কাজে আগত শিক্ষক, গবেষক, প্রশিক্ষক/প্রশিক্ষণার্থী, রিসোর্স পার্সন ও কর্মকর্তা-কর্মচারীগণ।
+• পেনশন বা দাপ্তরিক কাজে আগত অবসরপ্রাপ্ত শিক্ষক/কর্মকর্তা।
+• বিশ্ববিদ্যালয় আয়োজিত সেমিনার/কর্মশালার অতিথি ও বিদেশি অতিথিবৃন্দ।
+• দেশীয় অন্যান্য সরকারি/বেসরকারি বিশ্ববিদ্যালয়ের শিক্ষক ও কর্মকর্তাবৃন্দ।
+
+📝 **বুকিং ও চেক-ইন পদ্ধতি:**
+১. [Dormitory Reservation Portal](http://103.113.200.36/PAMS/Dormitory/Reservation.aspx) এ প্রবেশ করে অনলাইন ফর্ম পূরণ করুন।
+২. সোনালী সেবা পে-স্লিপ প্রিন্ট করে সোনালী ব্যাংকের যেকোনো শাখায় ফি জমা দিন।
+৩. ফি জমাদান নিশ্চিত হওয়ার পর কক্ষ বরাদ্দ দেওয়া হবে। চেক-ইনের সময় ডরমেটরী শাখায় পে-স্লিপ প্রদর্শন করে চাবি গ্রহণ করুন।
+৪. **সুবিধাদি:** বিছানার চাদর, তোয়ালে, সাবান, টয়লেট পেপার, মশারি, বালিশ, কম্বল/লেপ ও তালা-চাবি সরবরাহ করা হয়।
+
+---
+🔗 **ডরমেটরী বুকিং পোর্টাল:** [Dormitory Reservation](http://103.113.200.36/PAMS/Dormitory/Reservation.aspx)"""
+
+ON_CAMPUS_PAYSLIP_REPLY = """### 📄 অন-ক্যাম্পাস শিক্ষার্থী পে-স্লিপ (On-Campus Payslip) ডাউনলোড নির্দেশিকা
+
+জাতীয় বিশ্ববিদ্যালয়ের গাজীপুর মূল ক্যাম্পাসের শিক্ষার্থীদের সেমিস্টার ও রেজিস্ট্রেশন ফি পে-স্লিপ সংগ্রহ পদ্ধতি:
+
+১. **পোর্টালে প্রবেশ করুন:** [On-Campus Payslip Portal](http://103.113.200.36/PAMS/ICTUnit/OnCampusPayslip.aspx)
+২. **রেজিস্ট্রেশন নম্বর ইনপুট:** **Registration Number** বক্সে আপনার সঠিক নম্বরটি লিখুন।
+৩. **Search বাটনে ক্লিক:** আপনার বকেয়া ও চলতি ট্রানজেকশনের তালিকা প্রদর্শিত হবে।
+৪. **পে-স্লিপ প্রিন্ট ও জমা:** প্রদর্শিত সোনালী সেবা পে-স্লিপটি ডাউনলোড করে প্রিন্ট করুন এবং সোনালী ব্যাংকে জমা দিন।
+
+---
+🔗 **অন-ক্যাম্পাস পে-স্লিপ পোর্টাল:** [On-Campus Payslip](http://103.113.200.36/PAMS/ICTUnit/OnCampusPayslip.aspx)
+🔍 **পেমেন্ট যাচাই:** [Check Payment](http://103.113.200.36/PAMS/ICTUnit/PaymentChk.aspx)"""
+
+PAYMENT_CHECK_REPLY = """### 🔍 সোনালী সেবা পেমেন্ট স্ট্যাটাস চেক (Payment Checking)
+
+জাতীয় বিশ্ববিদ্যালয়ের ই-পেমেন্ট বা সোনালী সেবায় জমাকৃত ফি-এর স্ট্যাটাস যাচাই পদ্ধতি:
+
+১. **পোর্টালে প্রবেশ করুন:** [Payment Checking Portal](http://103.113.200.36/PAMS/ICTUnit/PaymentChk.aspx)
+২. **তথ্য প্রদান:** আপনার **NU TransID**, **Bank ref no**, **Roll no** অথবা **Reg no** লিখে **Find** বাটনে ক্লিক করুন।
+৩. **স্ট্যাটাস দেখুন:** সিস্টেম তাৎক্ষণিকভাবে শিক্ষার্থীর নাম, পেমেন্ট স্ট্যাটাস (Paid/Pending), তারিখ, ব্যাংক ট্রানজেকশন আইডি এবং জমাকৃত টাকার পরিমাণ প্রদর্শন করবে।
+
+---
+🔗 **পেমেন্ট চেক পোর্টাল:** [Payment Checking](http://103.113.200.36/PAMS/ICTUnit/PaymentChk.aspx)"""
+
+EXAM_CENTRE_CHANGE_REPLY = """### 🏫 পরীক্ষা কেন্দ্র পরিবর্তন (Exam Centre Change) সংক্রান্ত নির্দেশিকা
+
+জাতীয় বিশ্ববিদ্যালয়ের পরীক্ষা কেন্দ্র পরিবর্তনের আবেদন প্রক্রিয়া:
+
+১. **আবেদন ও সুপারিশ:** যৌক্তিক কারণ (চিকিৎসা/স্থানান্তর) উল্লেখ করে অধ্যক্ষের সুপারিশসহ পরীক্ষা নিয়ন্ত্রক বরাবর আবেদন করতে হবে।
+২. **ফি এর পে-স্লিপ:** জাতীয় বিশ্ববিদ্যালয়ের ই-পেমেন্ট পোর্টাল [PAMS Services](http://103.113.200.36/PAMS/Default.aspx) থেকে নির্ধারিত ফি-এর সোনালী সেবা পে-স্লিপ সংগ্রহ করুন।
+৩. **ফি জমাদান:** সোনালী ব্যাংকে ফি জমা দিয়ে মূল চালান ও আবেদনপত্র বিশ্ববিদ্যালয়ের সংশ্লিষ্ট পরীক্ষা শাখায় জমা দিন।
+৪. **অনুমোদন:** পরীক্ষা নিয়ন্ত্রক দপ্তর অনুমোদন সাপেক্ষে সংশোধিত প্রবেশপত্র ইস্যু করবে।
+
+---
+🔗 **ই-পেমেন্ট পোর্টাল:** [e-Payment (PAMS)](http://103.113.200.36/PAMS/Default.aspx)"""
+
+CREDENTIAL_PRIVACY_REPLY = """### 🔒 নিরাপত্তা ও গোপনীয়তা সতর্কতা (Security & Privacy Guard)
+
+জাতীয় বিশ্ববিদ্যালয় এআই চ্যাটবট সিস্টেমে শিক্ষার্থীর কোনো ব্যক্তিগত পাসওয়ার্ড বা সংবেদনশীল তথ্য ডাটাবেসে সেভ করা হয় না এবং প্রদর্শন করা সম্পূর্ণ নিষিদ্ধ (Never displayed / Protected)।
+
+- আপনার পাসওয়ার্ড সম্পূর্ণ ব্যক্তিগত, এনক্রিপ্ট ও গোপন রাখুন।
+- পাসওয়ার্ড ভুলে গেলে বা রিসেট করতে চাইলে সংশ্লিষ্ট পোর্টালে (যেমন: [ems.nu.ac.bd](http://ems.nu.ac.bd/)) গিয়ে 'Forgot Password' অপশন ব্যবহার করুন অথবা আপনার কলেজের মাধ্যমে যোগাযোগ করুন।"""
+
+TOKEN_SERVICE_MENU_REPLY = """### 🎫 জাতীয় বিশ্ববিদ্যালয় সাপোর্ট টোকেন সার্ভিস (Support Token Service)
+
+একাডেমিক যেকোনো জটিল সমস্যা (যেমন: ভর্তি জটিলতা, ইএমএস অ্যাকাউন্ট লক, ফরম পূরণ সংক্রান্ত ত্রুটি, ফলাফল পুনঃনিরীক্ষণ, মার্কশিট/সার্টিফিকেট সংশোধন)-এর জন্য আপনি অফিসিয়াল সাপোর্ট টোকেন দাখিল করতে পারেন:
+
+1. **টোকেন তৈরি করুন:** সরাসরি [🎫 নতুন টোকেন ফর্ম ওপেন করুন](javascript:openTokenModal()) অথবা উপরের **Token Service** বাটনে ক্লিক করুন।
+2. **নির্দিষ্ট সেবা নির্বাচন:** আপনার সমস্যার ক্যাটাগরি (EMS, Examination, Admission, Certificate ইত্যাদি) নির্বাচন করে বিবরণ লিখুন।
+3. **ইউনিক ট্র্যাকিং আইডি:** সাবমিট করার সাথে সাথে একটি ইউনিক ট্র্যাকিং নম্বর (যেমন: `NU-2026-000140`) পাবেন।
+4. **স্ট্যাটাস চেক:** পরবর্তীতে [📋 টোকেন স্ট্যাটাস চেক](javascript:openTokenCheckModal()) অপশনে আপনার টোকেন নম্বর দিয়ে সর্বশেষ অগ্রগতি দেখতে পারবেন।
+
+💡 *সরাসরি টোকেন ফর্ম ওপেন করতে নিচের বাটনে বা 'Token Service' ক্লিক করুন।*"""
+
+TOKEN_STATUS_CHECK_PROMPT_REPLY = """### 📋 টোকেন স্ট্যাটাস চেক (Check Token Status)
+
+আপনার পূর্বে দাখিলকৃত সাপোর্ট টোকেনের সর্বশেষ অবস্থা জানতে:
+
+1. আপনার **টোকেন আইডি** মেসেজে লিখুন (যেমন: `NU-2026-000140`) অথবা
+2. সরাসরি [📋 টোকেন স্ট্যাটাস চেক পপআপ ওপেন করুন](javascript:openTokenCheckModal())।"""
 
 # Direct normalized phrase mapping for instant lookups (< 0.001s)
 INSTANT_LOOKUP_MAP: Dict[str, ChatResponse] = {}
 
 def _init_instant_lookups():
+    # Support Token Service
+    token_triggers = [
+        "token service", "token", "support token", "create token", "open token",
+        "টোকেন", "টোকেন সার্ভিস", "টোকেন সেবা", "সাপোর্ট টোকেন", "টোকেন খুলব", "টোকেন বানাব",
+        "token service (token service)", "টোকেন সার্ভিস (token service)", "🎫 টোকেন সার্ভিস (token service)"
+    ]
+    for trig in token_triggers:
+        INSTANT_LOOKUP_MAP[trig] = ChatResponse(
+            reply=TOKEN_SERVICE_MENU_REPLY,
+            citations=CITATIONS_ERP_SERVICES,
+            intent="TOKEN_SERVICE_MENU",
+            skill_used="token_service",
+            suggested_chips=["🎫 টোকেন সার্ভিস (Token Service)", "📋 টোকেন স্ট্যাটাস চেক", "📄 সাম্প্রতিক নোটিশ", "🏠 মূল মেনু"]
+        )
+
+    # Token Status Check
+    token_status_triggers = [
+        "check token status", "token status", "check token", "check my token", "token status check",
+        "টোকেন স্ট্যাটাস", "টোকেন স্ট্যাটাস চেক", "টোকেন চেক", "আমার টোকেন", "📋 টোকেন স্ট্যাটাস চেক"
+    ]
+    for trig in token_status_triggers:
+        INSTANT_LOOKUP_MAP[trig] = ChatResponse(
+            reply=TOKEN_STATUS_CHECK_PROMPT_REPLY,
+            citations=CITATIONS_ERP_SERVICES,
+            intent="TOKEN_STATUS",
+            skill_used="token_service",
+            suggested_chips=["📋 টোকেন স্ট্যাটাস চেক", "🎫 টোকেন সার্ভিস (Token Service)", "🏠 মূল মেনু"]
+        )
     # Greetings & Salutations
     greeting_triggers = [
         "hi", "hello", "hey", "start", "menu", "help", "hlo", "helo", "hy",
@@ -406,6 +575,90 @@ def _init_instant_lookups():
             suggested_chips=["📜 সার্টিফিকেট আবেদনের নিয়ম", "🎫 সার্টিফিকেট সহায়তা টোকেন", "🏠 মূল মেনু"]
         )
 
+    # e-Payment & PAMS Portal
+    pams_triggers = [
+        "pams", "e-payment", "epayment", "e payment", "103.113.200.36", "103.113.200.36/pams",
+        "প্যামস", "ই-পেমেন্ট", "পেমেন্ট পোর্টাল", "ইপেমেন্ট"
+    ]
+    for trig in pams_triggers:
+        INSTANT_LOOKUP_MAP[trig] = ChatResponse(
+            reply=PAMS_REPLY,
+            citations=CITATIONS_PAMS,
+            intent="PAMS_OVERVIEW",
+            skill_used="payment_services",
+            suggested_chips=["📝 খাতা পুনঃমূল্যায়ন ফি", "🏨 ডরমেটরী রিজার্ভেশন", "📄 অন-ক্যাম্পাস পে-স্লিপ", "🔍 পেমেন্ট চেক"]
+        )
+
+    # Re-Evaluation Fee
+    re_eval_triggers = [
+        "re-evaluation", "re evaluation", "reevaluation", "re-evaluation fee", "খাতা পুনঃমূল্যায়ন",
+        "পুনঃমূল্যায়ন", "re-evaluation.aspx", "খাতা চ্যালেঞ্জ ফি"
+    ]
+    for trig in re_eval_triggers:
+        INSTANT_LOOKUP_MAP[trig] = ChatResponse(
+            reply=RE_EVALUATION_REPLY,
+            citations=CITATIONS_PAMS,
+            intent="RE_EVALUATION",
+            skill_used="payment_services",
+            suggested_chips=["📝 খাতা পুনঃমূল্যায়ন পোর্টাল", "🔍 পেমেন্ট স্ট্যাটাস চেক", "🏠 মূল মেনু"]
+        )
+
+    # Dormitory Reservation
+    dormitory_triggers = [
+        "dormitory", "dormitory reservation", "guest house", "ডরমেটরী", "ডরমেটরি",
+        "গেস্ট হাউস", "ডরমেটরী বুকিং", "reservation.aspx"
+    ]
+    for trig in dormitory_triggers:
+        INSTANT_LOOKUP_MAP[trig] = ChatResponse(
+            reply=DORMITORY_REPLY,
+            citations=CITATIONS_PAMS,
+            intent="DORMITORY_RESERVATION",
+            skill_used="campus_services",
+            suggested_chips=["🏨 ডরমেটরী বুকিং পোর্টাল", "💳 সোনালী সেবা ফি", "🏠 মূল মেনু"]
+        )
+
+    # On-Campus Payslip
+    payslip_triggers = [
+        "on-campus payslip", "on campus payslip", "oncampuspayslip", "অন-ক্যাম্পাস পে-স্লিপ",
+        "ক্যাম্পাস পে স্লিপ", "oncampuspayslip.aspx"
+    ]
+    for trig in payslip_triggers:
+        INSTANT_LOOKUP_MAP[trig] = ChatResponse(
+            reply=ON_CAMPUS_PAYSLIP_REPLY,
+            citations=CITATIONS_PAMS,
+            intent="ON_CAMPUS_PAYSLIP",
+            skill_used="payment_services",
+            suggested_chips=["📄 পে-স্লিপ ডাউনলোড লিংক", "🔍 পেমেন্ট ভেরিফিকেশন", "🏠 মূল মেনু"]
+        )
+
+    # Payment Checking
+    payment_chk_triggers = [
+        "paymentchk", "paymentchk.aspx", "check payment", "payment check", "পেমেন্ট চেক",
+        "পেমেন্ট যাচাই", "সোনালী সেবা চেক", "trans id check"
+    ]
+    for trig in payment_chk_triggers:
+        INSTANT_LOOKUP_MAP[trig] = ChatResponse(
+            reply=PAYMENT_CHECK_REPLY,
+            citations=CITATIONS_PAMS,
+            intent="PAYMENT_CHECK",
+            skill_used="payment_services",
+            suggested_chips=["🔍 পেমেন্ট চেক পোর্টাল", "💳 e-Payment মেনু", "🏠 মূল মেনু"]
+        )
+
+    # Exam Centre Change
+    centre_change_triggers = [
+        "exam centre change", "exam center change", "centre change", "center change",
+        "পরীক্ষা কেন্দ্র পরিবর্তন", "সেন্টার পরিবর্তন", "কেন্দ্র বদল"
+    ]
+    for trig in centre_change_triggers:
+        INSTANT_LOOKUP_MAP[trig] = ChatResponse(
+            reply=EXAM_CENTRE_CHANGE_REPLY,
+            citations=CITATIONS_PAMS,
+            intent="EXAM_CENTRE_CHANGE",
+            skill_used="examination",
+            suggested_chips=["🏫 পরীক্ষা কেন্দ্র পরিবর্তন ফি", "🎫 সাপোর্ট টোকেন", "🏠 মূল মেনু"]
+        )
+
 _init_instant_lookups()
 
 def get_preloaded_response(query: str) -> Optional[ChatResponse]:
@@ -413,6 +666,29 @@ def get_preloaded_response(query: str) -> Optional[ChatResponse]:
     Checks if a normalized query has a preloaded instant response (< 0.001s execution).
     """
     normalized = query.lower().strip(" \t\n\r.?!,;:-_~`@#$%^&*()+=/\\|")
+    
+    # 1. Hallucination Guard: Far future unannounced years (2030+) or rumor probes
+    future_years = ["2030", "2031", "2032", "2033", "2034", "2035", "২০৩০", "২০৩১", "২০৩২", "২০৩৩", "২০৩৪", "২০৩৫"]
+    if any(y in normalized for y in future_years):
+        return ChatResponse(
+            reply=HALLUCINATION_DEFENSE_REPLY,
+            citations=CITATIONS_GENERAL,
+            intent="UNVERIFIED_FUTURE_NOTICE",
+            skill_used="nu_general",
+            suggested_chips=["📄 সকল সাম্প্রতিক নোটিশ", "🎓 ভর্তি তথ্য", "🌐 nu.ac.bd ভিজিট করুন"]
+        )
+
+    # 2. Credential Privacy Guard: Password leak / storage probes
+    if any(k in normalized for k in ["পাসওয়ার্ড", "পাসওয়ার্ড", "password", "secret_nu", "সেভ করো এবং আমাকে পাসওয়ার্ড"]):
+        if any(w in normalized for w in ["সেভ", "save", "দেখাও", "show", "database", "ডাটাবেস", "secret"]):
+            return ChatResponse(
+                reply=CREDENTIAL_PRIVACY_REPLY,
+                citations=CITATIONS_GENERAL,
+                intent="CREDENTIAL_PRIVACY_GUARD",
+                skill_used="security_guard",
+                suggested_chips=["🔐 ইএমএস পাসওয়ার্ড রিসেট", "🎫 সাপোর্ট টোকেন", "🏠 মূল মেনু"]
+            )
+
     if normalized in INSTANT_LOOKUP_MAP:
         return INSTANT_LOOKUP_MAP[normalized]
     
